@@ -1,0 +1,80 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Hastalar{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-0">Hastalar</h1>
+            <p class="text-muted">Tüm hastaların listesi</p>
+        </div>
+        <div class="col-auto">
+            <div class="d-flex">
+                <form method="get" class="d-flex me-2">
+                    <input type="text" name="search" class="form-control me-2" placeholder="Hasta ara..." value="{{ request.GET.search }}">
+                    <button type="submit" class="btn btn-primary">Ara</button>
+                </form>
+                
+                {% if user.is_receptionist or user.is_admin_user %}
+                <a href="{% url 'register' %}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Yeni Hasta
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Ad Soyad</th>
+                            <th>E-posta</th>
+                            <th>Doğum Tarihi</th>
+                            <th>Telefon</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if patients %}
+                            {% for patient in patients %}
+                                <tr>
+                                    <td>{{ patient.get_full_name }}</td>
+                                    <td>{{ patient.email }}</td>
+                                    <td>{{ patient.date_of_birth|date:"d.m.Y"|default:"Belirtilmemiş" }}</td>
+                                    <td>{{ patient.phone_number|default:"Belirtilmemiş" }}</td>
+                                    <td>
+                                        <a href="{% url 'patient-detail' patient.id %}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i> Görüntüle
+                                        </a>
+                                        
+                                        {% if user.is_doctor or user.is_receptionist or user.is_admin_user %}
+                                        <a href="{% url 'appointment-create' %}?patient={{ patient.id }}" class="btn btn-sm btn-success">
+                                            <i class="fas fa-calendar-plus"></i> Randevu Oluştur
+                                        </a>
+                                        {% endif %}
+                                        
+                                        {% if user.is_admin_user %}
+                                        <a href="#" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i> Düzenle
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">Hasta bulunamadı.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
