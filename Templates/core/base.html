@@ -31,6 +31,24 @@
         /* Ana içerik padding ayarı */
         #kt_app_main {
             padding-left: 225px; /* Sidebar genişliği kadar padding */
+            padding-top: 60px; /* Header yüksekliği için */
+        }
+        
+        /* Header yüksekliğini azaltma */
+        .app-header {
+            height: 60px !important;
+            min-height: 60px !important;
+        }
+        
+        /* Header içindeki elemanların yüksekliğini azaltma */
+        .app-header .app-header-logo, 
+        .app-header .app-navbar {
+            height: 60px !important;
+        }
+        
+        /* Form elemanlarının yüksekliğini azaltma */
+        .search-input.form-control {
+            height: 35px !important;
         }
         
         /* Mobil görünüm için medya sorgusu */
@@ -53,49 +71,39 @@
             
             <!-- Header -->
             <div id="kt_app_header" class="app-header d-flex flex-column flex-stack">
-                <div class="d-flex flex-stack flex-grow-1">
-                    <div class="app-header-logo d-flex align-items-center ps-lg-12" id="kt_app_header_logo">
+                <div class="d-flex align-items-center flex-grow-1">
+                    <div class="app-header-logo d-flex align-items-center ps-lg-5" id="kt_app_header_logo">
                         <!-- Sidebar Toggle -->
-                        <div id="kt_app_sidebar_toggle" class="app-sidebar-toggle btn btn-sm btn-icon bg-body btn-color-gray-500 btn-active-color-primary w-30px h-30px ms-n2 me-4 d-none d-lg-flex">
-                            <i class="ki-outline ki-abstract-14 fs-3 mt-1"></i>
+                        <div id="kt_app_sidebar_toggle" class="app-sidebar-toggle btn btn-sm btn-icon bg-body btn-color-gray-500 btn-active-color-primary w-25px h-25px ms-n2 me-2 d-none d-lg-flex">
+                            <i class="ki-outline ki-abstract-14 fs-4"></i>
                         </div>
                         <!-- Mobile Sidebar Toggle -->
-                        <div class="btn btn-icon btn-active-color-primary w-35px h-35px ms-3 me-2 d-flex d-lg-none" id="kt_app_sidebar_mobile_toggle">
+                        <div class="btn btn-icon btn-active-color-primary w-30px h-30px ms-2 me-1 d-flex d-lg-none" id="kt_app_sidebar_mobile_toggle">
                             <i class="ki-outline ki-abstract-14 fs-2"></i>
                         </div>
                         <!-- Logo -->
-                        <a href="{% url 'home' %}" class="app-sidebar-logo">
-                            <h3 class="text-primary m-0">MediTrack</h3>
+                        <a href="{% url 'home' %}" class="app-sidebar-logo me-5">
+                            <h3 class="text-primary m-0 fs-4">MediTrack</h3>
                         </a>
                     </div>
                     
                     <!-- Navbar -->
                     <div class="app-navbar flex-grow-1 justify-content-end" id="kt_app_header_navbar">
-                        <div class="app-navbar-item d-flex align-items-stretch flex-lg-grow-1">
-                            <!-- Search -->
-                            <div id="kt_header_search" class="header-search d-flex align-items-center w-lg-350px">
-                                <form method="get" class="d-none d-lg-block w-100 position-relative mb-5 mb-lg-0">
-                                    <i class="ki-outline ki-magnifier search-icon fs-2 text-gray-500 position-absolute top-50 translate-middle-y ms-5"></i>
-                                    <input type="text" class="search-input form-control border h-lg-45px ps-13" name="search" value="" placeholder="Ara..." />
-                                </form>
-                            </div>
-                        </div>
-                        
                         <!-- User Menu -->
                         {% if user.is_authenticated %}
                         <div class="app-navbar-item ms-1 ms-lg-3">
-                            <div class="btn btn-icon btn-custom btn-active-color-primary w-35px h-35px w-md-40px h-md-40px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
-                                <i class="ki-outline ki-user fs-1"></i>
+                            <div class="btn btn-icon btn-custom btn-active-color-primary w-30px h-30px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
+                                <i class="ki-outline ki-user fs-2"></i>
                             </div>
                             <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px" data-kt-menu="true">
                                 <div class="menu-item px-3">
                                     <div class="menu-content d-flex align-items-center px-3">
-                                        <div class="symbol symbol-50px me-5">
+                                        <div class="symbol symbol-40px me-3">
                                             <i class="ki-outline ki-user fs-2"></i>
                                         </div>
                                         <div class="d-flex flex-column">
-                                            <div class="fw-bold d-flex align-items-center fs-5">{{ user.get_full_name }}</div>
-                                            <span class="fw-semibold text-muted fs-7">{{ user.get_user_type_display }}</span>
+                                            <div class="fw-bold d-flex align-items-center fs-6">{{ user.get_full_name }}</div>
+                                            <span class="fw-semibold text-muted fs-8">{{ user.get_user_type_display }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -115,7 +123,7 @@
                         </div>
                         {% else %}
                         <div class="app-navbar-item ms-1 ms-lg-3">
-                            <a href="{% url 'login' %}" class="btn btn-primary">Giriş Yap</a>
+                            <a href="{% url 'login' %}" class="btn btn-sm btn-primary">Giriş Yap</a>
                         </div>
                         {% endif %}
                     </div>
