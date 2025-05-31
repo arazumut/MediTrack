@@ -1,0 +1,176 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Hasta Kaydı - MediTrack{% endblock %}
+
+{% block content %}
+<div class="card mb-5 mb-xl-10">
+    <div class="card-header">
+        <div class="card-title">
+            <h3 class="fw-bold m-0">Hasta Kaydı</h3>
+        </div>
+    </div>
+    
+    <div class="card-body">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <div class="row mb-6">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="fv-row mb-0">
+                        <label class="form-label fs-6 fw-bold mb-2">{{ form.username.label }}</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            {% for error in form.username.errors %}
+                            <div data-field="username">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="fv-row mb-0">
+                        <label class="form-label fs-6 fw-bold mb-2">{{ form.email.label }}</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            {% for error in form.email.errors %}
+                            <div data-field="email">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-6">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="fv-row mb-0">
+                        <label class="form-label fs-6 fw-bold mb-2">{{ form.first_name.label }}</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            {% for error in form.first_name.errors %}
+                            <div data-field="first_name">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="fv-row mb-0">
+                        <label class="form-label fs-6 fw-bold mb-2">{{ form.last_name.label }}</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            {% for error in form.last_name.errors %}
+                            <div data-field="last_name">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-6">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="fv-row mb-0">
+                        <label class="form-label fs-6 fw-bold mb-2">{{ form.password1.label }}</label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            {% for error in form.password1.errors %}
+                            <div data-field="password1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="fv-row mb-0">
+                        <label class="form-label fs-6 fw-bold mb-2">{{ form.password2.label }}</label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            {% for error in form.password2.errors %}
+                            <div data-field="password2">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-6">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="fv-row mb-0">
+                        <label class="form-label fs-6 fw-bold mb-2">{{ form.date_of_birth.label }}</label>
+                        {{ form.date_of_birth }}
+                        {% if form.date_of_birth.errors %}
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            {% for error in form.date_of_birth.errors %}
+                            <div data-field="date_of_birth">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="fv-row mb-0">
+                        <label class="form-label fs-6 fw-bold mb-2">{{ form.blood_type.label }}</label>
+                        {{ form.blood_type }}
+                        {% if form.blood_type.errors %}
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            {% for error in form.blood_type.errors %}
+                            <div data-field="blood_type">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-6">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="fv-row mb-0">
+                        <label class="form-label fs-6 fw-bold mb-2">{{ form.phone_number.label }}</label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            {% for error in form.phone_number.errors %}
+                            <div data-field="phone_number">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-6">
+                <div class="col-12">
+                    <div class="fv-row mb-0">
+                        <label class="form-label fs-6 fw-bold mb-2">{{ form.address.label }}</label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            {% for error in form.address.errors %}
+                            <div data-field="address">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end">
+                <a href="{% url 'dashboard' %}" class="btn btn-light me-3">İptal</a>
+                <button type="submit" class="btn btn-primary">
+                    <span class="indicator-label">Kaydet</span>
+                    <span class="indicator-progress">Lütfen bekleyin...
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

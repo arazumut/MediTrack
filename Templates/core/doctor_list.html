@@ -1,0 +1,68 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Doktorlar{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-0">Doktorlar</h1>
+            <p class="text-muted">Tüm doktorların listesi</p>
+        </div>
+        <div class="col-auto">
+            <form method="get" class="d-flex">
+                <input type="text" name="search" class="form-control me-2" placeholder="Doktor ara..." value="{{ request.GET.search }}">
+                <button type="submit" class="btn btn-primary">Ara</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Ad Soyad</th>
+                            <th>Uzmanlık</th>
+                            <th>E-posta</th>
+                            <th>Telefon</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if doctors %}
+                            {% for doctor in doctors %}
+                                <tr>
+                                    <td>{{ doctor.get_full_name }}</td>
+                                    <td>{{ doctor.specialization|default:"-" }}</td>
+                                    <td>{{ doctor.email }}</td>
+                                    <td>{{ doctor.phone|default:"-" }}</td>
+                                    <td>
+                                        {% if user.is_patient or user.is_receptionist %}
+                                            <a href="{% url 'appointment-create' %}?doctor={{ doctor.id }}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-calendar-plus"></i> Randevu Al
+                                            </a>
+                                        {% endif %}
+                                        
+                                        {% if user.is_admin_user or user.is_superuser %}
+                                            <a href="#" class="btn btn-sm btn-warning">
+                                                <i class="fas fa-edit"></i> Düzenle
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">Doktor bulunamadı.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

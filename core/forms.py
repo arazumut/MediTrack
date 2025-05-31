@@ -1,0 +1,147 @@
+from django import forms
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+
+from appointments.models import Appointment
+from treatments.models import Treatment, Prescription
+
+User = get_user_model()
+
+class LoginForm(AuthenticationForm):
+    """
+    Kullanıcı giriş formu, AuthenticationForm'u özelleştirir.
+    """
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Kullanıcı Adı')}),
+        label=_('Kullanıcı Adı')
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': _('Şifre')}),
+        label=_('Şifre')
+    )
+
+class PatientRegistrationForm(UserCreationForm):
+    """
+    Hasta kayıt formu, yeni bir hasta kullanıcı oluşturmak için kullanılır.
+    """
+    first_name = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Ad')}),
+        label=_('Ad')
+    )
+    last_name = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Soyad')}),
+        label=_('Soyad')
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': _('E-posta')}),
+        label=_('E-posta')
+    )
+    date_of_birth = forms.DateField(
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        label=_('Doğum Tarihi')
+    )
+    phone_number = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Telefon Numarası')}),
+        label=_('Telefon Numarası')
+    )
+    address = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': _('Adres')}),
+        label=_('Adres')
+    )
+    blood_type = forms.ChoiceField(
+        choices=[
+            ('', _('Seçiniz')),
+            ('A+', 'A+'),
+            ('A-', 'A-'),
+            ('B+', 'B+'),
+            ('B-', 'B-'),
+            ('AB+', 'AB+'),
+            ('AB-', 'AB-'),
+            ('0+', '0+'),
+            ('0-', '0-'),
+        ],
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label=_('Kan Grubu')
+    )
+    
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 
+                 'date_of_birth', 'phone_number', 'address', 'blood_type')
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': _('Kullanıcı Adı')})
+        self.fields['password1'].widget.attrs.update({'class': 'form-control', 'placeholder': _('Şifre')})
+        self.fields['password2'].widget.attrs.update({'class': 'form-control', 'placeholder': _('Şifre (Tekrar)')})
+        
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.user_type = 'patient'
+        if commit:
+            user.save()
+        return user
+
+class AppointmentForm(forms.ModelForm):
+    """
+    Randevu oluşturma ve düzenleme formu.
+    """
+    class Meta:
+        model = Appointment
+        fields = ('patient', 'doctor', 'date', 'time', 'description')
+        widgets = {
+            'patient': forms.Select(attrs={'class': 'form-control'}),
+            'doctor': forms.Select(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+        
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        
+        # Sadece hasta tipi kullanıcıları göster
+        self.fields['patient'].queryset = User.objects.filter(user_type='patient')
+        
+        # Sadece doktor tipi kullanıcıları göster
+        self.fields['doctor'].queryset = User.objects.filter(user_type='doctor')
+        
+        # Eğer giriş yapan kullanıcı hasta ise, sadece kendisini seçebilir
+        if user and user.is_patient():
+            self.fields['patient'].initial = user
+            self.fields['patient'].widget = forms.HiddenInput()
+
+class TreatmentForm(forms.ModelForm):
+    """
+    Tedavi oluşturma ve düzenleme formu.
+    """
+    class Meta:
+        model = Treatment
+        fields = ('diagnosis', 'notes')
+        widgets = {
+            'diagnosis': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+class PrescriptionForm(forms.ModelForm):
+    """
+    Reçete oluşturma ve düzenleme formu.
+    """
+    class Meta:
+        model = Prescription
+        fields = ('name', 'dosage', 'instructions')
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'dosage': forms.TextInput(attrs={'class': 'form-control'}),
+            'instructions': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+PrescriptionFormSet = forms.inlineformset_factory(
+    Treatment, 
+    Prescription, 
+    form=PrescriptionForm, 
+    extra=1, 
+    can_delete=True
+) 

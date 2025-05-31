@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MediTrack - Giriş</title>
+    
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Template CSS -->
+    {% load static %}
+    <link href="{% static 'assets/plugins/global/plugins.bundle.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/css/style.bundle.css' %}" rel="stylesheet" type="text/css" />
+</head>
+<body id="kt_body" class="app-blank app-blank">
+    <div class="d-flex flex-column flex-root" id="kt_app_root">
+        <div class="d-flex flex-column flex-lg-row flex-column-fluid">
+            
+            <!-- Solda Giriş Formu -->
+            <div class="d-flex flex-column flex-lg-row-fluid w-lg-50 p-10 order-2 order-lg-1">
+                <div class="d-flex flex-center flex-column flex-lg-row-fluid">
+                    <div class="w-lg-500px p-10">
+                        
+                        <!-- Form Başlığı -->
+                        <div class="text-center mb-11">
+                            <h1 class="text-gray-900 fw-bolder mb-3">MediTrack</h1>
+                            <div class="text-gray-500 fw-semibold fs-6">Klinik Hasta Takip ve Randevu Sistemi</div>
+                        </div>
+                        
+                        <!-- Flash Messages -->
+                        {% if messages %}
+                        <div class="messages">
+                            {% for message in messages %}
+                            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Hata Mesajları -->
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <div class="d-flex flex-column">
+                                <h4 class="mb-1 text-danger">Giriş Başarısız</h4>
+                                <span>Lütfen kullanıcı adı ve şifrenizi kontrol ediniz.</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Giriş Formu -->
+                        <form class="form w-100" method="post">
+                            {% csrf_token %}
+                            
+                            <!-- Kullanıcı Adı -->
+                            <div class="fv-row mb-8">
+                                <label class="form-label fs-6 fw-bolder text-gray-900">{{ form.username.label }}</label>
+                                {{ form.username }}
+                            </div>
+                            
+                            <!-- Şifre -->
+                            <div class="fv-row mb-8">
+                                <label class="form-label fw-bolder text-gray-900 fs-6">{{ form.password.label }}</label>
+                                {{ form.password }}
+                            </div>
+                            
+                            <!-- Giriş Butonu -->
+                            <div class="d-grid mb-10">
+                                <button type="submit" id="kt_sign_in_submit" class="btn btn-primary">
+                                    <span class="indicator-label">Giriş Yap</span>
+                                    <span class="indicator-progress">Lütfen bekleyin...
+                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                                </button>
+                            </div>
+                            
+                            <input type="hidden" name="next" value="{{ next }}">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sağda Görsel ve Bilgi Alanı -->
+            <div class="d-flex flex-lg-row-fluid w-lg-50 bgi-size-cover bgi-position-center order-1 order-lg-2" style="background-color: #1e1e2d;">
+                <div class="d-flex flex-column flex-center py-15 px-5 px-md-15 w-100">
+                    <h1 class="text-white fs-2qx fw-bolder text-center mb-7">MediTrack</h1>
+                    <div class="text-white fs-base text-center">
+                        Sağlık merkezleri için tam kapsamlı bir yönetim sistemi. <br>
+                        Hasta kayıt, randevu yönetimi, doktor panelleri, tedavi geçmişi ve reçete öneri sistemi.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'assets/plugins/global/plugins.bundle.js' %}"></script>
+    <script src="{% static 'assets/js/scripts.bundle.js' %}"></script>
+</body>
+</html> 
