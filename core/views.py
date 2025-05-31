@@ -11,7 +11,7 @@ from django.utils import timezone
 
 from .forms import (
     LoginForm, PatientRegistrationForm, AppointmentForm, 
-    TreatmentForm, PrescriptionFormSet, DoctorCreationForm
+    TreatmentForm, PrescriptionFormSet, DoctorCreationForm, DoctorUpdateForm
 )
 from appointments.models import Appointment
 from treatments.models import Treatment, Prescription
@@ -498,4 +498,27 @@ class DoctorCreationView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, _('Doktor hesabı başarıyla oluşturuldu.'))
+        return response
+
+class DoctorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """
+    Doktor güncelleme görünümü
+    """
+    model = User
+    form_class = DoctorUpdateForm
+    template_name = 'core/doctor_form.html'
+    success_url = reverse_lazy('doctor-list')
+    
+    def test_func(self):
+        # Sadece admin kullanıcılar doktor bilgilerini güncelleyebilir
+        return self.request.user.is_admin_user() or self.request.user.is_superuser
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_update'] = True
+        return context
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, _('Doktor bilgileri başarıyla güncellendi.'))
         return response

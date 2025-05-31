@@ -10,6 +10,7 @@ urlpatterns = [
     # Doktorlar
     path('doctors/', views.DoctorListView.as_view(), name='doctor-list'),
     path('doctors/create/', views.DoctorCreationView.as_view(), name='doctor-create'),
+    path('doctors/<int:pk>/update/', views.DoctorUpdateView.as_view(), name='doctor-update'),
     
     # Randevular
     path('appointments/', views.AppointmentListView.as_view(), name='appointment-list'),

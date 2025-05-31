@@ -1,14 +1,14 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
-{% block title %}Doktor Ekle{% endblock %}
+{% block title %}{% if is_update %}Doktor Düzenle{% else %}Doktor Ekle{% endif %}{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="row mb-4">
         <div class="col">
-            <h1 class="h3 mb-0">Doktor Ekle</h1>
-            <p class="text-muted">Yeni bir doktor hesabı oluşturun</p>
+            <h1 class="h3 mb-0">{% if is_update %}Doktor Düzenle{% else %}Doktor Ekle{% endif %}</h1>
+            <p class="text-muted">{% if is_update %}Doktor bilgilerini güncelleyin{% else %}Yeni bir doktor hesabı oluşturun{% endif %}</p>
         </div>
         <div class="col-auto">
             <a href="{% url 'doctor-list' %}" class="btn btn-secondary">
@@ -24,6 +24,7 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <h4 class="mb-3">Hesap Bilgileri</h4>
+                        {% if not is_update %}
                         <div class="mb-3">
                             <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}</label>
                             {{ form.username }}
@@ -51,9 +52,7 @@
                             </div>
                             {% endif %}
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <h4 class="mb-3">Kişisel Bilgiler</h4>
+                        {% endif %}
                         <div class="mb-3">
                             <label for="{{ form.first_name.id_for_label }}" class="form-label">{{ form.first_name.label }}</label>
                             {{ form.first_name }}
@@ -90,12 +89,23 @@
                             </div>
                             {% endif %}
                         </div>
+                        {% if is_update %}
+                        <div class="mb-3">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">{{ form.phone_number.label }}</label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.phone_number.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
                 
                 <div class="text-end">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Doktor Ekle
+                        <i class="fas fa-save"></i> {% if is_update %}Değişiklikleri Kaydet{% else %}Doktor Ekle{% endif %}
                     </button>
                 </div>
             </form>

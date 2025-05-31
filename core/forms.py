@@ -193,4 +193,25 @@ class DoctorCreationForm(forms.ModelForm):
         user.user_type = 'doctor'
         if commit:
             user.save()
-        return user 
+        return user
+
+class DoctorUpdateForm(forms.ModelForm):
+    """
+    Doktor güncelleme formu
+    """
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'specialization', 'phone_number']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Ad')}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Soyad')}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': _('E-posta')}),
+            'specialization': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Uzmanlık Alanı')}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Telefon')}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Telefon numarası ve uzmanlık alanı zorunlu değil
+        self.fields['phone_number'].required = False
+        self.fields['specialization'].required = True 

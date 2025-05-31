@@ -1,0 +1,164 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Randevu Detayı{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-0">Randevu Detayı</h1>
+            <p class="text-muted">Randevu bilgileri ve detayları</p>
+        </div>
+        <div class="col-auto">
+            <div class="d-flex">
+                <a href="{% url 'appointment-list' %}" class="btn btn-sm btn-light me-2">
+                    <i class="fas fa-arrow-left"></i> Geri Dön
+                </a>
+                
+                {% if user.is_receptionist or user.is_admin_user or user.is_doctor and user == appointment.doctor %}
+                <a href="{% url 'appointment-update' appointment.id %}" class="btn btn-sm btn-warning me-2">
+                    <i class="fas fa-edit"></i> Düzenle
+                </a>
+                {% endif %}
+                
+                {% if user.is_receptionist or user.is_admin_user %}
+                <a href="{% url 'appointment-delete' appointment.id %}" class="btn btn-sm btn-danger me-2">
+                    <i class="fas fa-trash"></i> Sil
+                </a>
+                {% endif %}
+                
+                {% if user.is_doctor and user == appointment.doctor and appointment.status == 'planned' %}
+                <a href="{% url 'treatment-create' appointment.id %}" class="btn btn-sm btn-success">
+                    <i class="fas fa-notes-medical"></i> Tedavi Ekle
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Randevu Detayları -->
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Randevu Bilgileri</h6>
+                    <span class="badge bg-{{ appointment.status|yesno:'success,danger,primary' }}">
+                        {{ appointment.get_status_display }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Hasta:</label>
+                                <div>{{ appointment.patient.get_full_name }}</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Doktor:</label>
+                                <div>{{ appointment.doctor.get_full_name }}</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tarih:</label>
+                                <div>{{ appointment.date }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Saat:</label>
+                                <div>{{ appointment.time }}</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Oluşturulma Tarihi:</label>
+                                <div>{{ appointment.created_at }}</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Son Güncelleme:</label>
+                                <div>{{ appointment.updated_at }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Açıklama:</label>
+                        <div>
+                            {% if appointment.description %}
+                                {{ appointment.description }}
+                            {% else %}
+                                <em>Açıklama yok</em>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sağ Paneller -->
+        <div class="col-md-4">
+            {% if appointment.treatment %}
+            <!-- Tedavi Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Tedavi Bilgileri</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Teşhis:</label>
+                        <div>{{ appointment.treatment.diagnosis }}</div>
+                    </div>
+                    
+                    {% if appointment.treatment.notes %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Notlar:</label>
+                        <div>{{ appointment.treatment.notes }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    <a href="{% url 'treatment-detail' appointment.treatment.id %}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-notes-medical"></i> Tedavi Detayları
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Hasta Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Hasta Bilgileri</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Ad Soyad:</label>
+                        <div>{{ appointment.patient.get_full_name }}</div>
+                    </div>
+                    
+                    {% if appointment.patient.date_of_birth %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Doğum Tarihi:</label>
+                        <div>{{ appointment.patient.date_of_birth }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if appointment.patient.phone_number %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Telefon:</label>
+                        <div>{{ appointment.patient.phone_number }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if appointment.patient.blood_type %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Kan Grubu:</label>
+                        <div>{{ appointment.patient.blood_type }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    <a href="{% url 'patient-detail' appointment.patient.id %}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-user"></i> Hasta Profili
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

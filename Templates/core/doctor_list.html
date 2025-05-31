@@ -55,7 +55,7 @@
                                         {% endif %}
                                         
                                         {% if user.is_admin_user or user.is_superuser %}
-                                            <a href="#" class="btn btn-sm btn-warning">
+                                            <a href="{% url 'doctor-update' doctor.id %}" class="btn btn-sm btn-warning">
                                                 <i class="fas fa-edit"></i> Düzenle
                                             </a>
                                         {% endif %}
