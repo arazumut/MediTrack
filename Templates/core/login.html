@@ -85,12 +85,64 @@
             </div>
             
             <!-- Sağda Görsel ve Bilgi Alanı -->
-            <div class="d-flex flex-lg-row-fluid w-lg-50 bgi-size-cover bgi-position-center order-1 order-lg-2" style="background-color: #1e1e2d;">
-                <div class="d-flex flex-column flex-center py-15 px-5 px-md-15 w-100">
-                    <h1 class="text-white fs-2qx fw-bolder text-center mb-7">MediTrack</h1>
-                    <div class="text-white fs-base text-center">
-                        Sağlık merkezleri için tam kapsamlı bir yönetim sistemi. <br>
-                        Hasta kayıt, randevu yönetimi, doktor panelleri, tedavi geçmişi ve reçete öneri sistemi.
+            <div class="d-flex flex-lg-row-fluid w-lg-50 bgi-size-cover bgi-position-center order-1 order-lg-2" style="background-color: #f0f8ff;">
+                <div class="d-flex flex-column flex-center py-7 py-lg-15 px-5 px-md-15 w-100">
+                    <div class="mb-10 mb-lg-15 text-center">
+                        <img src="{% static 'assets/media/illustrations/sigma-1/4.png' %}" class="img-fluid" style="max-height: 320px;" alt="MediTrack Sağlık Sistemi">
+                    </div>
+                    
+                    <div class="text-center">
+                        <h1 class="text-primary fs-2qx fw-bold mb-5">MediTrack Sağlık Sistemi</h1>
+                        
+                        <div class="fs-6 text-gray-700 mb-7">
+                            Sağlık merkezinizi dijital dünyaya taşıyan modern ve kapsamlı çözüm
+                        </div>
+                        
+                        <div class="d-flex flex-center flex-wrap">
+                            <div class="d-flex align-items-center mb-6 me-7">
+                                <div class="symbol symbol-45px me-4">
+                                    <span class="symbol-label bg-light-primary">
+                                        <i class="fas fa-calendar-check fs-2 text-primary"></i>
+                                    </span>
+                                </div>
+                                <div class="d-flex flex-column align-items-start">
+                                    <span class="text-gray-900 fw-bold fs-6">Randevu Yönetimi</span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex align-items-center mb-6">
+                                <div class="symbol symbol-45px me-4">
+                                    <span class="symbol-label bg-light-success">
+                                        <i class="fas fa-user-md fs-2 text-success"></i>
+                                    </span>
+                                </div>
+                                <div class="d-flex flex-column align-items-start">
+                                    <span class="text-gray-900 fw-bold fs-6">Hasta Takip</span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex align-items-center mb-6 me-7">
+                                <div class="symbol symbol-45px me-4">
+                                    <span class="symbol-label bg-light-danger">
+                                        <i class="fas fa-pills fs-2 text-danger"></i>
+                                    </span>
+                                </div>
+                                <div class="d-flex flex-column align-items-start">
+                                    <span class="text-gray-900 fw-bold fs-6">Reçete Yönetimi</span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex align-items-center mb-6">
+                                <div class="symbol symbol-45px me-4">
+                                    <span class="symbol-label bg-light-warning">
+                                        <i class="fas fa-chart-line fs-2 text-warning"></i>
+                                    </span>
+                                </div>
+                                <div class="d-flex flex-column align-items-start">
+                                    <span class="text-gray-900 fw-bold fs-6">Analiz ve Raporlar</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -101,5 +153,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'assets/plugins/global/plugins.bundle.js' %}"></script>
     <script src="{% static 'assets/js/scripts.bundle.js' %}"></script>
+    <!-- Font Awesome (ikonlar için) -->
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
 </body>
 </html> 
