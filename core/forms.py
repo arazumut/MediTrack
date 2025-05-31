@@ -2,6 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+import datetime
 
 from appointments.models import Appointment
 from treatments.models import Treatment, Prescription
@@ -112,6 +113,13 @@ class AppointmentForm(forms.ModelForm):
         if user and user.is_patient():
             self.fields['patient'].initial = user
             self.fields['patient'].widget = forms.HiddenInput()
+            self.fields['date'].help_text = _('Randevu almak istediğiniz tarihi seçiniz')
+            self.fields['time'].help_text = _('Randevu almak istediğiniz saati seçiniz')
+            self.fields['description'].help_text = _('Randevu sebebinizi kısaca açıklayınız')
+        
+        # İleri tarihli randevular için kısıtlama ekleyelim
+        today = datetime.date.today()
+        self.fields['date'].widget.attrs['min'] = today.strftime('%Y-%m-%d')
 
 class TreatmentForm(forms.ModelForm):
     """
@@ -144,4 +152,45 @@ PrescriptionFormSet = forms.inlineformset_factory(
     form=PrescriptionForm, 
     extra=1, 
     can_delete=True
-) 
+)
+
+class DoctorCreationForm(forms.ModelForm):
+    """
+    Doktor oluşturma formu
+    """
+    password1 = forms.CharField(
+        label=_('Şifre'),
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': _('Şifre')}),
+        strip=False,
+    )
+    password2 = forms.CharField(
+        label=_('Şifre (Tekrar)'),
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': _('Şifre (Tekrar)')}),
+        strip=False,
+    )
+    
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'specialization', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Kullanıcı Adı')}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Ad')}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Soyad')}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': _('E-posta')}),
+            'specialization': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('Uzmanlık Alanı')}),
+        }
+    
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError(_("Şifreler eşleşmiyor."))
+        return password2
+    
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        user.user_type = 'doctor'
+        if commit:
+            user.save()
+        return user 

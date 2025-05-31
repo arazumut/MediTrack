@@ -36,7 +36,10 @@ urlpatterns = [
         template_name='core/login.html',
         authentication_form=LoginForm
     ), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(
+        next_page='login',
+        http_method_names=['get', 'post']
+    ), name='logout'),
     
     # Core uygulaması URL'leri
     path('core/', include('core.urls')),

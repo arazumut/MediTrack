@@ -11,10 +11,18 @@
             <p class="text-muted">Tüm doktorların listesi</p>
         </div>
         <div class="col-auto">
-            <form method="get" class="d-flex">
-                <input type="text" name="search" class="form-control me-2" placeholder="Doktor ara..." value="{{ request.GET.search }}">
-                <button type="submit" class="btn btn-primary">Ara</button>
-            </form>
+            <div class="d-flex">
+                <form method="get" class="d-flex me-2">
+                    <input type="text" name="search" class="form-control me-2" placeholder="Doktor ara..." value="{{ request.GET.search }}">
+                    <button type="submit" class="btn btn-primary">Ara</button>
+                </form>
+                
+                {% if user.is_admin_user or user.is_superuser %}
+                <a href="{% url 'doctor-create' %}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Doktor Ekle
+                </a>
+                {% endif %}
+            </div>
         </div>
     </div>
 

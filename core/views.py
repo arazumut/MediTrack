@@ -11,7 +11,7 @@ from django.utils import timezone
 
 from .forms import (
     LoginForm, PatientRegistrationForm, AppointmentForm, 
-    TreatmentForm, PrescriptionFormSet
+    TreatmentForm, PrescriptionFormSet, DoctorCreationForm
 )
 from appointments.models import Appointment
 from treatments.models import Treatment, Prescription
@@ -178,13 +178,29 @@ class AppointmentCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView)
     success_url = reverse_lazy('appointment-list')
     
     def test_func(self):
-        # Sadece doktorlar ve resepsiyonistler randevu oluşturabilir
-        return self.request.user.is_doctor() or self.request.user.is_receptionist() or self.request.user.is_admin_user()
+        # Tüm kullanıcılar randevu oluşturabilir
+        return True
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({'user': self.request.user})
         return kwargs
+    
+    def get_initial(self):
+        initial = super().get_initial()
+        # URL'den doktor ID'si alınırsa doktoru otomatik seç
+        doctor_id = self.request.GET.get('doctor')
+        if doctor_id:
+            initial['doctor'] = doctor_id
+        
+        # URL'den hasta ID'si alınırsa hastayı otomatik seç
+        patient_id = self.request.GET.get('patient')
+        if patient_id:
+            initial['patient'] = patient_id
+        elif self.request.user.is_patient():
+            initial['patient'] = self.request.user.id
+            
+        return initial
     
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -465,3 +481,21 @@ class DoctorListView(LoginRequiredMixin, ListView):
             )
         
         return queryset.order_by('first_name', 'last_name')
+
+class DoctorCreationView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    """
+    Doktor oluşturma görünümü
+    """
+    model = User
+    form_class = DoctorCreationForm
+    template_name = 'core/doctor_form.html'
+    success_url = reverse_lazy('doctor-list')
+    
+    def test_func(self):
+        # Sadece admin kullanıcılar doktor ekleyebilir
+        return self.request.user.is_admin_user() or self.request.user.is_superuser
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, _('Doktor hesabı başarıyla oluşturuldu.'))
+        return response

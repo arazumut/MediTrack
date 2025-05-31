@@ -1,0 +1,173 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{% if form.instance.id %}Randevu Düzenle{% else %}Yeni Randevu{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">{% if form.instance.id %}Randevu Düzenle{% else %}Yeni Randevu{% endif %}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        {% if user.is_patient %}
+                        <!-- Hasta için basitleştirilmiş form -->
+                        {{ form.patient }}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.doctor.id_for_label }}" class="form-label">{{ form.doctor.label }}*</label>
+                            {{ form.doctor }}
+                            {% if form.doctor.errors %}
+                            <div class="text-danger">
+                                {% for error in form.doctor.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% if form.doctor.help_text %}
+                            <div class="form-text">{{ form.doctor.help_text }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}*</label>
+                                    {{ form.date }}
+                                    {% if form.date.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.date.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    {% if form.date.help_text %}
+                                    <div class="form-text">{{ form.date.help_text }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.time.id_for_label }}" class="form-label">{{ form.time.label }}*</label>
+                                    {{ form.time }}
+                                    {% if form.time.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.time.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    {% if form.time.help_text %}
+                                    <div class="form-text">{{ form.time.help_text }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger">
+                                {% for error in form.description.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% if form.description.help_text %}
+                            <div class="form-text">{{ form.description.help_text }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        {% else %}
+                        <!-- Doktor ve resepsiyonist için tam form -->
+                        <div class="mb-3">
+                            <label for="{{ form.patient.id_for_label }}" class="form-label">{{ form.patient.label }}*</label>
+                            {{ form.patient }}
+                            {% if form.patient.errors %}
+                            <div class="text-danger">
+                                {% for error in form.patient.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.doctor.id_for_label }}" class="form-label">{{ form.doctor.label }}*</label>
+                            {{ form.doctor }}
+                            {% if form.doctor.errors %}
+                            <div class="text-danger">
+                                {% for error in form.doctor.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}*</label>
+                                    {{ form.date }}
+                                    {% if form.date.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.date.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.time.id_for_label }}" class="form-label">{{ form.time.label }}*</label>
+                                    {{ form.time }}
+                                    {% if form.time.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.time.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger">
+                                {% for error in form.description.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'appointment-list' %}" class="btn btn-secondary me-md-2">İptal</a>
+                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
