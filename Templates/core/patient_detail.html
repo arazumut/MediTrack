@@ -1,0 +1,188 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Hasta: {{ patient.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-0">{{ patient.get_full_name }}</h1>
+            <p class="text-muted">Hasta Bilgileri</p>
+        </div>
+        <div class="col-auto">
+            {% if user.is_doctor or user.is_receptionist or user.is_admin_user %}
+            <a href="{% url 'appointment-create' %}?patient={{ patient.id }}" class="btn btn-primary">
+                <i class="fas fa-calendar-plus"></i> Randevu Oluştur
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Hasta Bilgileri Kartı -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header">
+                    <h3 class="card-title">Kişisel Bilgiler</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3 text-center">
+                        <div class="symbol symbol-100px symbol-circle mb-3">
+                            <span class="symbol-label bg-light-primary text-primary fs-1">
+                                <i class="ki-outline ki-profile-user fs-1"></i>
+                            </span>
+                        </div>
+                        <h4>{{ patient.get_full_name }}</h4>
+                        <p class="text-muted mb-0">Hasta</p>
+                    </div>
+                    
+                    <div class="separator my-3"></div>
+                    
+                    <div class="d-flex flex-column">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <i class="ki-outline ki-sms fs-4 me-2"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <span class="text-muted">E-posta:</span>
+                                <span class="fw-bold d-block">{{ patient.email }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <i class="ki-outline ki-phone fs-4 me-2"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <span class="text-muted">Telefon:</span>
+                                <span class="fw-bold d-block">{{ patient.phone|default:"Belirtilmemiş" }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <i class="ki-outline ki-calendar-8 fs-4 me-2"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <span class="text-muted">Doğum Tarihi:</span>
+                                <span class="fw-bold d-block">{{ patient.birth_date|date:"d.m.Y"|default:"Belirtilmemiş" }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <i class="ki-outline ki-geolocation fs-4 me-2"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <span class="text-muted">Adres:</span>
+                                <span class="fw-bold d-block">{{ patient.address|default:"Belirtilmemiş" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hasta Randevuları -->
+        <div class="col-md-8 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">Randevular</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Saat</th>
+                                    <th>Doktor</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if appointments %}
+                                    {% for appointment in appointments %}
+                                        <tr>
+                                            <td>{{ appointment.date|date:"d.m.Y" }}</td>
+                                            <td>{{ appointment.time|time:"H:i" }}</td>
+                                            <td>{{ appointment.doctor.get_full_name }}</td>
+                                            <td>
+                                                {% if appointment.status == 'planned' %}
+                                                    <span class="badge bg-primary">Planlandı</span>
+                                                {% elif appointment.status == 'completed' %}
+                                                    <span class="badge bg-success">Tamamlandı</span>
+                                                {% elif appointment.status == 'cancelled' %}
+                                                    <span class="badge bg-danger">İptal Edildi</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'appointment-detail' appointment.id %}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i> Görüntüle
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">Randevu bulunamadı.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hasta Tedavileri -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h3 class="card-title">Tedavi Geçmişi</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Doktor</th>
+                                    <th>Tanı</th>
+                                    <th>Tedavi</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if treatments %}
+                                    {% for treatment in treatments %}
+                                        <tr>
+                                            <td>{{ treatment.created_at|date:"d.m.Y" }}</td>
+                                            <td>{{ treatment.appointment.doctor.get_full_name }}</td>
+                                            <td>{{ treatment.diagnosis|truncatechars:30 }}</td>
+                                            <td>{{ treatment.treatment_plan|truncatechars:30 }}</td>
+                                            <td>
+                                                <a href="{% url 'treatment-detail' treatment.id %}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i> Görüntüle
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">Tedavi geçmişi bulunamadı.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,118 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Randevular{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-0">Randevular</h1>
+            <p class="text-muted">Tüm randevuların listesi</p>
+        </div>
+        <div class="col-auto">
+            <div class="d-flex">
+                <form method="get" class="d-flex me-2">
+                    <input type="text" name="search" class="form-control me-2" placeholder="Randevu ara..." value="{{ request.GET.search }}">
+                    <select name="status" class="form-select me-2">
+                        <option value="">Tüm Durumlar</option>
+                        <option value="planned" {% if request.GET.status == 'planned' %}selected{% endif %}>Planlandı</option>
+                        <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>Tamamlandı</option>
+                        <option value="cancelled" {% if request.GET.status == 'cancelled' %}selected{% endif %}>İptal Edildi</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Filtrele</button>
+                </form>
+                
+                {% if user.is_doctor or user.is_receptionist or user.is_admin_user %}
+                <a href="{% url 'appointment-create' %}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Yeni Randevu
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Saat</th>
+                            {% if not user.is_patient %}
+                                <th>Hasta</th>
+                            {% endif %}
+                            {% if not user.is_doctor %}
+                                <th>Doktor</th>
+                            {% endif %}
+                            <th>Durum</th>
+                            <th>Açıklama</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if appointments %}
+                            {% for appointment in appointments %}
+                                <tr>
+                                    <td>{{ appointment.date|date:"d.m.Y" }}</td>
+                                    <td>{{ appointment.time|time:"H:i" }}</td>
+                                    {% if not user.is_patient %}
+                                        <td>
+                                            <a href="{% url 'patient-detail' appointment.patient.id %}">
+                                                {{ appointment.patient.get_full_name }}
+                                            </a>
+                                        </td>
+                                    {% endif %}
+                                    {% if not user.is_doctor %}
+                                        <td>{{ appointment.doctor.get_full_name }}</td>
+                                    {% endif %}
+                                    <td>
+                                        {% if appointment.status == 'planned' %}
+                                            <span class="badge bg-primary">Planlandı</span>
+                                        {% elif appointment.status == 'completed' %}
+                                            <span class="badge bg-success">Tamamlandı</span>
+                                        {% elif appointment.status == 'cancelled' %}
+                                            <span class="badge bg-danger">İptal Edildi</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ appointment.description|truncatechars:30 }}</td>
+                                    <td>
+                                        <a href="{% url 'appointment-detail' appointment.id %}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i> Görüntüle
+                                        </a>
+                                        
+                                        {% if appointment.status == 'planned' %}
+                                            {% if user.is_doctor and appointment.doctor == user %}
+                                                <a href="{% url 'treatment-create' appointment.id %}" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-notes-medical"></i> Tedavi Ekle
+                                                </a>
+                                            {% endif %}
+                                            
+                                            {% if user.is_doctor or user.is_receptionist or user.is_admin_user %}
+                                                <a href="{% url 'appointment-update' appointment.id %}" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-edit"></i> Düzenle
+                                                </a>
+                                            {% endif %}
+                                            
+                                            {% if user.is_receptionist or user.is_admin_user %}
+                                                <a href="{% url 'appointment-delete' appointment.id %}" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i> Sil
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center">Randevu bulunamadı.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

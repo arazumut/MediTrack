@@ -1,85 +1,85 @@
-# MediTrack - Klinik Hasta Takip ve Randevu Sistemi
+# MediTrack - Clinical Patient Tracking and Appointment System
 
-MediTrack, sağlık merkezleri için tasarlanmış kapsamlı bir hasta takip ve randevu yönetim sistemidir. Bu sistem, hasta kayıtları, randevu planlaması, tedavi geçmişi ve reçete yönetimi gibi temel klinik işlevlerini içerir.
+MediTrack is a comprehensive patient tracking and appointment management system designed for healthcare centers. This system includes essential clinical functions such as patient records, appointment scheduling, treatment history, and prescription management.
 
-## Özellikler
+## Features
 
-- **Kullanıcı ve Rol Yönetimi**: Hasta, doktor, resepsiyonist ve admin rolleri
-- **Hasta Yönetimi**: Hasta kaydı, profil bilgileri düzenleme, tedavi geçmişi görüntüleme
-- **Randevu Sistemi**: Randevu oluşturma, güncelleme, iptal etme ve görüntüleme
-- **Tedavi ve Reçete Yönetimi**: Tedavi notları, teşhis, reçete önerisi ekleme
-- **Bildirim Sistemi**: Randevu hatırlatmaları (e-posta ile)
-- **Kapsamlı Yetkilendirme**: Her kullanıcı rolü için özel izinler ve sınırlamalar
+- **User and Role Management**: Patient, doctor, receptionist, and admin roles
+- **Patient Management**: Patient registration, profile editing, treatment history viewing
+- **Appointment System**: Creating, updating, canceling, and viewing appointments
+- **Treatment and Prescription Management**: Adding treatment notes, diagnoses, and prescription recommendations
+- **Notification System**: Appointment reminders (via email)
+- **Comprehensive Authorization**: Special permissions and limitations for each user role
 
-## Kurulum
+## Installation
 
-1. Python 3.8+ kurulu olduğundan emin olun
-2. Bu projeyi klonlayın
-3. Sanal ortam oluşturun:
+1. Make sure Python 3.8+ is installed
+2. Clone this project
+3. Create a virtual environment:
    ```
    python -m venv venv
    ```
-4. Sanal ortamı aktifleştirin:
+4. Activate the virtual environment:
    - Windows: `venv\Scripts\activate`
    - Unix/Mac: `source venv/bin/activate`
-5. Bağımlılıkları yükleyin:
+5. Install dependencies:
    ```
    pip install -r requirements.txt
    ```
-6. Veritabanı migrasyonlarını gerçekleştirin:
+6. Perform database migrations:
    ```
    python manage.py migrate
    ```
-7. Örnek verileri ve admin kullanıcısını yükleyin:
+7. Load sample data and admin user:
    ```
    python manage.py loaddata initial_data
    ```
-8. Sunucuyu başlatın:
+8. Start the server:
    ```
    python manage.py runserver
    ```
 
-## Örnek Kullanıcılar
+## Sample Users
 
-Aşağıdaki örnek kullanıcılar, sistemi test etmek için kullanılabilir:
+The following sample users can be used to test the system:
 
-| Kullanıcı Adı | Şifre | Rol |
-|---------------|-------|-----|
+| Username | Password | Role |
+|----------|----------|------|
 | admin | admin123 | Admin |
-| doktor1 | doktor123 | Doktor |
-| doktor2 | doktor123 | Doktor |
-| resepsiyon1 | resepsiyon123 | Resepsiyonist |
-| hasta1 | hasta123 | Hasta |
-| hasta2 | hasta123 | Hasta |
+| doctor1 | doctor123 | Doctor |
+| doctor2 | doctor123 | Doctor |
+| reception1 | reception123 | Receptionist |
+| patient1 | patient123 | Patient |
+| patient2 | patient123 | Patient |
 
-## Kullanıcı Rolleri ve İzinleri
+## User Roles and Permissions
 
-| Rol | İzinler |
-|-----|---------|
-| Hasta | - Kendi randevularını görüntüleyebilir<br>- Kendi tedavi geçmişini görüntüleyebilir<br>- Kendi profilini güncelleyebilir |
-| Doktor | - Kendi randevularını görüntüleyebilir<br>- Hastalarına tedavi ve reçete ekleyebilir<br>- Hastaları hakkında bilgi görüntüleyebilir |
-| Resepsiyonist | - Hasta kaydı oluşturabilir<br>- Randevu oluşturabilir, güncelleyebilir<br>- Tüm hastaları ve randevuları görüntüleyebilir |
-| Admin | - Tam sistem erişimi<br>- Tüm kullanıcıları yönetebilir<br>- Tüm verileri görüntüleyebilir ve düzenleyebilir |
+| Role | Permissions |
+|------|-------------|
+| Patient | - Can view their own appointments<br>- Can view their own treatment history<br>- Can update their own profile |
+| Doctor | - Can view their own appointments<br>- Can add treatments and prescriptions to their patients<br>- Can view information about their patients |
+| Receptionist | - Can create patient records<br>- Can create and update appointments<br>- Can view all patients and appointments |
+| Admin | - Full system access<br>- Can manage all users<br>- Can view and edit all data |
 
-## Teknolojiler
+## Technologies
 
 - Django 5.2
-- SQLite (Geliştirme için)
+- SQLite (for development)
 - Bootstrap 5
 - JavaScript
 
-## Ekran Görüntüleri
+## Screenshots
 
-*Ekran görüntüleri gelecek*
+*Screenshots coming soon*
 
-## Lisans
+## License
 
-Bu proje MIT lisansı altında lisanslanmıştır.
+This project is licensed under the Apache 2.0 License.
 
-## İletişim
+## Contact
 
-Sorularınız veya geri bildirimleriniz için lütfen iletişime geçin.
+Please get in touch with any questions or feedback.
 
 ---
 
-Geliştirici: [İsim] 
+Developer: K. Umut Araz 
