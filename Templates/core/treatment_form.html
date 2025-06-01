@@ -1,0 +1,197 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{% if form.instance.id %}Tedavi Düzenle{% else %}Yeni Tedavi{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">{% if form.instance.id %}Tedavi Düzenle{% else %}Yeni Tedavi{% endif %}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Randevu Bilgileri -->
+                        {% if appointment %}
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Randevu Bilgileri</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Hasta:</strong> {{ appointment.patient.get_full_name }}</p>
+                                        <p><strong>Tarih:</strong> {{ appointment.date }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Doktor:</strong> {{ appointment.doctor.get_full_name }}</p>
+                                        <p><strong>Saat:</strong> {{ appointment.time }}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <p><strong>Açıklama:</strong> {{ appointment.description }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Tedavi Formu -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Tedavi Bilgileri</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="{{ form.diagnosis.id_for_label }}" class="form-label">{{ form.diagnosis.label }}*</label>
+                                    {{ form.diagnosis }}
+                                    {% if form.diagnosis.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.diagnosis.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.notes.id_for_label }}" class="form-label">{{ form.notes.label }}</label>
+                                    {{ form.notes }}
+                                    {% if form.notes.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.notes.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Reçete Formları -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Reçete</h5>
+                            </div>
+                            <div class="card-body">
+                                {{ prescription_formset.management_form }}
+                                
+                                <div id="prescription-forms">
+                                    {% for prescription_form in prescription_formset %}
+                                    <div class="prescription-form mb-3 p-3 border rounded">
+                                        {% if prescription_form.instance.pk %}{{ prescription_form.DELETE }}{% endif %}
+                                        
+                                        <div class="mb-3">
+                                            <label for="{{ prescription_form.name.id_for_label }}" class="form-label">İlaç Adı*</label>
+                                            {{ prescription_form.name }}
+                                            {% if prescription_form.name.errors %}
+                                            <div class="text-danger">
+                                                {% for error in prescription_form.name.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="{{ prescription_form.dosage.id_for_label }}" class="form-label">Doz*</label>
+                                            {{ prescription_form.dosage }}
+                                            {% if prescription_form.dosage.errors %}
+                                            <div class="text-danger">
+                                                {% for error in prescription_form.dosage.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="{{ prescription_form.instructions.id_for_label }}" class="form-label">Kullanım Talimatları*</label>
+                                            {{ prescription_form.instructions }}
+                                            {% if prescription_form.instructions.errors %}
+                                            <div class="text-danger">
+                                                {% for error in prescription_form.instructions.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        {% if prescription_form.instance.pk %}
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                {{ prescription_form.DELETE }} Bu reçeteyi sil
+                                            </label>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <button type="button" id="add-prescription" class="btn btn-sm btn-outline-success">
+                                    <i class="ki-outline ki-plus fs-2"></i> Reçete Ekle
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'appointment-list' %}" class="btn btn-secondary me-md-2">İptal</a>
+                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addPrescriptionBtn = document.getElementById('add-prescription');
+        const prescriptionForms = document.getElementById('prescription-forms');
+        const totalFormsInput = document.querySelector('input[name="prescription_set-TOTAL_FORMS"]');
+        
+        let formCount = parseInt(totalFormsInput.value);
+        
+        addPrescriptionBtn.addEventListener('click', function() {
+            const newForm = document.querySelector('.prescription-form').cloneNode(true);
+            const formRegex = RegExp(`prescription_set-(\\d){1}-`,'g');
+            
+            // Form içeriklerini temizle
+            newForm.querySelectorAll('input[type="text"], textarea').forEach(input => {
+                input.value = '';
+            });
+            
+            // Form ID'lerini güncelle
+            newForm.innerHTML = newForm.innerHTML.replace(formRegex, `prescription_set-${formCount}-`);
+            
+            // DELETE checkbox'ı kaldır (yeni form olduğu için)
+            const deleteCheckbox = newForm.querySelector('input[type="checkbox"]');
+            if (deleteCheckbox) {
+                deleteCheckbox.parentElement.parentElement.remove();
+            }
+            
+            prescriptionForms.appendChild(newForm);
+            
+            // Toplam form sayısını güncelle
+            formCount++;
+            totalFormsInput.value = formCount;
+        });
+    });
+</script>
+{% endblock %}
