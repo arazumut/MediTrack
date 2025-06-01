@@ -1,3 +1,4 @@
 from django.db import models
 
-# Create your models here.
+# İstatistik ve iletişim modelleri buraya import edilecek
+# Ancak circular import sorunlarını önlemek için burada import etmiyoruz

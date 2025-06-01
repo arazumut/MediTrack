@@ -1,0 +1,53 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Sağlık Geçmişi Kaydı Sil{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Sağlık Geçmişi Kaydını Sil</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-4">Bu sağlık geçmişi kaydını silmek istediğinizden emin misiniz?</h5>
+                    
+                    <div class="alert alert-warning">
+                        <div class="d-flex align-items-center">
+                            <i class="ki-outline ki-warning-2 fs-2x text-warning me-4"></i>
+                            <div>
+                                <h5 class="mb-1">Dikkat!</h5>
+                                <p class="mb-0">Bu işlem geri alınamaz ve tüm ilişkili veriler silinecektir.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border p-4 rounded mb-4">
+                        <p><strong>Hasta:</strong> {{ object.patient.get_full_name }}</p>
+                        <p><strong>Durum Tipi:</strong> {{ object.get_condition_type_display }}</p>
+                        <p><strong>Durum Adı/Tanımı:</strong> {{ object.condition_name }}</p>
+                        <p><strong>Tanı Tarihi:</strong> {{ object.diagnosed_date|default:"Belirtilmemiş" }}</p>
+                        <p><strong>Durum:</strong> 
+                            {% if object.is_active %}
+                            <span class="badge badge-success">Aktif</span>
+                            {% else %}
+                            <span class="badge badge-danger">Geçmiş</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'medical-history-list' object.patient.id %}" class="btn btn-secondary">İptal</a>
+                            <button type="submit" class="btn btn-danger">Sil</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

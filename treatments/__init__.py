@@ -1,0 +1,1 @@
+# Circular import sorununu önlemek için doğrudan import etmiyoruz

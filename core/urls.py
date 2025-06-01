@@ -1,5 +1,9 @@
 from django.urls import path
 from . import views
+from .views_medical_history import (
+    MedicalHistoryListView, MedicalHistoryCreateView, 
+    MedicalHistoryUpdateView, MedicalHistoryDeleteView
+)
 
 urlpatterns = [
     # Hastalar
@@ -23,4 +27,10 @@ urlpatterns = [
     path('appointments/<int:appointment_id>/treatment/create/', views.TreatmentCreateView.as_view(), name='treatment-create'),
     path('treatments/<int:pk>/', views.TreatmentDetailView.as_view(), name='treatment-detail'),
     path('treatments/<int:pk>/update/', views.TreatmentUpdateView.as_view(), name='treatment-update'),
+    
+    # Sağlık Geçmişi
+    path('patients/<int:patient_id>/medical-history/', MedicalHistoryListView.as_view(), name='medical-history-list'),
+    path('patients/<int:patient_id>/medical-history/create/', MedicalHistoryCreateView.as_view(), name='medical-history-create'),
+    path('medical-history/<int:pk>/update/', MedicalHistoryUpdateView.as_view(), name='medical-history-update'),
+    path('medical-history/<int:pk>/delete/', MedicalHistoryDeleteView.as_view(), name='medical-history-delete'),
 ] 

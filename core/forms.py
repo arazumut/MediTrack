@@ -6,6 +6,7 @@ import datetime
 
 from appointments.models import Appointment
 from treatments.models import Treatment, Prescription
+from treatments.models_medical_history import MedicalHistory
 
 User = get_user_model()
 
@@ -214,4 +215,25 @@ class DoctorUpdateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Telefon numarası ve uzmanlık alanı zorunlu değil
         self.fields['phone_number'].required = False
-        self.fields['specialization'].required = True 
+        self.fields['specialization'].required = True
+        
+class MedicalHistoryForm(forms.ModelForm):
+    """
+    Hasta sağlık geçmişi ekleme ve düzenleme formu.
+    """
+    class Meta:
+        model = MedicalHistory
+        fields = ['patient', 'condition_type', 'condition_name', 'diagnosed_date', 'notes', 'is_active']
+        widgets = {
+            'patient': forms.Select(attrs={'class': 'form-control'}),
+            'condition_type': forms.Select(attrs={'class': 'form-control'}),
+            'condition_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'diagnosed_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Sadece hasta tipi kullanıcıları göster
+        self.fields['patient'].queryset = User.objects.filter(user_type='patient') 

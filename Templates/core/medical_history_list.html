@@ -1,0 +1,177 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Sağlık Geçmişi - {{ patient.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">{{ patient.get_full_name }} - Sağlık Geçmişi</h4>
+            {% if user.is_doctor or user.is_admin_user %}
+            <a href="{% url 'medical-history-create' patient.id %}" class="btn btn-light">
+                <i class="ki-outline ki-plus fs-2"></i> Yeni Kayıt Ekle
+            </a>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-4">
+                <a href="{% url 'patient-detail' patient.id %}" class="btn btn-sm btn-secondary">
+                    <i class="ki-outline ki-arrow-left fs-2"></i> Hasta Detayına Dön
+                </a>
+                <div>
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="show-all">Tümünü Göster</button>
+                    <button type="button" class="btn btn-sm btn-outline-success" id="show-active">Aktif Kayıtlar</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" id="show-inactive">Geçmiş Kayıtlar</button>
+                </div>
+            </div>
+            
+            {% if medical_histories %}
+            <div class="table-responsive">
+                <table class="table table-row-bordered table-hover">
+                    <thead>
+                        <tr class="fw-bold fs-6 text-gray-800">
+                            <th>Durum Tipi</th>
+                            <th>Durum Adı/Tanımı</th>
+                            <th>Tanı Tarihi</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for history in medical_histories %}
+                        <tr class="medical-history-row {% if history.is_active %}active-row{% else %}inactive-row{% endif %}">
+                            <td>{{ history.get_condition_type_display }}</td>
+                            <td>{{ history.condition_name }}</td>
+                            <td>{{ history.diagnosed_date|default:"-" }}</td>
+                            <td>
+                                {% if history.is_active %}
+                                <span class="badge badge-light-success">Aktif</span>
+                                {% else %}
+                                <span class="badge badge-light-danger">Geçmiş</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-icon btn-light me-2" 
+                                        data-bs-toggle="modal" data-bs-target="#viewModal{{ history.id }}">
+                                    <i class="ki-outline ki-eye fs-2 text-primary"></i>
+                                </button>
+                                {% if user.is_doctor or user.is_admin_user %}
+                                <a href="{% url 'medical-history-update' history.id %}" class="btn btn-sm btn-icon btn-light me-2">
+                                    <i class="ki-outline ki-pencil fs-2 text-warning"></i>
+                                </a>
+                                <a href="{% url 'medical-history-delete' history.id %}" class="btn btn-sm btn-icon btn-light">
+                                    <i class="ki-outline ki-trash fs-2 text-danger"></i>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        
+                        <!-- View Modal -->
+                        <div class="modal fade" id="viewModal{{ history.id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">{{ history.condition_name }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Durum Tipi:</strong> {{ history.get_condition_type_display }}</p>
+                                        <p><strong>Tanı Tarihi:</strong> {{ history.diagnosed_date|default:"Belirtilmemiş" }}</p>
+                                        <p><strong>Durum:</strong> 
+                                            {% if history.is_active %}
+                                            <span class="badge badge-success">Aktif</span>
+                                            {% else %}
+                                            <span class="badge badge-danger">Geçmiş</span>
+                                            {% endif %}
+                                        </p>
+                                        <p><strong>Notlar:</strong></p>
+                                        <div class="border p-3 rounded bg-light">
+                                            {{ history.notes|linebreaks|default:"Not eklenmemiş." }}
+                                        </div>
+                                        <p class="mt-3 text-muted"><small>Eklenme Tarihi: {{ history.created_at }}</small></p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <h5 class="alert-heading">Kayıt Bulunamadı</h5>
+                <p>Bu hasta için henüz sağlık geçmişi kaydı oluşturulmamış.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const showAllBtn = document.getElementById('show-all');
+        const showActiveBtn = document.getElementById('show-active');
+        const showInactiveBtn = document.getElementById('show-inactive');
+        const rows = document.querySelectorAll('.medical-history-row');
+        
+        // Tümünü göster
+        showAllBtn.addEventListener('click', function() {
+            rows.forEach(row => {
+                row.style.display = 'table-row';
+            });
+            updateActiveButtons([showAllBtn], [showActiveBtn, showInactiveBtn]);
+        });
+        
+        // Sadece aktif olanları göster
+        showActiveBtn.addEventListener('click', function() {
+            rows.forEach(row => {
+                if (row.classList.contains('active-row')) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            updateActiveButtons([showActiveBtn], [showAllBtn, showInactiveBtn]);
+        });
+        
+        // Sadece geçmiş olanları göster
+        showInactiveBtn.addEventListener('click', function() {
+            rows.forEach(row => {
+                if (row.classList.contains('inactive-row')) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            updateActiveButtons([showInactiveBtn], [showAllBtn, showActiveBtn]);
+        });
+        
+        function updateActiveButtons(activeButtons, inactiveButtons) {
+            activeButtons.forEach(btn => {
+                btn.classList.remove('btn-outline-primary', 'btn-outline-success', 'btn-outline-danger');
+                btn.classList.add('btn-primary');
+            });
+            
+            inactiveButtons.forEach(btn => {
+                btn.classList.remove('btn-primary');
+                if (btn.id === 'show-all') {
+                    btn.classList.add('btn-outline-primary');
+                } else if (btn.id === 'show-active') {
+                    btn.classList.add('btn-outline-success');
+                } else {
+                    btn.classList.add('btn-outline-danger');
+                }
+            });
+        }
+        
+        // Sayfa yüklendiğinde varsayılan olarak tümünü göster
+        showAllBtn.click();
+    });
+</script>
+{% endblock %}

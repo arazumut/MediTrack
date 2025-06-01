@@ -71,3 +71,9 @@ class Prescription(models.Model):
     
     def __str__(self):
         return f"{self.name} - {self.dosage}"
+
+# Diğer modeller için import
+from .models_medical_history import MedicalHistory
+from .models_lab import LabTest, TestResult
+from .models_medications import Medication, MedicationInteraction
+from .models_imaging import MedicalImage, Report

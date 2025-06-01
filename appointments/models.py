@@ -59,3 +59,6 @@ class Appointment(models.Model):
     
     def __str__(self):
         return f"{self.patient} - {self.doctor} - {self.date} {self.time}"
+
+# Doktor uygunluk sistemi için importlar
+from .models_availability import DoctorAvailability, DoctorTimeOff
