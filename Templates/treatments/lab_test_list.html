@@ -1,0 +1,175 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Laboratuvar Testleri{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                {% if patient %}
+                {{ patient.get_full_name }} - Laboratuvar Testleri
+                {% else %}
+                Laboratuvar Testleri
+                {% endif %}
+            </h4>
+            {% if user.is_doctor or user.is_admin_user %}
+            <div>
+                {% if patient %}
+                <a href="{% url 'lab-test-create' patient_id=patient.id %}" class="btn btn-light">
+                    <i class="ki-outline ki-plus fs-2"></i> Yeni Test İste
+                </a>
+                {% else %}
+                <a href="{% url 'patient-list' %}" class="btn btn-light">
+                    <i class="ki-outline ki-plus fs-2"></i> Önce Hasta Seçin
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-4">
+                {% if patient %}
+                <a href="{% url 'patient-detail' patient.id %}" class="btn btn-sm btn-secondary">
+                    <i class="ki-outline ki-arrow-left fs-2"></i> Hasta Detayına Dön
+                </a>
+                {% endif %}
+                
+                <div>
+                    <button type="button" class="btn btn-sm btn-outline-primary filter-btn" data-filter="all">Tümünü Göster</button>
+                    <button type="button" class="btn btn-sm btn-outline-info filter-btn" data-filter="requested">İstenen</button>
+                    <button type="button" class="btn btn-sm btn-outline-warning filter-btn" data-filter="in_progress">İşlemde</button>
+                    <button type="button" class="btn btn-sm btn-outline-success filter-btn" data-filter="completed">Tamamlanan</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger filter-btn" data-filter="cancelled">İptal Edilen</button>
+                </div>
+            </div>
+            
+            {% if lab_tests %}
+            <div class="table-responsive">
+                <table class="table table-row-bordered table-hover">
+                    <thead>
+                        <tr class="fw-bold fs-6 text-gray-800">
+                            <th>Test Adı</th>
+                            <th>Hasta</th>
+                            <th>İsteyen Doktor</th>
+                            <th>İstek Tarihi</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for test in lab_tests %}
+                        <tr class="lab-test-row" data-status="{{ test.status }}">
+                            <td>{{ test.test_name }}</td>
+                            <td>{{ test.patient.get_full_name }}</td>
+                            <td>{{ test.doctor.get_full_name }}</td>
+                            <td>{{ test.requested_date|date:"d.m.Y H:i" }}</td>
+                            <td>
+                                {% if test.status == 'requested' %}
+                                <span class="badge badge-light-info">{{ test.get_status_display }}</span>
+                                {% elif test.status == 'in_progress' %}
+                                <span class="badge badge-light-warning">{{ test.get_status_display }}</span>
+                                {% elif test.status == 'completed' %}
+                                <span class="badge badge-light-success">{{ test.get_status_display }}</span>
+                                {% elif test.status == 'cancelled' %}
+                                <span class="badge badge-light-danger">{{ test.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'lab-test-detail' test.id %}" class="btn btn-sm btn-icon btn-light me-2">
+                                    <i class="ki-outline ki-eye fs-2 text-primary"></i>
+                                </a>
+                                
+                                {% if user.is_doctor and user == test.doctor or user.is_admin_user %}
+                                    {% if test.status == 'requested' %}
+                                    <a href="{% url 'lab-test-update' test.id %}" class="btn btn-sm btn-icon btn-light me-2">
+                                        <i class="ki-outline ki-pencil fs-2 text-warning"></i>
+                                    </a>
+                                    <a href="{% url 'lab-test-delete' test.id %}" class="btn btn-sm btn-icon btn-light">
+                                        <i class="ki-outline ki-trash fs-2 text-danger"></i>
+                                    </a>
+                                    {% endif %}
+                                {% endif %}
+                                
+                                {% if user.is_receptionist or user.is_admin_user %}
+                                    {% if test.status == 'requested' %}
+                                    <a href="#" class="btn btn-sm btn-icon btn-light me-2 update-status" 
+                                       data-test-id="{{ test.id }}" data-status="in_progress">
+                                        <i class="ki-outline ki-check-circle fs-2 text-warning"></i>
+                                    </a>
+                                    {% elif test.status == 'in_progress' %}
+                                    <a href="{% url 'test-result-create' test.id %}" class="btn btn-sm btn-icon btn-light me-2">
+                                        <i class="ki-outline ki-clipboard fs-2 text-success"></i>
+                                    </a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <h5 class="alert-heading">Kayıt Bulunamadı</h5>
+                {% if patient %}
+                <p>Bu hasta için henüz laboratuvar testi oluşturulmamış.</p>
+                {% else %}
+                <p>Henüz laboratuvar testi oluşturulmamış.</p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filtreleme işlevi
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const rows = document.querySelectorAll('.lab-test-row');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const filter = this.getAttribute('data-filter');
+                
+                // Seçili düğme stilini güncelle
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Satırları filtrele
+                rows.forEach(row => {
+                    if (filter === 'all' || row.getAttribute('data-status') === filter) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Durumu güncelleme işlevi
+        const updateStatusButtons = document.querySelectorAll('.update-status');
+        
+        updateStatusButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const testId = this.getAttribute('data-test-id');
+                const status = this.getAttribute('data-status');
+                
+                if (confirm('Test durumunu değiştirmek istediğinize emin misiniz?')) {
+                    // AJAX ile durumu güncelle
+                    // Bu kısımda gerçek bir AJAX çağrısı yapılacak
+                    // Şimdilik sayfayı yeniden yükleyelim
+                    window.location.reload();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

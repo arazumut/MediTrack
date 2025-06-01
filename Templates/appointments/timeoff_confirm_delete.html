@@ -1,0 +1,35 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}İzin Günü Sil{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">İzin Günü Sil</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <h5 class="alert-heading">Dikkat!</h5>
+                <p>
+                    <strong>{{ object.start_date }} - {{ object.end_date }}</strong> tarihli izin kaydını silmek istediğinize emin misiniz?
+                </p>
+                <p>Bu işlem geri alınamaz!</p>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'doctor-timeoff-list' object.doctor.id %}" class="btn btn-secondary">
+                        <i class="ki-outline ki-cross-circle fs-2"></i> İptal
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="ki-outline ki-trash fs-2"></i> Evet, Sil
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

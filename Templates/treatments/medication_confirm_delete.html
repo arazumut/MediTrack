@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}{% translate "İlaç Sil" %}: {{ medication.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="mb-4">
+        <h1 class="mb-0">{% translate "İlaç Sil" %}</h1>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">{% translate "Silme Onayı" %}</h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                {% translate "Dikkat! Bu işlem geri alınamaz." %}
+            </div>
+            
+            <p>{% translate "Aşağıdaki ilacı silmek üzeresiniz:" %}</p>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ medication.name }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ medication.active_ingredient }}</h6>
+                    {% if medication.description %}
+                    <p class="card-text">{{ medication.description|truncatewords:20 }}</p>
+                    {% endif %}
+                    <div class="mt-2">
+                        {% if medication.is_prescription %}
+                        <span class="badge bg-warning">{% translate "Reçeteli" %}</span>
+                        {% else %}
+                        <span class="badge bg-success">{% translate "Reçetesiz" %}</span>
+                        {% endif %}
+                        {% if medication.drug_code %}
+                        <span class="badge bg-secondary">{{ medication.drug_code }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'medication_detail' medication.pk %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> {% translate "Vazgeç" %}
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i> {% translate "İlacı Sil" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

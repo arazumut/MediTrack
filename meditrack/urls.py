@@ -42,6 +42,12 @@ urlpatterns = [
     
     # Core uygulaması URL'leri
     path('core/', include('core.urls')),
+    
+    # Appointments uygulaması URL'leri
+    path('appointments/', include('appointments.urls')),
+    
+    # Treatments uygulaması URL'leri
+    path('treatments/', include('treatments.urls')),
 ]
 
 # Media ve static dosyaları için URL'ler

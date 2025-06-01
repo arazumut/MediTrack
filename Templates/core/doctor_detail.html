@@ -1,0 +1,88 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ doctor.get_full_name }} - Doktor Detayı{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Doktor Bilgileri</h4>
+            {% if user.is_admin_user or user.is_superuser %}
+            <div>
+                <a href="{% url 'doctor-update' doctor.id %}" class="btn btn-sm btn-light">
+                    <i class="ki-outline ki-pencil fs-2"></i> Düzenle
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center mb-4 mb-md-0">
+                    {% if doctor.profile_image %}
+                    <img src="{{ doctor.profile_image.url }}" alt="{{ doctor.get_full_name }}" class="img-fluid rounded-circle mb-3" style="max-width: 200px;">
+                    {% else %}
+                    <img src="{% static 'assets/media/avatars/blank.png' %}" alt="{{ doctor.get_full_name }}" class="img-fluid rounded-circle mb-3" style="max-width: 200px;">
+                    {% endif %}
+                    <h4>{{ doctor.get_full_name }}</h4>
+                    <p class="text-muted">{{ doctor.specialization }}</p>
+                </div>
+                <div class="col-md-8">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>İletişim Bilgileri</h5>
+                            <p><strong>E-posta:</strong> {{ doctor.email }}</p>
+                            <p><strong>Telefon:</strong> {{ doctor.phone_number }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Profesyonel Bilgiler</h5>
+                            <p><strong>Uzmanlık:</strong> {{ doctor.specialization }}</p>
+                            <p><strong>Ünvan:</strong> {{ doctor.title }}</p>
+                        </div>
+                    </div>
+                    
+                    {% if doctor.biography %}
+                    <div class="mb-4">
+                        <h5>Biyografi</h5>
+                        <p>{{ doctor.biography }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <h5>Doktor Hizmetleri</h5>
+                        <div class="row mt-3">
+                            <div class="col-md-6 mb-3">
+                                <a href="{% url 'doctor-availability-list' doctor.id %}" class="btn btn-info btn-block w-100">
+                                    <i class="ki-outline ki-time fs-2 me-2"></i> Çalışma Saatleri
+                                </a>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <a href="{% url 'doctor-calendar' doctor.id %}" class="btn btn-primary btn-block w-100">
+                                    <i class="ki-outline ki-calendar fs-2 me-2"></i> Aylık Takvim
+                                </a>
+                            </div>
+                            {% if user.is_admin_user or user.is_superuser or user.id == doctor.id %}
+                            <div class="col-md-6 mb-3">
+                                <a href="{% url 'doctor-timeoff-list' doctor.id %}" class="btn btn-warning btn-block w-100">
+                                    <i class="ki-outline ki-calendar-cross fs-2 me-2"></i> İzin Günleri
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card shadow mt-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Yaklaşan Randevular</h5>
+        </div>
+        <div class="card-body">
+            <!-- Burada doktorun yaklaşan randevularını göstermek için bir liste veya takvim gösterimi eklenebilir -->
+            <p class="text-muted">Yaklaşan randevular burada gösterilecektir.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

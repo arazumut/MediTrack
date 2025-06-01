@@ -1,0 +1,281 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ lab_test.test_name }} - Detay{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">{{ lab_test.test_name }}</h4>
+                    <span class="badge 
+                        {% if lab_test.status == 'requested' %}badge-light-info
+                        {% elif lab_test.status == 'in_progress' %}badge-light-warning
+                        {% elif lab_test.status == 'completed' %}badge-light-success
+                        {% elif lab_test.status == 'cancelled' %}badge-light-danger
+                        {% endif %}">
+                        {{ lab_test.get_status_display }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-4">
+                        {% if lab_test.patient %}
+                        <a href="{% url 'lab-test-list' patient_id=lab_test.patient.id %}" class="btn btn-sm btn-secondary">
+                            <i class="ki-outline ki-arrow-left fs-2"></i> Laboratuvar Testlerine Dön
+                        </a>
+                        {% else %}
+                        <a href="{% url 'lab-test-list' %}" class="btn btn-sm btn-secondary">
+                            <i class="ki-outline ki-arrow-left fs-2"></i> Laboratuvar Testlerine Dön
+                        </a>
+                        {% endif %}
+                        
+                        <div>
+                            {% if user.is_doctor and user == lab_test.doctor or user.is_admin_user %}
+                                {% if lab_test.status == 'requested' %}
+                                <a href="{% url 'lab-test-update' lab_test.id %}" class="btn btn-sm btn-warning me-2">
+                                    <i class="ki-outline ki-pencil fs-2"></i> Düzenle
+                                </a>
+                                <a href="{% url 'lab-test-delete' lab_test.id %}" class="btn btn-sm btn-danger">
+                                    <i class="ki-outline ki-trash fs-2"></i> Sil
+                                </a>
+                                {% endif %}
+                            {% endif %}
+                            
+                            {% if user.is_receptionist or user.is_admin_user %}
+                                {% if lab_test.status == 'requested' %}
+                                <button class="btn btn-sm btn-info update-status" data-status="in_progress">
+                                    <i class="ki-outline ki-check-circle fs-2"></i> İşleme Al
+                                </button>
+                                {% elif lab_test.status == 'in_progress' and not lab_test.result %}
+                                <a href="{% url 'test-result-create' lab_test.id %}" class="btn btn-sm btn-success">
+                                    <i class="ki-outline ki-clipboard fs-2"></i> Sonuç Ekle
+                                </a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>Test Bilgileri</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th width="30%">Hasta</th>
+                                    <td>
+                                        <a href="{% url 'patient-detail' lab_test.patient.id %}">
+                                            {{ lab_test.patient.get_full_name }}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>İsteyen Doktor</th>
+                                    <td>{{ lab_test.doctor.get_full_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>İstek Tarihi</th>
+                                    <td>{{ lab_test.requested_date|date:"d.m.Y H:i" }}</td>
+                                </tr>
+                                {% if lab_test.completed_date %}
+                                <tr>
+                                    <th>Tamamlanma Tarihi</th>
+                                    <td>{{ lab_test.completed_date|date:"d.m.Y H:i" }}</td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <th>İlgili Tedavi</th>
+                                    <td>
+                                        <a href="{% url 'treatment-detail' lab_test.treatment.id %}">
+                                            {{ lab_test.treatment.diagnosis }} ({{ lab_test.treatment.created_at|date:"d.m.Y" }})
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>Test Detayları</h5>
+                        <div class="border p-3 rounded bg-light">
+                            {{ lab_test.test_details|linebreaks|default:"Detay belirtilmemiş." }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            {% if lab_test.result %}
+            <div class="card shadow mb-4">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Test Sonucu</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Sonuç</h6>
+                        <div class="border p-3 rounded {% if lab_test.result.is_normal %}bg-light-success{% else %}bg-light-danger{% endif %}">
+                            {{ lab_test.result.result_text|linebreaks }}
+                        </div>
+                    </div>
+                    
+                    {% if lab_test.result.reference_values %}
+                    <div class="mb-3">
+                        <h6>Referans Değerler</h6>
+                        <div class="border p-3 rounded bg-light">
+                            {{ lab_test.result.reference_values|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if lab_test.result.notes %}
+                    <div class="mb-3">
+                        <h6>Notlar</h6>
+                        <div class="border p-3 rounded bg-light">
+                            {{ lab_test.result.notes|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <h6>Durum</h6>
+                        {% if lab_test.result.is_normal %}
+                        <span class="badge badge-light-success">Normal</span>
+                        {% else %}
+                        <span class="badge badge-light-danger">Anormal</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if lab_test.result.technician %}
+                    <div class="mb-3">
+                        <h6>Teknisyen/Laborant</h6>
+                        <p>{{ lab_test.result.technician }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <h6>Sonuç Tarihi</h6>
+                        <p>{{ lab_test.result.created_at|date:"d.m.Y H:i" }}</p>
+                    </div>
+                    
+                    {% if lab_test.result.result_file %}
+                    <div class="mb-3">
+                        <h6>Sonuç Dosyası</h6>
+                        <a href="{{ lab_test.result.result_file.url }}" class="btn btn-sm btn-primary" target="_blank">
+                            <i class="ki-outline ki-document fs-2"></i> Dosyayı İndir
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    {% if user.is_receptionist or user.is_admin_user %}
+                    <div class="d-grid">
+                        <a href="{% url 'test-result-update' lab_test.result.id %}" class="btn btn-warning">
+                            <i class="ki-outline ki-pencil fs-2"></i> Sonucu Düzenle
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="card shadow">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">Test Sonucu</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-0">
+                        <h5 class="alert-heading">Sonuç Bekleniyor</h5>
+                        <p>Bu test için henüz sonuç girilmemiş.</p>
+                        
+                        {% if user.is_receptionist or user.is_admin_user %}
+                            {% if lab_test.status == 'in_progress' %}
+                            <div class="mt-3">
+                                <a href="{% url 'test-result-create' lab_test.id %}" class="btn btn-success">
+                                    <i class="ki-outline ki-clipboard fs-2"></i> Sonuç Ekle
+                                </a>
+                            </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="card shadow mt-4">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">Hasta Bilgileri</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="symbol symbol-50px me-3">
+                            <span class="symbol-label bg-light-primary">
+                                <i class="ki-outline ki-profile-user fs-2 text-primary"></i>
+                            </span>
+                        </div>
+                        <div>
+                            <a href="{% url 'patient-detail' lab_test.patient.id %}" class="fs-5 text-dark text-hover-primary fw-bold">{{ lab_test.patient.get_full_name }}</a>
+                            <div class="fw-semibold text-gray-400">Hasta</div>
+                        </div>
+                    </div>
+                    
+                    <div class="separator my-3"></div>
+                    
+                    {% if lab_test.patient.date_of_birth %}
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="ki-outline ki-calendar fs-3 text-gray-500 me-2"></i>
+                        <span class="text-gray-700">{{ lab_test.patient.date_of_birth|date:"d.m.Y" }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if lab_test.patient.phone %}
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="ki-outline ki-phone fs-3 text-gray-500 me-2"></i>
+                        <span class="text-gray-700">{{ lab_test.patient.phone }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if lab_test.patient.email %}
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="ki-outline ki-sms fs-3 text-gray-500 me-2"></i>
+                        <span class="text-gray-700">{{ lab_test.patient.email }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="separator my-3"></div>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'medical-history-list' lab_test.patient.id %}" class="btn btn-sm btn-light-primary">
+                            <i class="ki-outline ki-notepad-bookmark fs-3"></i> Sağlık Geçmişi
+                        </a>
+                        <a href="{% url 'lab-test-list' patient_id=lab_test.patient.id %}" class="btn btn-sm btn-light-info">
+                            <i class="ki-outline ki-flask fs-3"></i> Tüm Laboratuvar Testleri
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Durumu güncelleme işlevi
+        const updateStatusButton = document.querySelector('.update-status');
+        
+        if (updateStatusButton) {
+            updateStatusButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                const status = this.getAttribute('data-status');
+                
+                if (confirm('Test durumunu değiştirmek istediğinize emin misiniz?')) {
+                    // AJAX ile durumu güncelle
+                    // Bu kısımda gerçek bir AJAX çağrısı yapılacak
+                    // Şimdilik sayfayı yeniden yükleyelim
+                    window.location.reload();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

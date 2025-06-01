@@ -1,0 +1,131 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}{% translate "İlaç Etkileşimleri" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">{% translate "İlaç Etkileşimleri" %}</h1>
+        {% if perms.treatments.add_medicationinteraction %}
+        <a href="{% url 'interaction_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> {% translate "Yeni Etkileşim Ekle" %}
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{% translate "Etkileşim Listesi" %}</h5>
+            <span class="badge bg-secondary">{{ page_obj.paginator.count }} {% translate "kayıt" %}</span>
+        </div>
+        <div class="card-body p-0">
+            {% if interactions %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>{% translate "İlaç 1" %}</th>
+                            <th>{% translate "İlaç 2" %}</th>
+                            <th>{% translate "Etkileşim Şiddeti" %}</th>
+                            <th>{% translate "İşlemler" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for interaction in interactions %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'medication_detail' interaction.medication1.pk %}" class="text-decoration-none">
+                                    {{ interaction.medication1.name }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{% url 'medication_detail' interaction.medication2.pk %}" class="text-decoration-none">
+                                    {{ interaction.medication2.name }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if interaction.severity == 'mild' %}
+                                <span class="badge bg-info">{% translate "Hafif" %}</span>
+                                {% elif interaction.severity == 'moderate' %}
+                                <span class="badge bg-warning">{% translate "Orta" %}</span>
+                                {% else %}
+                                <span class="badge bg-danger">{% translate "Ciddi" %}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'interaction_detail' interaction.pk %}" class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    {% if perms.treatments.change_medicationinteraction %}
+                                    <a href="{% url 'interaction_update' interaction.pk %}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    {% endif %}
+                                    {% if perms.treatments.delete_medicationinteraction %}
+                                    <a href="{% url 'interaction_delete' interaction.pk %}" class="btn btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-4 text-center">
+                <p class="text-muted mb-0">{% translate "Henüz kayıtlı ilaç etkileşimi bulunmamaktadır." %}</p>
+            </div>
+            {% endif %}
+        </div>
+        {% if is_paginated %}
+        <div class="card-footer">
+            <nav>
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="mt-4">
+        <a href="{% url 'medication_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-pills me-1"></i> {% translate "İlaç Listesine Dön" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

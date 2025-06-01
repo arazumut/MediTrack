@@ -1,0 +1,186 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}{% translate "Tıbbi Raporlar" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">{% translate "Tıbbi Raporlar" %}</h1>
+        {% if patient %}
+            <span class="fs-5 text-muted">{{ patient.get_full_name }}</span>
+        {% endif %}
+        
+        {% if treatment %}
+            <span class="fs-5 text-muted">Tedavi: {{ treatment }}</span>
+        {% endif %}
+        
+        <div>
+            {% if perms.treatments.add_report or user.is_doctor %}
+                {% if patient %}
+                    <a href="{% url 'report-create' patient_id=patient.id %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> {% translate "Yeni Rapor Ekle" %}
+                    </a>
+                {% elif treatment %}
+                    <a href="{% url 'report-create' treatment_id=treatment.id %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> {% translate "Yeni Rapor Ekle" %}
+                    </a>
+                {% else %}
+                    <a href="{% url 'patient-list' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> {% translate "Önce Hasta Seçin" %}
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">{% translate "Rapor Ara" %}</h5>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    {{ search_form.report_type.label_tag }}
+                    {{ search_form.report_type }}
+                </div>
+                <div class="col-md-3">
+                    {{ search_form.title.label_tag }}
+                    {{ search_form.title }}
+                </div>
+                <div class="col-md-2">
+                    {{ search_form.date_from.label_tag }}
+                    {{ search_form.date_from }}
+                </div>
+                <div class="col-md-2">
+                    {{ search_form.date_to.label_tag }}
+                    {{ search_form.date_to }}
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">{% translate "Ara" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{% translate "Raporlar" %}</h5>
+            <span class="badge bg-secondary">{{ page_obj.paginator.count }} {% translate "kayıt" %}</span>
+        </div>
+        <div class="card-body p-0">
+            {% if reports %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>{% translate "Rapor Başlığı" %}</th>
+                            <th>{% translate "Rapor Tipi" %}</th>
+                            <th>{% translate "Hasta" %}</th>
+                            <th>{% translate "Doktor" %}</th>
+                            <th>{% translate "Geçerlilik Tarihi" %}</th>
+                            <th>{% translate "İşlemler" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'report-detail' report.pk %}" class="fw-bold text-decoration-none">
+                                    {{ report.title }}
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ report.get_report_type_display }}</span>
+                            </td>
+                            <td>
+                                <a href="{% url 'patient_detail' report.patient.id %}">
+                                    {{ report.patient.get_full_name }}
+                                </a>
+                            </td>
+                            <td>{{ report.doctor.get_full_name }}</td>
+                            <td>
+                                {{ report.valid_from|date:"d.m.Y" }}
+                                {% if report.valid_until %}
+                                    - {{ report.valid_until|date:"d.m.Y" }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'report-detail' report.pk %}" class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    {% if report.report_file %}
+                                    <a href="{% url 'serve-report-file' report.pk %}" class="btn btn-outline-info" target="_blank">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </a>
+                                    {% endif %}
+                                    {% if perms.treatments.change_report %}
+                                    <a href="{% url 'report-update' report.pk %}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    {% endif %}
+                                    {% if perms.treatments.delete_report %}
+                                    <a href="{% url 'report-delete' report.pk %}" class="btn btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-4 text-center">
+                <p class="text-muted mb-0">{% translate "Arama kriterlerinize uygun rapor bulunamadı." %}</p>
+            </div>
+            {% endif %}
+        </div>
+        {% if is_paginated %}
+            <div class="card-footer bg-light">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

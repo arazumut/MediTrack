@@ -186,6 +186,46 @@
                                     </a>
                                 </div>
                                 
+                                <!-- İlaçlar -->
+                                <div class="menu-item">
+                                    <a class="menu-link" href="{% url 'medication_list' %}">
+                                        <span class="menu-icon">
+                                            <i class="fas fa-pills fs-2"></i>
+                                        </span>
+                                        <span class="menu-title">İlaçlar</span>
+                                    </a>
+                                </div>
+                                
+                                <!-- Tıbbi Görüntüleme -->
+                                <div class="menu-item">
+                                    <a class="menu-link" href="{% url 'medical-image-list' %}">
+                                        <span class="menu-icon">
+                                            <i class="fas fa-x-ray fs-2"></i>
+                                        </span>
+                                        <span class="menu-title">Tıbbi Görüntüler</span>
+                                    </a>
+                                </div>
+                                
+                                <!-- Raporlar -->
+                                <div class="menu-item">
+                                    <a class="menu-link" href="{% url 'report-list' %}">
+                                        <span class="menu-icon">
+                                            <i class="fas fa-file-medical-alt fs-2"></i>
+                                        </span>
+                                        <span class="menu-title">Raporlar</span>
+                                    </a>
+                                </div>
+                                
+                                <!-- Laboratuvar Testleri -->
+                                <div class="menu-item">
+                                    <a class="menu-link" href="{% url 'lab-test-list' %}">
+                                        <span class="menu-icon">
+                                            <i class="fas fa-flask fs-2"></i>
+                                        </span>
+                                        <span class="menu-title">Laboratuvar Testleri</span>
+                                    </a>
+                                </div>
+                                
                                 <!-- Yeni Randevu -->
                                 {% if user.is_doctor or user.is_receptionist or user.is_admin_user %}
                                 <div class="menu-item">

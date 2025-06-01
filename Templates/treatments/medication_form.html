@@ -1,0 +1,149 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% if form.instance.pk %}
+    {% translate "İlaç Düzenle" %}: {{ form.instance.name }}
+    {% else %}
+    {% translate "Yeni İlaç Ekle" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="mb-4">
+        <h1 class="mb-0">
+            {% if form.instance.pk %}
+            {% translate "İlaç Düzenle" %}: {{ form.instance.name }}
+            {% else %}
+            {% translate "Yeni İlaç Ekle" %}
+            {% endif %}
+        </h1>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">{% translate "İlaç Bilgileri" %}</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}*</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.name.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.active_ingredient.id_for_label }}" class="form-label">{{ form.active_ingredient.label }}*</label>
+                            {{ form.active_ingredient }}
+                            {% if form.active_ingredient.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.active_ingredient.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.drug_code.id_for_label }}" class="form-label">{{ form.drug_code.label }}</label>
+                            {{ form.drug_code }}
+                            {% if form.drug_code.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.drug_code.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <div class="form-text">{% translate "İsteğe bağlı. İlacın resmi kodu." %}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3 mt-4">
+                            <div class="form-check">
+                                {{ form.is_prescription }}
+                                <label class="form-check-label" for="{{ form.is_prescription.id_for_label }}">
+                                    {{ form.is_prescription.label }}
+                                </label>
+                            </div>
+                            {% if form.is_prescription.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.is_prescription.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <div class="form-text">{% translate "İlaç reçete ile mi satılıyor?" %}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.description.errors %}
+                        {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="{{ form.side_effects.id_for_label }}" class="form-label">{{ form.side_effects.label }}</label>
+                    {{ form.side_effects }}
+                    {% if form.side_effects.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.side_effects.errors %}
+                        {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="{{ form.contraindications.id_for_label }}" class="form-label">{{ form.contraindications.label }}</label>
+                    {{ form.contraindications }}
+                    {% if form.contraindications.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.contraindications.errors %}
+                        {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'medication_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i> {% translate "İptal" %}
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>
+                        {% if form.instance.pk %}
+                        {% translate "Değişiklikleri Kaydet" %}
+                        {% else %}
+                        {% translate "İlaç Ekle" %}
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

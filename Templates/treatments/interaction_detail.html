@@ -1,0 +1,103 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}{% translate "İlaç Etkileşimi" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">{% translate "İlaç Etkileşimi Detayı" %}</h1>
+        <div>
+            {% if perms.treatments.change_medicationinteraction %}
+            <a href="{% url 'interaction_update' interaction.pk %}" class="btn btn-outline-primary me-2">
+                <i class="fas fa-edit me-1"></i> {% translate "Düzenle" %}
+            </a>
+            {% endif %}
+            {% if perms.treatments.delete_medicationinteraction %}
+            <a href="{% url 'interaction_delete' interaction.pk %}" class="btn btn-outline-danger">
+                <i class="fas fa-trash me-1"></i> {% translate "Sil" %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">{% translate "Etkileşim Bilgileri" %}</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0">{% translate "İlaç 1" %}</h6>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% url 'medication_detail' interaction.medication1.pk %}" class="text-decoration-none">
+                                    {{ interaction.medication1.name }}
+                                </a>
+                            </h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ interaction.medication1.active_ingredient }}</h6>
+                            {% if interaction.medication1.is_prescription %}
+                            <span class="badge bg-warning">{% translate "Reçeteli" %}</span>
+                            {% else %}
+                            <span class="badge bg-success">{% translate "Reçetesiz" %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0">{% translate "İlaç 2" %}</h6>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% url 'medication_detail' interaction.medication2.pk %}" class="text-decoration-none">
+                                    {{ interaction.medication2.name }}
+                                </a>
+                            </h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ interaction.medication2.active_ingredient }}</h6>
+                            {% if interaction.medication2.is_prescription %}
+                            <span class="badge bg-warning">{% translate "Reçeteli" %}</span>
+                            {% else %}
+                            <span class="badge bg-success">{% translate "Reçetesiz" %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center
+                    {% if interaction.severity == 'mild' %}
+                    bg-info text-white
+                    {% elif interaction.severity == 'moderate' %}
+                    bg-warning
+                    {% else %}
+                    bg-danger text-white
+                    {% endif %}">
+                    <h6 class="mb-0">{% translate "Etkileşim Şiddeti" %}</h6>
+                    <span class="badge bg-light text-dark">{{ interaction.get_severity_display }}</span>
+                </div>
+                <div class="card-body">
+                    <h6 class="fw-bold">{% translate "Etkileşim Açıklaması" %}:</h6>
+                    <p>{{ interaction.description|linebreaks }}</p>
+                    
+                    {% if interaction.recommendations %}
+                    <h6 class="fw-bold mt-4">{% translate "Öneriler" %}:</h6>
+                    <p class="mb-0">{{ interaction.recommendations|linebreaks }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'interaction_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> {% translate "Etkileşim Listesine Dön" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}{% translate "Tıbbi Görüntü Silme Onayı" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">{% translate "Tıbbi Görüntü Silme Onayı" %}</h4>
+                </div>
+                <div class="card-body">
+                    <p class="fs-5 mb-4">{% translate "Aşağıdaki tıbbi görüntüyü silmek istediğinize emin misiniz?" %}</p>
+                    
+                    <div class="mb-4 d-flex justify-content-center">
+                        <img src="{% url 'serve-medical-image' medical_image.pk %}" class="img-fluid rounded" alt="{{ medical_image.body_part }}" style="max-height: 200px;">
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <strong>{% translate "Görüntü Bilgileri:" %}</strong><br>
+                        <ul class="mb-0">
+                            <li>{% translate "Görüntü Tipi:" %} {{ medical_image.get_image_type_display }}</li>
+                            <li>{% translate "Vücut Bölgesi:" %} {{ medical_image.body_part }}</li>
+                            <li>{% translate "Çekim Tarihi:" %} {{ medical_image.taken_date|date:"d F Y" }}</li>
+                            <li>{% translate "Hasta:" %} {{ medical_image.patient.get_full_name }}</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        {% translate "Bu işlem geri alınamaz ve tüm ilişkili veriler kalıcı olarak silinecektir." %}
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'medical-image-detail' medical_image.id %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i> {% translate "İptal" %}
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash me-1"></i> {% translate "Sil" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

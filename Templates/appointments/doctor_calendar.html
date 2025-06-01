@@ -1,0 +1,151 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ doctor.get_full_name }} - Takvim{% endblock %}
+
+{% block extra_css %}
+<style>
+    .calendar-container {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    .calendar {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .calendar th, .calendar td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+    }
+    .calendar th {
+        background-color: #f5f5f5;
+    }
+    .calendar-day {
+        min-height: 100px;
+        vertical-align: top;
+    }
+    .calendar-date {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .availability-item {
+        background-color: #d1e7dd;
+        border-radius: 4px;
+        margin-bottom: 5px;
+        padding: 3px;
+        font-size: 0.8rem;
+    }
+    .timeoff-item {
+        background-color: #f8d7da;
+        border-radius: 4px;
+        margin-bottom: 5px;
+        padding: 3px;
+        font-size: 0.8rem;
+    }
+    .empty-day {
+        background-color: #f9f9f9;
+    }
+    .today {
+        background-color: #e2f0fb;
+    }
+    .calendar-nav {
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">{{ doctor.get_full_name }} - Çalışma Takvimi</h4>
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-4">
+                <div>
+                    <a href="{% url 'doctor-detail' doctor.id %}" class="btn btn-sm btn-secondary me-2">
+                        <i class="ki-outline ki-arrow-left fs-2"></i> Doktor Detayına Dön
+                    </a>
+                    <a href="{% url 'doctor-availability-list' doctor.id %}" class="btn btn-sm btn-info me-2">
+                        <i class="ki-outline ki-time fs-2"></i> Çalışma Saatleri
+                    </a>
+                    <a href="{% url 'doctor-timeoff-list' doctor.id %}" class="btn btn-sm btn-warning">
+                        <i class="ki-outline ki-calendar-cross fs-2"></i> İzin Günleri
+                    </a>
+                </div>
+            </div>
+            
+            <div class="calendar-nav d-flex justify-content-between align-items-center">
+                <a href="?year={{ prev_year }}&month={{ prev_month }}" class="btn btn-sm btn-outline-primary">
+                    <i class="ki-outline ki-arrow-left fs-2"></i> Önceki Ay
+                </a>
+                <h5 class="mb-0">{{ month_name }} {{ year }}</h5>
+                <a href="?year={{ next_year }}&month={{ next_month }}" class="btn btn-sm btn-outline-primary">
+                    Sonraki Ay <i class="ki-outline ki-arrow-right fs-2"></i>
+                </a>
+            </div>
+            
+            <div class="calendar-container">
+                <table class="calendar">
+                    <thead>
+                        <tr>
+                            {% for day in weekdays %}
+                            <th>{{ day }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for week in calendar_data %}
+                        <tr>
+                            {% for day in week %}
+                            <td class="calendar-day {% if day.day == '' %}empty-day{% endif %} {% if day.date == today %}today{% endif %}">
+                                {% if day.day != '' %}
+                                <div class="calendar-date">{{ day.day }}</div>
+                                
+                                {% if day.availabilities %}
+                                <div class="availability-list">
+                                    {% for availability in day.availabilities %}
+                                    <div class="availability-item">
+                                        {{ availability.start_time|time:"H:i" }} - {{ availability.end_time|time:"H:i" }}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                
+                                {% if day.time_offs %}
+                                <div class="timeoff-list">
+                                    {% for timeoff in day.time_offs %}
+                                    <div class="timeoff-item">
+                                        {% if timeoff.is_full_day %}
+                                        Tam Gün İzinli
+                                        {% else %}
+                                        İzinli: {{ timeoff.start_time|time:"H:i" }} - {{ timeoff.end_time|time:"H:i" }}
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="mt-4">
+                <div class="d-flex mb-2">
+                    <div class="availability-item me-2" style="width: 20px;"></div>
+                    <div>Çalışma Saati</div>
+                </div>
+                <div class="d-flex">
+                    <div class="timeoff-item me-2" style="width: 20px;"></div>
+                    <div>İzin Günü</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

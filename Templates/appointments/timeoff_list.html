@@ -1,0 +1,89 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ doctor.get_full_name }} - İzin Günleri{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">{{ doctor.get_full_name }} - İzin Günleri</h4>
+            {% if user.is_doctor and user.id == doctor.id or user.is_admin_user or user.is_receptionist %}
+            <a href="{% url 'doctor-timeoff-create' doctor.id %}" class="btn btn-light">
+                <i class="ki-outline ki-plus fs-2"></i> Yeni İzin Günü Ekle
+            </a>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-4">
+                <div>
+                    <a href="{% url 'doctor-detail' doctor.id %}" class="btn btn-sm btn-secondary me-2">
+                        <i class="ki-outline ki-arrow-left fs-2"></i> Doktor Detayına Dön
+                    </a>
+                    <a href="{% url 'doctor-calendar' doctor.id %}" class="btn btn-sm btn-info me-2">
+                        <i class="ki-outline ki-calendar fs-2"></i> Takvim Görünümü
+                    </a>
+                    <a href="{% url 'doctor-availability-list' doctor.id %}" class="btn btn-sm btn-primary">
+                        <i class="ki-outline ki-time fs-2"></i> Çalışma Saatleri
+                    </a>
+                </div>
+            </div>
+            
+            {% if time_offs %}
+            <div class="table-responsive">
+                <table class="table table-row-bordered table-hover">
+                    <thead>
+                        <tr class="fw-bold fs-6 text-gray-800">
+                            <th>Başlangıç Tarihi</th>
+                            <th>Bitiş Tarihi</th>
+                            <th>Saat Aralığı</th>
+                            <th>Tam Gün</th>
+                            <th>Sebep</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for timeoff in time_offs %}
+                        <tr>
+                            <td>{{ timeoff.start_date }}</td>
+                            <td>{{ timeoff.end_date }}</td>
+                            <td>
+                                {% if timeoff.is_full_day %}
+                                <span class="badge badge-light-info">Tam Gün</span>
+                                {% else %}
+                                {{ timeoff.start_time }} - {{ timeoff.end_time }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if timeoff.is_full_day %}
+                                <span class="badge badge-light-success">Evet</span>
+                                {% else %}
+                                <span class="badge badge-light-danger">Hayır</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ timeoff.reason|default:"-" }}</td>
+                            <td>
+                                {% if user.is_doctor and user.id == doctor.id or user.is_admin_user or user.is_receptionist %}
+                                <a href="{% url 'doctor-timeoff-update' timeoff.id %}" class="btn btn-sm btn-icon btn-light me-2">
+                                    <i class="ki-outline ki-pencil fs-2 text-warning"></i>
+                                </a>
+                                <a href="{% url 'doctor-timeoff-delete' timeoff.id %}" class="btn btn-sm btn-icon btn-light">
+                                    <i class="ki-outline ki-trash fs-2 text-danger"></i>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <h5 class="alert-heading">Kayıt Bulunamadı</h5>
+                <p>Bu doktor için henüz izin günü kaydı oluşturulmamış.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

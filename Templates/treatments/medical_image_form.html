@@ -1,0 +1,189 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% if object %}
+        {% translate "Tıbbi Görüntü Düzenle" %}
+    {% else %}
+        {% translate "Yeni Tıbbi Görüntü Ekle" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">
+                        {% if object %}
+                            {% translate "Tıbbi Görüntü Düzenle" %}
+                        {% else %}
+                            {% translate "Yeni Tıbbi Görüntü Ekle" %}
+                        {% endif %}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        {% if treatment %}
+                            <div class="alert alert-info">
+                                {% translate "Bu görüntü" %} <strong>{{ treatment }}</strong> {% translate "tedavisi için ekleniyor." %}
+                            </div>
+                        {% endif %}
+                        
+                        {% if patient %}
+                            <div class="alert alert-info">
+                                {% translate "Bu görüntü" %} <strong>{{ patient.get_full_name }}</strong> {% translate "için ekleniyor." %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="row g-3 mb-3">
+                            {% if not form.treatment.is_hidden %}
+                            <div class="col-md-6">
+                                <label for="{{ form.treatment.id_for_label }}" class="form-label">{{ form.treatment.label }}</label>
+                                {{ form.treatment }}
+                                {% if form.treatment.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.treatment.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% else %}
+                                {{ form.treatment }}
+                            {% endif %}
+                            
+                            {% if not form.patient.is_hidden %}
+                            <div class="col-md-6">
+                                <label for="{{ form.patient.id_for_label }}" class="form-label">{{ form.patient.label }}</label>
+                                {{ form.patient }}
+                                {% if form.patient.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.patient.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% else %}
+                                {{ form.patient }}
+                            {% endif %}
+                            
+                            {% if not form.doctor.is_hidden %}
+                            <div class="col-md-6">
+                                <label for="{{ form.doctor.id_for_label }}" class="form-label">{{ form.doctor.label }}</label>
+                                {{ form.doctor }}
+                                {% if form.doctor.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.doctor.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% else %}
+                                {{ form.doctor }}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.image_type.id_for_label }}" class="form-label">{{ form.image_type.label }}</label>
+                                {{ form.image_type }}
+                                {% if form.image_type.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.image_type.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.body_part.id_for_label }}" class="form-label">{{ form.body_part.label }}</label>
+                                {{ form.body_part }}
+                                {% if form.body_part.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.body_part.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.taken_date.id_for_label }}" class="form-label">{{ form.taken_date.label }}</label>
+                                {{ form.taken_date }}
+                                {% if form.taken_date.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.taken_date.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.image_file.id_for_label }}" class="form-label">{{ form.image_file.label }}</label>
+                                {{ form.image_file }}
+                                {% if form.image_file.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.image_file.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                {% if object and object.image_file %}
+                                    <div class="form-text">
+                                        {% translate "Mevcut görüntü:" %} 
+                                        <a href="{% url 'serve-medical-image' object.pk %}" target="_blank">{{ object.image_file.name }}</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.description.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> {% translate "Geri" %}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>
+                                {% if object %}
+                                    {% translate "Güncelle" %}
+                                {% else %}
+                                    {% translate "Kaydet" %}
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

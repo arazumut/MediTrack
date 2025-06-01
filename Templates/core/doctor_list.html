@@ -54,6 +54,10 @@
                                             </a>
                                         {% endif %}
                                         
+                                        <a href="{% url 'doctor-calendar' doctor.id %}" class="btn btn-sm btn-info">
+                                            <i class="ki-outline ki-calendar fs-2"></i> Takvim
+                                        </a>
+                                        
                                         {% if user.is_admin_user or user.is_superuser %}
                                             <a href="{% url 'doctor-update' doctor.id %}" class="btn btn-sm btn-warning">
                                                 <i class="fas fa-edit"></i> Düzenle

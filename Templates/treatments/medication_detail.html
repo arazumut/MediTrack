@@ -1,0 +1,152 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}{{ medication.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">{{ medication.name }}</h1>
+        <div>
+            {% if perms.treatments.change_medication %}
+            <a href="{% url 'medication_update' medication.pk %}" class="btn btn-outline-primary me-2">
+                <i class="fas fa-edit me-1"></i> {% translate "Düzenle" %}
+            </a>
+            {% endif %}
+            {% if perms.treatments.delete_medication %}
+            <a href="{% url 'medication_delete' medication.pk %}" class="btn btn-outline-danger">
+                <i class="fas fa-trash me-1"></i> {% translate "Sil" %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">{% translate "İlaç Bilgileri" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">{% translate "İlaç Adı" %}:</div>
+                        <div class="col-md-8">{{ medication.name }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">{% translate "Etken Madde" %}:</div>
+                        <div class="col-md-8">{{ medication.active_ingredient }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">{% translate "İlaç Kodu" %}:</div>
+                        <div class="col-md-8">{{ medication.drug_code|default:"-" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">{% translate "Reçete Durumu" %}:</div>
+                        <div class="col-md-8">
+                            {% if medication.is_prescription %}
+                            <span class="badge bg-warning">{% translate "Reçeteli" %}</span>
+                            {% else %}
+                            <span class="badge bg-success">{% translate "Reçetesiz" %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">{% translate "Eklenme Tarihi" %}:</div>
+                        <div class="col-md-8">{{ medication.created_at|date:"d F Y, H:i" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">{% translate "Son Güncelleme" %}:</div>
+                        <div class="col-md-8">{{ medication.updated_at|date:"d F Y, H:i" }}</div>
+                    </div>
+                    {% if medication.description %}
+                    <hr>
+                    <div class="mb-3">
+                        <h6 class="fw-bold">{% translate "Açıklama" %}:</h6>
+                        <p class="mb-0">{{ medication.description|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if medication.side_effects or medication.contraindications %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">{% translate "Sağlık Bilgileri" %}</h5>
+                </div>
+                <div class="card-body">
+                    {% if medication.side_effects %}
+                    <div class="mb-3">
+                        <h6 class="fw-bold">{% translate "Yan Etkiler" %}:</h6>
+                        <p>{{ medication.side_effects|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if medication.contraindications %}
+                    <div class="mb-0">
+                        <h6 class="fw-bold">{% translate "Kontrendikasyonlar" %}:</h6>
+                        <p class="mb-0">{{ medication.contraindications|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">{% translate "İlaç Etkileşimleri" %}</h5>
+                    {% if perms.treatments.add_medicationinteraction %}
+                    <a href="{% url 'interaction_create' %}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-plus"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="card-body p-0">
+                    {% if interactions %}
+                    <div class="list-group list-group-flush">
+                        {% for interaction in interactions %}
+                        <a href="{% url 'interaction_detail' interaction.pk %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>
+                                    {% if interaction.medication1 == medication %}
+                                    {{ interaction.medication2.name }}
+                                    {% else %}
+                                    {{ interaction.medication1.name }}
+                                    {% endif %}
+                                </span>
+                                {% if interaction.severity == 'mild' %}
+                                <span class="badge bg-info">{% translate "Hafif" %}</span>
+                                {% elif interaction.severity == 'moderate' %}
+                                <span class="badge bg-warning">{% translate "Orta" %}</span>
+                                {% else %}
+                                <span class="badge bg-danger">{% translate "Ciddi" %}</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="p-3 text-center">
+                        <p class="text-muted mb-0">{% translate "Bu ilaç için kayıtlı etkileşim bulunmamaktadır." %}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% if interactions %}
+                <div class="card-footer">
+                    <a href="{% url 'interaction_list' %}" class="text-decoration-none">
+                        {% translate "Tüm etkileşimleri görüntüle" %} <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'medication_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> {% translate "İlaç Listesine Dön" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

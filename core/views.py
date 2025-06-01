@@ -500,6 +500,23 @@ class DoctorCreationView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         messages.success(self.request, _('Doktor hesabı başarıyla oluşturuldu.'))
         return response
 
+class DoctorDetailView(LoginRequiredMixin, DetailView):
+    """
+    Doktor detay görünümü
+    """
+    model = User
+    template_name = 'core/doctor_detail.html'
+    context_object_name = 'doctor'
+    
+    def get_queryset(self):
+        return User.objects.filter(user_type='doctor')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        doctor = self.get_object()
+        # İhtiyaç duyulan ek verileri ekleyebiliriz
+        return context
+
 class DoctorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
     Doktor güncelleme görünümü
