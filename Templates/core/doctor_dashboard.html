@@ -106,7 +106,7 @@
                                                 <i class="ki-outline ki-switch fs-2"></i>
                                             </a>
                                             {% if appointment.status == 'planned' %}
-                                            <a href="{% url 'treatment-create' %}?appointment={{ appointment.id }}" class="btn btn-icon btn-bg-light btn-active-color-success btn-sm">
+                                            <a href="{% url 'treatment-create' appointment.id %}" class="btn btn-icon btn-bg-light btn-active-color-success btn-sm">
                                                 <i class="ki-outline ki-add-files fs-2"></i>
                                             </a>
                                             {% endif %}

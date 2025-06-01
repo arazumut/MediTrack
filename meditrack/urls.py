@@ -19,8 +19,10 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+from django.views.generic import RedirectView
 from core.forms import LoginForm
 from core.views import HomeView, dashboard
+from core.logout_view import logout_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,10 +38,7 @@ urlpatterns = [
         template_name='core/login.html',
         authentication_form=LoginForm
     ), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(
-        next_page='login',
-        http_method_names=['get', 'post']
-    ), name='logout'),
+    path('logout/', logout_view, name='logout'),
     
     # Core uygulaması URL'leri
     path('core/', include('core.urls')),
