@@ -141,16 +141,20 @@ class DoctorAvailabilityDeleteView(LoginRequiredMixin, UserPassesTestMixin, Dele
 class DoctorCalendarView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     """
     Doktor takvim görünümü. Doktorun müsait olduğu günleri ve izin günlerini gösterir.
+    Hem doktorlar hem de hastalar için erişilebilir.
     """
     template_name = 'appointments/doctor_calendar.html'
     
     def test_func(self):
-        # Sadece doktorun kendisi, resepsiyonistler ve adminler görebilir
+        # Doktorun kendisi, hastalar, resepsiyonistler ve adminler görebilir
         user = self.request.user
         doctor_id = self.kwargs.get('doctor_id')
         
         if user.is_doctor():
             return str(user.id) == str(doctor_id)
+        # Tüm hasta kullanıcıların erişimine izin ver
+        if user.is_patient():
+            return True
         return user.is_receptionist() or user.is_admin_user()
     
     def get_context_data(self, **kwargs):

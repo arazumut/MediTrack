@@ -51,20 +51,32 @@
                     <div class="mt-4">
                         <h5>Doktor Hizmetleri</h5>
                         <div class="row mt-3">
+                            {% if user.is_admin_user or user.is_superuser or user.is_doctor or user.is_receptionist %}
                             <div class="col-md-6 mb-3">
                                 <a href="{% url 'doctor-availability-list' doctor.id %}" class="btn btn-info btn-block w-100">
                                     <i class="ki-outline ki-time fs-2 me-2"></i> Çalışma Saatleri
                                 </a>
                             </div>
+                            {% endif %}
+                            
                             <div class="col-md-6 mb-3">
                                 <a href="{% url 'doctor-calendar' doctor.id %}" class="btn btn-primary btn-block w-100">
                                     <i class="ki-outline ki-calendar fs-2 me-2"></i> Aylık Takvim
                                 </a>
                             </div>
+                            
                             {% if user.is_admin_user or user.is_superuser or user.id == doctor.id %}
                             <div class="col-md-6 mb-3">
                                 <a href="{% url 'doctor-timeoff-list' doctor.id %}" class="btn btn-warning btn-block w-100">
                                     <i class="ki-outline ki-calendar-cross fs-2 me-2"></i> İzin Günleri
+                                </a>
+                            </div>
+                            {% endif %}
+                            
+                            {% if user.is_patient %}
+                            <div class="col-md-6 mb-3">
+                                <a href="{% url 'appointment-create' %}?doctor={{ doctor.id }}" class="btn btn-success btn-block w-100">
+                                    <i class="ki-outline ki-calendar-add fs-2 me-2"></i> Randevu Al
                                 </a>
                             </div>
                             {% endif %}

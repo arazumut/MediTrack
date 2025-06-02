@@ -67,13 +67,29 @@
                     <a href="{% url 'doctor-detail' doctor.id %}" class="btn btn-sm btn-secondary me-2">
                         <i class="ki-outline ki-arrow-left fs-2"></i> Doktor Detayına Dön
                     </a>
+                    {% if user.is_doctor or user.is_receptionist or user.is_admin_user %}
                     <a href="{% url 'doctor-availability-list' doctor.id %}" class="btn btn-sm btn-info me-2">
                         <i class="ki-outline ki-time fs-2"></i> Çalışma Saatleri
                     </a>
                     <a href="{% url 'doctor-timeoff-list' doctor.id %}" class="btn btn-sm btn-warning">
                         <i class="ki-outline ki-calendar-cross fs-2"></i> İzin Günleri
                     </a>
+                    {% endif %}
+                    
+                    {% if user.is_patient %}
+                    <a href="{% url 'appointment-create' %}?doctor={{ doctor.id }}" class="btn btn-success me-2">
+                        <i class="ki-outline ki-calendar-add fs-2"></i> Randevu Al
+                    </a>
+                    {% endif %}
                 </div>
+            </div>
+            
+            <div class="alert alert-info">
+                <i class="ki-outline ki-information-circle fs-2"></i>
+                <strong>Bilgi:</strong> Aşağıdaki takvimde, Dr. {{ doctor.get_full_name }}'in çalışma saatleri yeşil renkle, izinli olduğu zamanlar ise kırmızı renkle gösterilmiştir.
+                {% if user.is_patient %}
+                <div class="mt-2">Randevu almak için yukarıdaki "Randevu Al" butonunu kullanabilirsiniz.</div>
+                {% endif %}
             </div>
             
             <div class="calendar-nav d-flex justify-content-between align-items-center">
