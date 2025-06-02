@@ -278,4 +278,10 @@
         }
     });
 </script>
+
+{% if lab_results_chart_data %}
+<!-- ApexCharts -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="{% static 'assets/js/lab-results-chart.js' %}"></script>
+{% endif %}
 {% endblock %}

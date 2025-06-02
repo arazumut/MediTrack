@@ -52,6 +52,14 @@ class Prescription(models.Model):
         max_length=100,
         verbose_name=_('İlaç Adı')
     )
+    medication = models.ForeignKey(
+        'treatments.Medication',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='prescriptions',
+        verbose_name=_('İlaç')
+    )
     dosage = models.CharField(
         max_length=100,
         verbose_name=_('Doz')

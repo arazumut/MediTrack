@@ -65,6 +65,75 @@ class LabTestDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         if user.is_patient():
             return lab_test.patient == user
         return user.is_doctor() or user.is_receptionist() or user.is_admin_user()
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lab_test = self.get_object()
+        
+        # Eğer test sonucu varsa ve numerik değer içeriyorsa, geçmiş sonuçları al
+        if lab_test.result and lab_test.patient:
+            try:
+                # Aynı isimli testler için geçmiş sonuçları al
+                previous_tests = LabTest.objects.filter(
+                    patient=lab_test.patient,
+                    test_name=lab_test.test_name,
+                    status='completed'
+                ).exclude(id=lab_test.id).order_by('requested_date')
+                
+                # Eğer sonuçlar varsa ve numerik değerler içeriyorsa, grafik verilerini hazırla
+                if previous_tests.exists() and all(test.result for test in previous_tests):
+                    dates = [test.result.created_at.strftime('%d.%m.%Y') for test in previous_tests]
+                    dates.append(lab_test.result.created_at.strftime('%d.%m.%Y'))
+                    
+                    # Sonuç değerlerini parslamaya çalış
+                    import re
+                    values = []
+                    unit = ''
+                    reference_min = 0
+                    reference_max = 0
+                    
+                    # Mevcut testin referans aralığını bul
+                    if lab_test.result.reference_values:
+                        ref_match = re.search(r'(\d+\.?\d*)\s*-\s*(\d+\.?\d*)', lab_test.result.reference_values)
+                        if ref_match:
+                            reference_min = float(ref_match.group(1))
+                            reference_max = float(ref_match.group(2))
+                    
+                    # Birim bilgisini bul
+                    if lab_test.result.result_text:
+                        unit_match = re.search(r'(\d+\.?\d*)\s*([a-zA-Z/]+)', lab_test.result.result_text)
+                        if unit_match:
+                            unit = unit_match.group(2)
+                    
+                    # Geçmiş test sonuçlarını parsla
+                    for test in previous_tests:
+                        if test.result and test.result.result_text:
+                            value_match = re.search(r'(\d+\.?\d*)', test.result.result_text)
+                            if value_match:
+                                values.append(float(value_match.group(1)))
+                    
+                    # Mevcut test sonucunu parsla
+                    if lab_test.result.result_text:
+                        value_match = re.search(r'(\d+\.?\d*)', lab_test.result.result_text)
+                        if value_match:
+                            values.append(float(value_match.group(1)))
+                    
+                    # Eğer değerler başarıyla parse edildiyse, grafik verilerini ekle
+                    if len(values) == len(dates) and len(values) > 0:
+                        context['lab_results_chart_data'] = {
+                            'dates': dates,
+                            'values': values,
+                            'unit': unit,
+                            'reference_range': {
+                                'min': reference_min,
+                                'max': reference_max
+                            }
+                        }
+            except Exception as e:
+                # Hata durumunda grafik verilerini hazırlama
+                print(f"Error processing lab results chart data: {e}")
+        
+        return context
 
 class LabTestCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     """

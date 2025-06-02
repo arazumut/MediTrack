@@ -72,10 +72,79 @@ def dashboard(request):
             appointment__doctor=user
         ).order_by('-created_at')[:5]
         
+        # Toplam hasta sayısı
+        total_patients = User.objects.filter(
+            user_type='patient',
+            appointment__doctor=user
+        ).distinct().count()
+        
+        # Toplam tedavi sayısı
+        total_treatments = Treatment.objects.filter(
+            appointment__doctor=user
+        ).count()
+        
+        # Haftalık randevu istatistikleri
+        from datetime import timedelta
+        week_start = timezone.now().date() - timedelta(days=timezone.now().weekday())
+        weekly_appointments = []
+        
+        for i in range(7):
+            day = week_start + timedelta(days=i)
+            count = Appointment.objects.filter(doctor=user, date=day).count()
+            weekly_appointments.append(count)
+        
+        # Hasta yaş demografikleri
+        from django.db.models import Count, Case, When, IntegerField
+        from datetime import date
+        
+        age_demographics = [0, 0, 0, 0, 0]  # 0-18, 19-30, 31-45, 46-60, 60+
+        
+        patients = User.objects.filter(
+            user_type='patient',
+            appointment__doctor=user,
+            date_of_birth__isnull=False
+        ).distinct()
+        
+        for patient in patients:
+            age = (date.today() - patient.date_of_birth).days // 365
+            if age <= 18:
+                age_demographics[0] += 1
+            elif age <= 30:
+                age_demographics[1] += 1
+            elif age <= 45:
+                age_demographics[2] += 1
+            elif age <= 60:
+                age_demographics[3] += 1
+            else:
+                age_demographics[4] += 1
+        
+        # En sık görülen teşhisler
+        from django.db.models import Count
+        common_diagnoses_data = Treatment.objects.filter(
+            appointment__doctor=user
+        ).values('diagnosis').annotate(
+            count=Count('diagnosis')
+        ).order_by('-count')[:5]
+        
+        common_diagnoses = []
+        for item in common_diagnoses_data:
+            diagnosis = item['diagnosis']
+            if len(diagnosis) > 20:
+                diagnosis = diagnosis[:20] + "..."
+            common_diagnoses.append({
+                'name': diagnosis,
+                'count': item['count']
+            })
+        
         context.update({
             'today_appointments': today_appointments,
             'upcoming_appointments': upcoming_appointments,
             'recent_treatments': recent_treatments,
+            'total_patients': total_patients,
+            'total_treatments': total_treatments,
+            'weekly_appointments': weekly_appointments,
+            'age_demographics': age_demographics,
+            'common_diagnoses': common_diagnoses,
         })
         return render(request, 'core/doctor_dashboard.html', context)
     
