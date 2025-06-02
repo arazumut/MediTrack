@@ -54,6 +54,14 @@ class Notification(models.Model):
     
     def __str__(self):
         return f"{self.user} - {self.title}"
+    
+    def mark_as_read(self):
+        """
+        Bildirimi okundu olarak işaretler
+        """
+        if not self.is_read:
+            self.is_read = True
+            self.save(update_fields=['is_read'])
 
 class Message(models.Model):
     """

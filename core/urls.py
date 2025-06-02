@@ -4,6 +4,9 @@ from .views_medical_history import (
     MedicalHistoryListView, MedicalHistoryCreateView, 
     MedicalHistoryUpdateView, MedicalHistoryDeleteView
 )
+from .views_notification import (
+    NotificationListView, mark_notification_as_read, mark_all_notifications_as_read
+)
 
 urlpatterns = [
     # Hastalar
@@ -34,4 +37,9 @@ urlpatterns = [
     path('patients/<int:patient_id>/medical-history/create/', MedicalHistoryCreateView.as_view(), name='medical-history-create'),
     path('medical-history/<int:pk>/update/', MedicalHistoryUpdateView.as_view(), name='medical-history-update'),
     path('medical-history/<int:pk>/delete/', MedicalHistoryDeleteView.as_view(), name='medical-history-delete'),
+    
+    # Bildirimler
+    path('notifications/', NotificationListView.as_view(), name='notification-list'),
+    path('notifications/<int:notification_id>/mark-read/', mark_notification_as_read, name='mark-notification-read'),
+    path('notifications/mark-all-read/', mark_all_notifications_as_read, name='mark-all-notifications-read'),
 ] 

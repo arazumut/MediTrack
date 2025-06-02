@@ -116,7 +116,7 @@
                                                 <span class="badge badge-primary ms-2">{{ unread_notifications_count }} yeni</span>
                                                 {% endif %}
                                             </div>
-                                            <a href="#" class="fw-semibold text-muted text-hover-primary fs-7">Tüm bildirimleriniz</a>
+                                            <a href="{% url 'notification-list' %}" class="fw-semibold text-muted text-hover-primary fs-7">Tüm bildirimleriniz</a>
                                         </div>
                                     </div>
                                 </div>
@@ -134,7 +134,7 @@
                                 
                                 {% for notification in recent_notifications %}
                                 <div class="menu-item px-5 py-2">
-                                    <a href="{{ notification.related_url }}" class="menu-link px-5 {% if not notification.is_read %}bg-light-primary{% endif %}">
+                                    <a href="{% if not notification.is_read %}{% url 'mark-notification-read' notification.id %}{% else %}{{ notification.related_url }}{% endif %}" class="menu-link px-5 {% if not notification.is_read %}bg-light-primary{% endif %}">
                                         <span class="menu-title fw-semibold">{{ notification.title }}</span>
                                         <span class="menu-desc text-gray-600 fs-7 mt-1">{{ notification.message|truncatechars:60 }}</span>
                                         <span class="fs-8 text-muted">{{ notification.created_at|date:"d M Y H:i" }}</span>
@@ -149,6 +149,14 @@
                                     </div>
                                 </div>
                                 {% endif %}
+                                
+                                <div class="separator my-2"></div>
+                                
+                                <div class="menu-item px-5">
+                                    <a href="{% url 'notification-list' %}" class="menu-link px-5 text-center">
+                                        <span class="menu-title fw-semibold">Tüm Bildirimleri Görüntüle</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         
@@ -285,6 +293,21 @@
                                             <i class="fas fa-flask fs-2"></i>
                                         </span>
                                         <span class="menu-title">Laboratuvar Testleri</span>
+                                    </a>
+                                </div>
+                                
+                                <!-- Bildirimler -->
+                                <div class="menu-item">
+                                    <a class="menu-link" href="{% url 'notification-list' %}">
+                                        <span class="menu-icon">
+                                            <i class="ki-outline ki-notification-status fs-2"></i>
+                                        </span>
+                                        <span class="menu-title">Bildirimler</span>
+                                        {% if unread_notifications_count > 0 %}
+                                        <span class="menu-badge">
+                                            <span class="badge badge-circle badge-danger">{{ unread_notifications_count }}</span>
+                                        </span>
+                                        {% endif %}
                                     </a>
                                 </div>
                                 
