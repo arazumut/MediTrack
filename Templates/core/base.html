@@ -89,8 +89,70 @@
                     
                     <!-- Navbar -->
                     <div class="app-navbar flex-grow-1 justify-content-end" id="kt_app_header_navbar">
-                        <!-- User Menu -->
                         {% if user.is_authenticated %}
+                        <!-- Notifications Menu -->
+                        <div class="app-navbar-item ms-1 ms-lg-3">
+                            <div class="btn btn-icon btn-custom btn-active-color-primary position-relative w-30px h-30px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
+                                <i class="ki-outline ki-notification-status fs-2"></i>
+                                {% if unread_notifications_count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ unread_notifications_count }}
+                                    <span class="visually-hidden">okunmamış bildirim</span>
+                                </span>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Bildirimler Menüsü -->
+                            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-350px" data-kt-menu="true">
+                                <div class="menu-item px-3">
+                                    <div class="menu-content d-flex align-items-center px-3">
+                                        <div class="symbol symbol-50px me-3">
+                                            <i class="ki-outline ki-notification-status fs-2x text-primary"></i>
+                                        </div>
+                                        <div class="d-flex flex-column">
+                                            <div class="fw-bold d-flex align-items-center">
+                                                Bildirimler
+                                                {% if unread_notifications_count > 0 %}
+                                                <span class="badge badge-primary ms-2">{{ unread_notifications_count }} yeni</span>
+                                                {% endif %}
+                                            </div>
+                                            <a href="#" class="fw-semibold text-muted text-hover-primary fs-7">Tüm bildirimleriniz</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="separator my-2"></div>
+                                
+                                {% if recent_notifications %}
+                                <div class="menu-item px-5">
+                                    <div class="menu-content px-5">
+                                        <label class="form-check form-switch form-check-custom form-check-solid">
+                                            <span class="fs-7 fw-bold text-gray-800 me-2">Son Bildirimler</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                {% for notification in recent_notifications %}
+                                <div class="menu-item px-5 py-2">
+                                    <a href="{{ notification.related_url }}" class="menu-link px-5 {% if not notification.is_read %}bg-light-primary{% endif %}">
+                                        <span class="menu-title fw-semibold">{{ notification.title }}</span>
+                                        <span class="menu-desc text-gray-600 fs-7 mt-1">{{ notification.message|truncatechars:60 }}</span>
+                                        <span class="fs-8 text-muted">{{ notification.created_at|date:"d M Y H:i" }}</span>
+                                    </a>
+                                </div>
+                                {% endfor %}
+                                
+                                {% else %}
+                                <div class="menu-item px-5">
+                                    <div class="menu-content px-5 text-center">
+                                        <span class="fs-7 text-gray-600">Henüz bildiriminiz bulunmuyor.</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- User Menu -->
                         <div class="app-navbar-item ms-1 ms-lg-3">
                             <div class="btn btn-icon btn-custom btn-active-color-primary w-30px h-30px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
                                 <i class="ki-outline ki-user fs-2"></i>

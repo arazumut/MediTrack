@@ -26,6 +26,42 @@
         </div>
     </div>
 
+    {% if available_doctors and user.is_patient %}
+    <div class="card shadow mb-4 border-success">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">📊 Şu Anda Müsait Doktorlar ({{ current_time|date:"H:i" }})</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for doctor in available_doctors %}
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <div class="card h-100 border-success">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ doctor.get_full_name }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ doctor.specialization|default:"Genel Doktor" }}</h6>
+                            <div class="mt-3">
+                                <a href="{% url 'appointment-create' %}?doctor={{ doctor.id }}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-calendar-plus"></i> Hemen Randevu Al
+                                </a>
+                                <a href="{% url 'doctor-calendar' doctor.id %}" class="btn btn-sm btn-outline-success ms-1">
+                                    <i class="fas fa-calendar"></i> Takvim
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info mb-0">
+                        Şu anda müsait doktor bulunmamaktadır. Lütfen diğer doktorların takvimlerini kontrol ediniz.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="card shadow">
         <div class="card-body">
             <div class="table-responsive">

@@ -557,6 +557,40 @@ class DoctorListView(LoginRequiredMixin, ListView):
             )
         
         return queryset.order_by('first_name', 'last_name')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Şu anda müsait olan doktorları bul
+        from appointments.models_availability import DoctorAvailability, DoctorTimeOff
+        from datetime import datetime
+        
+        now = datetime.now()
+        current_weekday = now.weekday()  # 0 = Pazartesi, 6 = Pazar
+        current_time = now.time()
+        
+        # Bugün çalışan doktorlar
+        working_doctors = User.objects.filter(
+            user_type='doctor',
+            availabilities__weekday=current_weekday,
+            availabilities__start_time__lte=current_time,
+            availabilities__end_time__gte=current_time,
+            availabilities__is_active=True
+        ).distinct()
+        
+        # Bugün izinli olan doktorları çıkar
+        today = now.date()
+        on_leave_doctor_ids = DoctorTimeOff.objects.filter(
+            start_date__lte=today,
+            end_date__gte=today
+        ).values_list('doctor_id', flat=True)
+        
+        available_doctors = working_doctors.exclude(id__in=on_leave_doctor_ids)
+        
+        context['available_doctors'] = available_doctors
+        context['current_time'] = now
+        
+        return context
 
 class DoctorCreationView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     """
