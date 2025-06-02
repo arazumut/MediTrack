@@ -45,7 +45,7 @@ def dashboard(request):
         ).order_by('date', 'time')
         
         recent_treatments = Treatment.objects.filter(
-            appointment__patient=user
+            appointment__in=Appointment.objects.filter(patient=user)
         ).order_by('-created_at')[:5]
         
         context.update({
@@ -69,18 +69,21 @@ def dashboard(request):
         ).order_by('date', 'time')[:5]
         
         recent_treatments = Treatment.objects.filter(
-            appointment__doctor=user
+            appointment__in=Appointment.objects.filter(doctor=user)
         ).order_by('-created_at')[:5]
         
         # Toplam hasta sayısı
+        # Get all appointments for this doctor
+        doctor_appointments = Appointment.objects.filter(doctor=user)
+        # Then get all patients from those appointments
         total_patients = User.objects.filter(
             user_type='patient',
-            appointment__doctor=user
+            patient_appointments__in=doctor_appointments
         ).distinct().count()
         
         # Toplam tedavi sayısı
         total_treatments = Treatment.objects.filter(
-            appointment__doctor=user
+            appointment__in=doctor_appointments
         ).count()
         
         # Haftalık randevu istatistikleri
@@ -99,9 +102,11 @@ def dashboard(request):
         
         age_demographics = [0, 0, 0, 0, 0]  # 0-18, 19-30, 31-45, 46-60, 60+
         
+        # Get all patients who have appointments with this doctor
+        doctor_appointments = Appointment.objects.filter(doctor=user)
         patients = User.objects.filter(
             user_type='patient',
-            appointment__doctor=user,
+            patient_appointments__in=doctor_appointments,
             date_of_birth__isnull=False
         ).distinct()
         
@@ -120,8 +125,9 @@ def dashboard(request):
         
         # En sık görülen teşhisler
         from django.db.models import Count
+        doctor_appointments = Appointment.objects.filter(doctor=user)
         common_diagnoses_data = Treatment.objects.filter(
-            appointment__doctor=user
+            appointment__in=doctor_appointments
         ).values('diagnosis').annotate(
             count=Count('diagnosis')
         ).order_by('-count')[:5]
@@ -519,7 +525,8 @@ class PatientDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         appointments = Appointment.objects.filter(patient=patient).order_by('-date', '-time')
         
         # Hasta tedavileri
-        treatments = Treatment.objects.filter(appointment__patient=patient).order_by('-created_at')
+        patient_appointments = Appointment.objects.filter(patient=patient)
+        treatments = Treatment.objects.filter(appointment__in=patient_appointments).order_by('-created_at')
         
         context.update({
             'appointments': appointments,

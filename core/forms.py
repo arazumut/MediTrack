@@ -6,6 +6,7 @@ import datetime
 
 from appointments.models import Appointment
 from treatments.models import Treatment, Prescription
+from treatments.models_medications import Medication, MedicationInteraction
 from treatments.models_medical_history import MedicalHistory
 
 User = get_user_model()
@@ -138,14 +139,41 @@ class PrescriptionForm(forms.ModelForm):
     """
     Reçete oluşturma ve düzenleme formu.
     """
+    medication = forms.ModelChoiceField(
+        queryset=Medication.objects.all().order_by('name'),
+        label=_('Veritabanından İlaç Seç'),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select select2'}),
+        help_text=_('İlaç veritabanından seçim yaparsanız, ilaç etkileşimleri otomatik kontrol edilir.')
+    )
+    
     class Meta:
         model = Prescription
-        fields = ('name', 'dosage', 'instructions')
+        fields = ('medication', 'name', 'dosage', 'instructions')
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'dosage': forms.TextInput(attrs={'class': 'form-control'}),
             'instructions': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # İlk gelen instance varsa ve medication değeri doluysa, name alanını doldur
+        if self.instance and self.instance.pk and self.instance.medication:
+            self.fields['name'].initial = self.instance.medication.name
+            self.fields['medication'].initial = self.instance.medication
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        medication = cleaned_data.get('medication')
+        name = cleaned_data.get('name')
+        
+        # Eğer ilaç veritabanından seçilmişse, ilaç adını otomatik doldur
+        if medication and not name:
+            cleaned_data['name'] = medication.name
+        
+        return cleaned_data
 
 PrescriptionFormSet = forms.inlineformset_factory(
     Treatment, 
