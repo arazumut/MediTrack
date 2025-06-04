@@ -1,0 +1,189 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Randevu Takvimi - MediTrack{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+<style>
+    .fc-event {
+        cursor: pointer;
+    }
+    .fc-toolbar-title {
+        font-size: 1.5rem !important;
+    }
+    .calendar-container {
+        background-color: #fff;
+        border-radius: 0.625rem;
+        box-shadow: 0px 0px 30px 0px rgba(82, 63, 105, 0.05);
+    }
+    .fc-theme-standard td, .fc-theme-standard th {
+        border-color: #eff2f5;
+    }
+    .fc-col-header-cell-cushion {
+        color: #181C32;
+        font-weight: 600;
+    }
+    .fc-daygrid-day-number {
+        color: #5E6278;
+    }
+    .fc-button-primary {
+        background-color: #f5f8fa !important;
+        border-color: #f5f8fa !important;
+        color: #5E6278 !important;
+    }
+    .fc-button-primary:hover {
+        background-color: #e4e6ef !important;
+        border-color: #e4e6ef !important;
+    }
+    .fc-button-active {
+        background-color: #3699FF !important;
+        border-color: #3699FF !important;
+        color: #ffffff !important;
+    }
+    .fc-button-active:hover {
+        background-color: #187de4 !important;
+        border-color: #187de4 !important;
+    }
+    .fc-daygrid-event {
+        border-radius: 4px;
+        padding: 2px 4px;
+    }
+    .fc-h-event .fc-event-title {
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+    .fc-day-today {
+        background-color: rgba(54, 153, 255, 0.1) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card mb-5 mb-xl-10">
+    <div class="card-header border-0">
+        <div class="card-title m-0">
+            <h3 class="fw-bold m-0">Randevu Takvimi</h3>
+        </div>
+        <div class="card-toolbar">
+            <a href="{% url 'appointment-list' %}" class="btn btn-sm btn-light-primary me-3">
+                <i class="ki-outline ki-calendar-tick fs-2"></i>Randevu Listesi
+            </a>
+            {% if user.is_doctor or user.is_receptionist or user.is_admin_user %}
+            <a href="{% url 'appointment-create' %}" class="btn btn-sm btn-primary">
+                <i class="ki-outline ki-plus fs-2"></i>Yeni Randevu
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="card-body py-5">
+        <!-- Filtreler -->
+        <div class="mb-5">
+            <div class="row g-3">
+                {% if user.is_receptionist or user.is_admin_user %}
+                <div class="col-md-4">
+                    <label class="form-label">Doktor</label>
+                    <select id="doctor-filter" class="form-select">
+                        <option value="">Tüm Doktorlar</option>
+                        {% for doctor in doctors %}
+                        <option value="{{ doctor.id }}">Dr. {{ doctor.get_full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+                <div class="col-md-4">
+                    <label class="form-label">Durum</label>
+                    <select id="status-filter" class="form-select">
+                        <option value="">Tüm Durumlar</option>
+                        <option value="planned">Planlandı</option>
+                        <option value="completed">Tamamlandı</option>
+                        <option value="cancelled">İptal Edildi</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button id="apply-filters" class="btn btn-primary">Filtrele</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Takvim -->
+        <div class="calendar-container p-5">
+            <div id="calendar"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/locales-all.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            locale: 'tr',
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: [
+                {% for event in calendar_data %}
+                {
+                    id: '{{ event.id }}',
+                    title: '{{ event.title|escapejs }}',
+                    start: '{{ event.start }}',
+                    end: '{{ event.end }}',
+                    url: '{{ event.url }}',
+                    backgroundColor: '{{ event.backgroundColor }}',
+                    borderColor: '{{ event.borderColor }}'
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            eventClick: function(info) {
+                if (info.event.url) {
+                    window.location.href = info.event.url;
+                    return false;
+                }
+            },
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }
+        });
+        
+        calendar.render();
+        
+        // Filtre butonuna tıklandığında
+        document.getElementById('apply-filters').addEventListener('click', function() {
+            var doctorFilter = document.getElementById('doctor-filter') ? document.getElementById('doctor-filter').value : '';
+            var statusFilter = document.getElementById('status-filter').value;
+            
+            // Tüm etkinlikleri filtrele
+            calendar.getEvents().forEach(function(event) {
+                var shouldShow = true;
+                
+                // Doktor filtresi
+                if (doctorFilter && event.extendedProps && event.extendedProps.doctorId && event.extendedProps.doctorId != doctorFilter) {
+                    shouldShow = false;
+                }
+                
+                // Durum filtresi
+                if (statusFilter && event.extendedProps && event.extendedProps.status && event.extendedProps.status != statusFilter) {
+                    shouldShow = false;
+                }
+                
+                if (shouldShow) {
+                    event.setProp('display', 'auto');
+                } else {
+                    event.setProp('display', 'none');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %} 
