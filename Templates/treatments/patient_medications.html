@@ -7,7 +7,7 @@
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="mb-0">{% translate "Hasta İlaçları" %}: {{ patient.get_full_name }}</h1>
-        <a href="{% url 'patient_detail' patient.id %}" class="btn btn-outline-primary">
+        <a href="{% url 'patient-detail' patient.id %}" class="btn btn-outline-primary">
             <i class="fas fa-user me-1"></i> {% translate "Hasta Profiline Dön" %}
         </a>
     </div>
@@ -102,11 +102,12 @@
                 <p class="mb-0">{% translate "Reçete edilmiş ilaçlarınızla ilgili yan etkiler, kontrendikasyonlar veya diğer sorularınız için eczacınıza da danışabilirsiniz." %}</p>
             </div>
             
-            {% if patient.medical_history.filter(condition_type='medication', is_active=True).exists %}
+            {% if patient.medical_history.all %}
             <div class="mt-4">
                 <h5>{% translate "Düzenli Kullanılan İlaçlar" %}</h5>
                 <ul class="list-group">
-                    {% for med_history in patient.medical_history.filter(condition_type='medication', is_active=True) %}
+                    {% for med_history in patient.medical_history.all %}
+                    {% if med_history.condition_type == 'medication' and med_history.is_active %}
                     <li class="list-group-item">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -120,6 +121,7 @@
                             {% endif %}
                         </div>
                     </li>
+                    {% endif %}
                     {% endfor %}
                 </ul>
             </div>

@@ -6,6 +6,7 @@ from .views_availability import (
     DoctorTimeOffUpdateView, DoctorTimeOffDeleteView,
     DoctorCalendarView
 )
+from . import views
 
 urlpatterns = [
     # Doktor Çalışma Saatleri
@@ -22,4 +23,8 @@ urlpatterns = [
     
     # Doktor Takvimi
     path('doctors/<int:doctor_id>/calendar/', DoctorCalendarView.as_view(), name='doctor-calendar'),
+    
+    # Takvim görünümü
+    path('calendar/', views.CalendarView.as_view(), name='appointment-calendar'),
+    path('calendar/events/', views.get_calendar_events, name='calendar-events'),
 ]

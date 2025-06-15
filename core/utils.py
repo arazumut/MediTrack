@@ -1,6 +1,10 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.urls import reverse
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils import timezone
+from datetime import timedelta
 
 from core.models_communication import Notification
 from appointments.models_availability import DoctorAvailability, DoctorTimeOff
@@ -141,4 +145,51 @@ def doctor_timeoff_deleted(sender, instance, **kwargs):
     create_availability_change_notification(
         doctor=instance.doctor, 
         operation_type='timeoff'
+    )
+
+
+def send_appointment_reminder_email(appointment):
+    """
+    Randevu hatırlatma e-postası gönderir
+    """
+    subject = f'MediTrack - Randevu Hatırlatması: {appointment.date.strftime("%d.%m.%Y")}'
+    
+    message = f"""Sayın {appointment.patient.get_full_name()},
+
+Bu e-posta, yaklaşan randevunuzu hatırlatmak için gönderilmiştir.
+
+Randevu Bilgileri:
+Tarih: {appointment.date.strftime("%d.%m.%Y")}
+Saat: {appointment.time.strftime("%H:%M")}
+Doktor: Dr. {appointment.doctor.get_full_name()}
+Açıklama: {appointment.description}
+
+Randevunuza zamanında gelmenizi rica ederiz. Herhangi bir değişiklik için lütfen kliniğimizle iletişime geçiniz.
+
+Saygılarımızla,
+MediTrack Sağlık Sistemi
+"""
+    
+    send_mail(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [appointment.patient.email],
+        fail_silently=False,
+    )
+    
+    return True
+
+
+def get_upcoming_appointments(days=1):
+    """
+    Belirtilen gün sayısı içindeki yaklaşan randevuları getirir
+    """
+    from appointments.models import Appointment
+    
+    tomorrow = timezone.now().date() + timedelta(days=days)
+    
+    return Appointment.objects.filter(
+        date=tomorrow,
+        status='planned'
     )
