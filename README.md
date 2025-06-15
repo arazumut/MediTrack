@@ -70,7 +70,13 @@ The following sample users can be used to test the system:
 
 ## Screenshots
 
-*Screenshots coming soon*
+<img width="1710" alt="Ekran Resmi 2025-06-15 15 10 38" src="https://github.com/user-attachments/assets/08e809ee-f8b1-497e-aed0-649e98d03ad7" />
+
+<img width="1710" alt="Ekran Resmi 2025-06-15 15 10 42" src="https://github.com/user-attachments/assets/9de98ddc-d74d-40ca-a96b-0f71fe205b2d" />
+<img width="1710" alt="Ekran Resmi 2025-06-15 15 11 03" src="https://github.com/user-attachments/assets/01ccd4f5-3e33-460b-b64f-1323187f34a1" />
+<img width="1710" alt="Ekran Resmi 2025-06-15 15 10 50" src="https://github.com/user-attachments/assets/bb5cbe50-643c-4fa3-8f4b-efbe1a9150ea" />
+<img width="1710" alt="Ekran Resmi 2025-06-15 15 10 46" src="https://github.com/user-attachments/assets/e5073729-d999-4352-9b0f-2e6f07988d10" />
+
 
 ## License
 
