@@ -6,11 +6,12 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
 from treatments.models_medical_history import MedicalHistory
 from .forms import MedicalHistoryForm
 
-User = settings.AUTH_USER_MODEL
+User = get_user_model()
 
 class MedicalHistoryListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     """
