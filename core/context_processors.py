@@ -1,4 +1,5 @@
 from core.models_communication import Notification
+from core.models_theme import UserThemePreference
 
 def notifications_processor(request):
     """
@@ -19,5 +20,17 @@ def notifications_processor(request):
         
         context['unread_notifications_count'] = unread_notifications_count
         context['recent_notifications'] = recent_notifications
+    
+    return context
+
+def theme_processor(request):
+    """
+    Kullanıcının tema tercihini içerik işleyicisine ekler.
+    """
+    context = {}
+    
+    if request.user.is_authenticated:
+        theme_preference, created = UserThemePreference.objects.get_or_create(user=request.user)
+        context['dark_mode'] = theme_preference.dark_mode
     
     return context

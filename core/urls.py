@@ -7,6 +7,7 @@ from .views_medical_history import (
 from .views_notification import (
     NotificationListView, mark_notification_as_read, mark_all_notifications_as_read
 )
+from .views_theme import toggle_theme, get_theme_preference
 
 urlpatterns = [
     # Hastalar
@@ -42,4 +43,8 @@ urlpatterns = [
     path('notifications/', NotificationListView.as_view(), name='notification-list'),
     path('notifications/<int:notification_id>/mark-read/', mark_notification_as_read, name='mark-notification-read'),
     path('notifications/mark-all-read/', mark_all_notifications_as_read, name='mark-all-notifications-read'),
-] 
+    
+    # Tema Ayarları
+    path('theme/toggle/', toggle_theme, name='toggle-theme'),
+    path('theme/preference/', get_theme_preference, name='get-theme-preference'),
+]
