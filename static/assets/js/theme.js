@@ -20,19 +20,27 @@ document.addEventListener('DOMContentLoaded', function() {
      * Fetch the user's theme preference from the server
      */
     function fetchThemePreference() {
-        fetch('/theme/preference/')
-            .then(response => response.json())
-            .then(data => {
-                if (data.dark_mode) {
-                    document.body.classList.add('dark-mode');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                }
-                updateThemeIcon();
-            })
-            .catch(error => {
-                console.error('Error fetching theme preference:', error);
-            });
+        fetch('/theme/preference/', {
+            method: 'GET',
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.dark_mode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            updateThemeIcon();
+        })
+        .catch(error => {
+            console.error('Error fetching theme preference:', error);
+        });
     }
     
     /**
@@ -44,11 +52,18 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST',
             headers: {
                 'X-CSRFToken': getCsrfToken(),
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
+            credentials: 'same-origin',
             body: JSON.stringify({})
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 if (data.dark_mode) {

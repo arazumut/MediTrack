@@ -23,6 +23,7 @@ from django.views.generic import RedirectView
 from core.forms import LoginForm
 from core.views import HomeView, dashboard
 from core.logout_view import logout_view
+from core.views_theme import toggle_theme, get_theme_preference
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,6 +40,10 @@ urlpatterns = [
         authentication_form=LoginForm
     ), name='login'),
     path('logout/', logout_view, name='logout'),
+    
+    # Tema ayarları
+    path('theme/toggle/', toggle_theme, name='toggle-theme'),
+    path('theme/preference/', get_theme_preference, name='get-theme-preference'),
     
     # Core uygulaması URL'leri
     path('core/', include('core.urls')),
