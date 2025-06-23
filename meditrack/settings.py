@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'unfold',  # Django Unfold admin theme
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -144,3 +145,25 @@ LOGIN_URL = 'login'
 
 # Email ayarları (geliştirme için console backend)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Unfold Admin Theme Settings
+UNFOLD = {
+    "SITE_TITLE": "MediTracked",
+    "SITE_HEADER": "MediTracked",
+    "SITE_URL": "/",
+    "SITE_ICON": None,  # or a path to your logo
+    "DASHBOARD_CALLBACK": None,
+    "STYLES": [],  # Using default styles
+    "SCRIPTS": [],  # Using default scripts
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+        "navigation": []
+    },
+    "TABS": [],
+    "EXTENSIONS": {},
+    "COLORMODE": {
+        "default": "light",
+        "toggle": True,
+    },
+}
