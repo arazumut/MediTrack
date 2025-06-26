@@ -283,6 +283,38 @@
                                     </a>
                                 </div>
                                 
+                                <!-- Telemedicine -->
+                                <div class="menu-item">
+                                    <a class="menu-link" href="{% url 'telemedicine:list' %}">
+                                        <span class="menu-icon">
+                                            <i class="fas fa-video fs-2"></i>
+                                        </span>
+                                        <span class="menu-title">Telemedicine</span>
+                                    </a>
+                                </div>
+                                
+                                <!-- Analytics Dashboard -->
+                                {% if user.is_doctor or user.is_admin_user %}
+                                <div class="menu-item">
+                                    <a class="menu-link" href="{% url 'core:analytics_dashboard' %}">
+                                        <span class="menu-icon">
+                                            <i class="fas fa-chart-line fs-2"></i>
+                                        </span>
+                                        <span class="menu-title">Analytics</span>
+                                    </a>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- AI Health Assistant -->
+                                <div class="menu-item">
+                                    <a class="menu-link" href="{% url 'core:ai_assistant' %}">
+                                        <span class="menu-icon">
+                                            <i class="fas fa-brain fs-2"></i>
+                                        </span>
+                                        <span class="menu-title">AI Assistant</span>
+                                    </a>
+                                </div>
+                                
                                 <!-- İlaçlar -->
                                 <div class="menu-item">
                                     <a class="menu-link" href="{% url 'medication_list' %}">

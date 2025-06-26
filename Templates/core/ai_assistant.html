@@ -1,0 +1,514 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}AI Health Assistant{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2><i class="fas fa-brain text-primary"></i> AI Health Assistant</h2>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary" id="clearHistory">
+                        <i class="fas fa-trash"></i> Clear History
+                    </button>
+                    <button type="button" class="btn btn-outline-info" id="exportChat">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- AI Chat Interface -->
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-robot"></i> Chat with AI Assistant
+                    </h5>
+                    <small>Get health insights, symptom analysis, and medical recommendations</small>
+                </div>
+                
+                <div class="card-body d-flex flex-column" style="height: 600px;">
+                    <!-- Chat Messages -->
+                    <div class="chat-messages flex-grow-1 overflow-auto mb-3" id="chatMessages">
+                        <!-- Welcome Message -->
+                        <div class="message ai-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <div class="message-text">
+                                    <strong>AI Health Assistant</strong>
+                                    <p>Hello! I'm your AI Health Assistant. I can help you with:</p>
+                                    <ul>
+                                        <li>🔍 Symptom analysis and recommendations</li>
+                                        <li>💊 Drug interaction checks</li>
+                                        <li>📊 Health risk assessments</li>
+                                        <li>📝 Medical information and explanations</li>
+                                        <li>🏥 General health guidance</li>
+                                    </ul>
+                                    <p>How can I assist you today?</p>
+                                </div>
+                                <div class="message-time">{{ current_time|date:"H:i" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Input -->
+                    <div class="chat-input">
+                        <form id="chatForm" class="d-flex">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="messageInput" 
+                                       placeholder="Ask about symptoms, medications, or health concerns..." 
+                                       autocomplete="off">
+                                <button class="btn btn-primary" type="submit" id="sendButton">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Quick Actions -->
+                        <div class="quick-actions mt-2">
+                            <button class="btn btn-sm btn-outline-secondary me-2" data-message="Analyze my symptoms">
+                                🔍 Analyze Symptoms
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary me-2" data-message="Check drug interactions">
+                                💊 Drug Interactions
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary me-2" data-message="Assess health risks">
+                                📊 Risk Assessment
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" data-message="Explain my test results">
+                                📋 Explain Results
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AI Features Sidebar -->
+        <div class="col-lg-4">
+            <!-- AI Insights Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-lightbulb"></i> AI Health Insights</h6>
+                </div>
+                <div class="card-body">
+                    <div class="insight-item mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="insight-icon bg-warning text-white rounded-circle me-3">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Health Risks</h6>
+                                <small class="text-muted">Based on your profile</small>
+                            </div>
+                        </div>
+                        <div class="insight-content">
+                            <p class="mb-1">Medium cardiovascular risk detected</p>
+                            <small class="text-muted">Recommendation: Regular exercise and diet monitoring</small>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-item mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="insight-icon bg-info text-white rounded-circle me-3">
+                                <i class="fas fa-pills"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Medication Review</h6>
+                                <small class="text-muted">Last checked today</small>
+                            </div>
+                        </div>
+                        <div class="insight-content">
+                            <p class="mb-1">No interactions detected</p>
+                            <small class="text-muted">Current medications are safe together</small>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="insight-icon bg-success text-white rounded-circle me-3">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Vitals Trend</h6>
+                                <small class="text-muted">Last 30 days</small>
+                            </div>
+                        </div>
+                        <div class="insight-content">
+                            <p class="mb-1">Blood pressure improving</p>
+                            <small class="text-muted">Continue current treatment plan</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Tools Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-tools"></i> AI Tools</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" id="symptomChecker">
+                            <i class="fas fa-stethoscope"></i> Symptom Checker
+                        </button>
+                        <button class="btn btn-outline-info" id="drugInteraction">
+                            <i class="fas fa-pills"></i> Drug Interaction Checker
+                        </button>
+                        <button class="btn btn-outline-warning" id="riskAssessment">
+                            <i class="fas fa-chart-line"></i> Risk Assessment
+                        </button>
+                        <button class="btn btn-outline-success" id="healthTips">
+                            <i class="fas fa-leaf"></i> Personalized Tips
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent AI Activities -->
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-history"></i> Recent AI Activities</h6>
+                </div>
+                <div class="card-body">
+                    <div class="activity-item mb-3">
+                        <div class="d-flex">
+                            <div class="activity-icon me-3">
+                                <i class="fas fa-search text-primary"></i>
+                            </div>
+                            <div>
+                                <p class="mb-1 small">Symptom analysis completed</p>
+                                <small class="text-muted">2 hours ago</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item mb-3">
+                        <div class="d-flex">
+                            <div class="activity-icon me-3">
+                                <i class="fas fa-pills text-warning"></i>
+                            </div>
+                            <div>
+                                <p class="mb-1 small">Drug interaction check</p>
+                                <small class="text-muted">1 day ago</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="d-flex">
+                            <div class="activity-icon me-3">
+                                <i class="fas fa-heart text-danger"></i>
+                            </div>
+                            <div>
+                                <p class="mb-1 small">Health risk assessment</p>
+                                <small class="text-muted">3 days ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mb-0">AI is analyzing...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.chat-messages {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.message {
+    display: flex;
+    margin-bottom: 20px;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 18px;
+}
+
+.ai-message .message-avatar {
+    background: linear-gradient(45deg, #007bff, #6f42c1);
+    color: white;
+}
+
+.user-message {
+    flex-direction: row-reverse;
+}
+
+.user-message .message-avatar {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    margin-right: 0;
+    margin-left: 15px;
+}
+
+.message-content {
+    flex: 1;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.user-message .message-content {
+    background: #e3f2fd;
+}
+
+.message-text {
+    margin-bottom: 5px;
+}
+
+.message-time {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.quick-actions .btn {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.insight-icon {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.activity-icon {
+    width: 25px;
+    text-align: center;
+}
+
+.chat-input {
+    border-top: 1px solid #dee2e6;
+    padding-top: 15px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.typing-dots {
+    display: flex;
+    align-items: center;
+}
+
+.typing-dots span {
+    height: 8px;
+    width: 8px;
+    background: #007bff;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 2px;
+    animation: typing 1.4s infinite;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    30% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    const chatMessages = $('#chatMessages');
+    const messageInput = $('#messageInput');
+    const chatForm = $('#chatForm');
+    
+    // Auto-scroll to bottom
+    function scrollToBottom() {
+        chatMessages.scrollTop(chatMessages[0].scrollHeight);
+    }
+    
+    // Add message to chat
+    function addMessage(content, isUser = false, isTyping = false) {
+        const messageClass = isUser ? 'user-message' : 'ai-message';
+        const avatar = isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+        const currentTime = new Date().toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'});
+        
+        let messageHtml;
+        
+        if (isTyping) {
+            messageHtml = `
+                <div class="message ai-message typing-message">
+                    <div class="message-avatar">${avatar}</div>
+                    <div class="typing-indicator">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <span class="ms-2">AI is thinking...</span>
+                    </div>
+                </div>
+            `;
+        } else {
+            messageHtml = `
+                <div class="message ${messageClass}">
+                    <div class="message-avatar">${avatar}</div>
+                    <div class="message-content">
+                        <div class="message-text">${content}</div>
+                        <div class="message-time">${currentTime}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        chatMessages.append(messageHtml);
+        scrollToBottom();
+    }
+    
+    // Remove typing indicator
+    function removeTypingIndicator() {
+        $('.typing-message').remove();
+    }
+    
+    // Send message to AI
+    function sendMessage(message) {
+        // Add user message
+        addMessage(message, true);
+        
+        // Clear input
+        messageInput.val('');
+        
+        // Show typing indicator
+        addMessage('', false, true);
+        
+        // Send to AI endpoint
+        $.ajax({
+            url: '{% url "core:ai_chat" %}',
+            method: 'POST',
+            data: {
+                'message': message,
+                'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(response) {
+                removeTypingIndicator();
+                if (response.success) {
+                    addMessage(response.response);
+                } else {
+                    addMessage('Sorry, I encountered an error processing your request. Please try again.');
+                }
+            },
+            error: function() {
+                removeTypingIndicator();
+                addMessage('Sorry, I\'m currently unavailable. Please try again later.');
+            }
+        });
+    }
+    
+    // Form submission
+    chatForm.on('submit', function(e) {
+        e.preventDefault();
+        const message = messageInput.val().trim();
+        if (message) {
+            sendMessage(message);
+        }
+    });
+    
+    // Quick action buttons
+    $('.quick-actions .btn').on('click', function() {
+        const message = $(this).data('message');
+        messageInput.val(message);
+        sendMessage(message);
+    });
+    
+    // AI Tool buttons
+    $('#symptomChecker').on('click', function() {
+        sendMessage('I want to analyze my symptoms. Can you help me?');
+    });
+    
+    $('#drugInteraction').on('click', function() {
+        sendMessage('Can you check for drug interactions with my medications?');
+    });
+    
+    $('#riskAssessment').on('click', function() {
+        sendMessage('Can you assess my health risks based on my profile?');
+    });
+    
+    $('#healthTips').on('click', function() {
+        sendMessage('Give me personalized health tips based on my medical history.');
+    });
+    
+    // Clear chat history
+    $('#clearHistory').on('click', function() {
+        if (confirm('Are you sure you want to clear the chat history?')) {
+            chatMessages.find('.message:not(:first)').remove();
+        }
+    });
+    
+    // Export chat
+    $('#exportChat').on('click', function() {
+        // This would export the chat history
+        alert('Export functionality will be implemented soon.');
+    });
+    
+    // Auto-focus on input
+    messageInput.focus();
+});
+</script>
+{% endblock %}

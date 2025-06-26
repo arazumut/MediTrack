@@ -5,3 +5,53 @@ crispy-bootstrap5==0.7
 django-widget-tweaks==1.5.0
 python-dateutil==2.8.2
 django-unfold==0.60.0
+
+# REST API and Mobile Support
+djangorestframework==3.14.0
+djangorestframework-authtoken==0.0.0
+django-cors-headers==4.3.1
+
+# AI and Machine Learning
+openai==1.3.0
+scikit-learn==1.3.2
+pandas==2.1.4
+numpy==1.25.2
+transformers==4.36.0
+
+# Data Analysis and Visualization
+plotly==5.17.0
+matplotlib==3.8.2
+seaborn==0.13.0
+
+# WebRTC and Real-time Communication
+channels==4.0.0
+channels-redis==4.1.0
+websockets==12.0
+
+# Background Tasks
+celery==5.3.4
+redis==5.0.1
+
+# Additional Utilities
+python-decouple==3.8
+psycopg2-binary==2.9.9
+gunicorn==21.2.0
+whitenoise==6.6.0
+
+# Development and Testing
+pytest==7.4.3
+pytest-django==4.7.0
+factory-boy==3.3.0
+coverage==7.3.2
+
+# Internationalization
+django-modeltranslation==0.18.11
+
+# File Processing
+reportlab==4.0.7
+openpyxl==3.1.2
+python-magic==0.4.27
+
+# Security
+cryptography==41.0.8
+pyjwt==2.8.0
