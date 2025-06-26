@@ -1,0 +1,203 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Schedule Teleconsultation{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-calendar-plus"></i> Schedule New Teleconsultation</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="scheduleForm">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.patient.id_for_label }}" class="form-label">Patient</label>
+                                {{ form.patient }}
+                                {% if form.patient.errors %}
+                                <div class="text-danger small">{{ form.patient.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.doctor.id_for_label }}" class="form-label">Doctor</label>
+                                {{ form.doctor }}
+                                {% if form.doctor.errors %}
+                                <div class="text-danger small">{{ form.doctor.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="{{ form.scheduled_time.id_for_label }}" class="form-label">Scheduled Time</label>
+                                {{ form.scheduled_time }}
+                                {% if form.scheduled_time.errors %}
+                                <div class="text-danger small">{{ form.scheduled_time.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.duration_minutes.id_for_label }}" class="form-label">Duration (minutes)</label>
+                                {{ form.duration_minutes }}
+                                {% if form.duration_minutes.errors %}
+                                <div class="text-danger small">{{ form.duration_minutes.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.session_type.id_for_label }}" class="form-label">Session Type</label>
+                            {{ form.session_type }}
+                            {% if form.session_type.errors %}
+                            <div class="text-danger small">{{ form.session_type.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.notes.id_for_label }}" class="form-label">Notes (Optional)</label>
+                            {{ form.notes }}
+                            {% if form.notes.errors %}
+                            <div class="text-danger small">{{ form.notes.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Doctor Availability Check -->
+                        <div class="mb-3" id="availabilityCheck" style="display: none;">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                <span id="availabilityMessage">Checking doctor availability...</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'telemedicine:list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Sessions
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-calendar-check"></i> Schedule Session
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Doctor Availability Display -->
+            <div class="card mt-4" id="doctorAvailability" style="display: none;">
+                <div class="card-header">
+                    <h6><i class="fas fa-clock"></i> Doctor Availability</h6>
+                </div>
+                <div class="card-body">
+                    <div id="availabilitySlots">
+                        <!-- Dynamic content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Set minimum date/time to current time
+    const now = new Date();
+    const minDateTime = now.toISOString().slice(0, 16);
+    $('#{{ form.scheduled_time.id_for_label }}').attr('min', minDateTime);
+
+    // Doctor availability check
+    $('#{{ form.doctor.id_for_label }}, #{{ form.scheduled_time.id_for_label }}').change(function() {
+        checkDoctorAvailability();
+    });
+
+    function checkDoctorAvailability() {
+        const doctorId = $('#{{ form.doctor.id_for_label }}').val();
+        const scheduledTime = $('#{{ form.scheduled_time.id_for_label }}').val();
+        
+        if (doctorId && scheduledTime) {
+            $('#availabilityCheck').show();
+            $('#availabilityMessage').text('Checking doctor availability...');
+            
+            // AJAX call to check availability
+            $.ajax({
+                url: '{% url "telemedicine:check_availability" %}',
+                method: 'POST',
+                data: {
+                    'doctor_id': doctorId,
+                    'scheduled_time': scheduledTime,
+                    'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
+                },
+                success: function(response) {
+                    if (response.available) {
+                        $('#availabilityMessage').html('<i class="fas fa-check-circle text-success"></i> Doctor is available at this time');
+                        $('#submitBtn').prop('disabled', false);
+                    } else {
+                        $('#availabilityMessage').html('<i class="fas fa-exclamation-triangle text-warning"></i> Doctor may not be available. ' + response.message);
+                        $('#submitBtn').prop('disabled', false); // Allow anyway, but warn
+                    }
+                },
+                error: function() {
+                    $('#availabilityMessage').html('<i class="fas fa-exclamation-circle text-danger"></i> Unable to check availability');
+                    $('#submitBtn').prop('disabled', false);
+                }
+            });
+        } else {
+            $('#availabilityCheck').hide();
+        }
+    }
+
+    // Form validation
+    $('#scheduleForm').on('submit', function(e) {
+        const scheduledTime = new Date($('#{{ form.scheduled_time.id_for_label }}').val());
+        const now = new Date();
+        
+        if (scheduledTime <= now) {
+            e.preventDefault();
+            alert('Please select a future date and time.');
+            return false;
+        }
+        
+        // Show loading state
+        $('#submitBtn').html('<i class="fas fa-spinner fa-spin"></i> Scheduling...').prop('disabled', true);
+    });
+
+    // Duration shortcuts
+    $('.duration-shortcut').click(function() {
+        const minutes = $(this).data('minutes');
+        $('#{{ form.duration_minutes.id_for_label }}').val(minutes);
+    });
+});
+</script>
+
+<style>
+.duration-shortcuts {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.duration-shortcut {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background: #f8f9fa;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.duration-shortcut:hover {
+    background: #e9ecef;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+</style>
+{% endblock %}

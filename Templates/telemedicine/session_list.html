@@ -1,0 +1,173 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Teleconsultations{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-video"></i> Telemedicine Sessions</h2>
+                <a href="{% url 'telemedicine:schedule' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Schedule New Session
+                </a>
+            </div>
+
+            <!-- Search and Filter Form -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-3">
+                            {{ search_form.search_query }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ search_form.status_filter }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ search_form.date_from }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ search_form.date_to }}
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                            <a href="{% url 'telemedicine:list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Clear
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sessions Cards -->
+            <div class="row">
+                {% for session in sessions %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card session-card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span class="badge badge-{{ session.status|default:'secondary' }}">
+                                {{ session.get_status_display }}
+                            </span>
+                            <small class="text-muted">{{ session.session_type|title }}</small>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                {% if user.user_type == 'patient' %}
+                                    Dr. {{ session.doctor.get_full_name }}
+                                {% else %}
+                                    {{ session.patient.get_full_name }}
+                                {% endif %}
+                            </h6>
+                            <p class="card-text">
+                                <i class="fas fa-calendar"></i> 
+                                {{ session.scheduled_time|date:"M d, Y" }}<br>
+                                <i class="fas fa-clock"></i> 
+                                {{ session.scheduled_time|time:"H:i" }} 
+                                ({{ session.duration_minutes }} min)
+                            </p>
+                            {% if session.notes %}
+                            <p class="card-text text-muted small">
+                                {{ session.notes|truncatewords:10 }}
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer">
+                            <div class="btn-group w-100" role="group">
+                                <a href="{% url 'telemedicine:detail' session.session_id %}" 
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                {% if session.status == 'scheduled' %}
+                                <a href="{% url 'telemedicine:join' session.session_id %}" 
+                                   class="btn btn-success btn-sm">
+                                    <i class="fas fa-video"></i> Join
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fas fa-video fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No Sessions Found</h4>
+                        <p class="text-muted">You don't have any teleconsultation sessions yet.</p>
+                        <a href="{% url 'telemedicine:schedule' %}" class="btn btn-primary">
+                            Schedule Your First Session
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.session-card {
+    transition: transform 0.2s;
+    border-left: 4px solid #007bff;
+}
+
+.session-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.badge-scheduled {
+    background-color: #17a2b8;
+}
+
+.badge-in_progress {
+    background-color: #28a745;
+}
+
+.badge-completed {
+    background-color: #6c757d;
+}
+
+.badge-cancelled {
+    background-color: #dc3545;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-refresh for active sessions
+{% if has_active_sessions %}
+setInterval(function() {
+    location.reload();
+}, 30000); // Refresh every 30 seconds
+{% endif %}
+</script>
+{% endblock %}

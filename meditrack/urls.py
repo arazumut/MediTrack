@@ -53,6 +53,9 @@ urlpatterns = [
     
     # Treatments uygulaması URL'leri
     path('treatments/', include('treatments.urls')),
+    
+    # Telemedicine uygulaması URL'leri
+    path('telemedicine/', include('telemedicine.urls')),
 ]
 
 # Media ve static dosyaları için URL'ler

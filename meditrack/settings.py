@@ -39,14 +39,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Third party apps
+    'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
     # Kendi uygulamalarımız
     'users',
     'appointments',
     'treatments',
     'core',
+    'telemedicine',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -166,5 +172,134 @@ UNFOLD = {
     "COLORMODE": {
         "default": "light",
         "toggle": True,
+    },
+}
+
+# REST Framework Settings
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+}
+
+# CORS Settings for Mobile API
+CORS_ALLOW_ALL_ORIGINS = True  # Only for development
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+]
+
+# Internationalization Settings
+LANGUAGES = [
+    ('tr', 'Türkçe'),
+    ('en', 'English'),
+    ('ar', 'العربية'),
+    ('de', 'Deutsch'),
+    ('fr', 'Français'),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
+USE_L10N = True
+
+# Telemedicine Settings
+TELEMEDICINE_SETTINGS = {
+    'MAX_SESSION_DURATION': 120,  # minutes
+    'DEFAULT_SESSION_DURATION': 30,  # minutes
+    'WEBRTC_STUN_SERVERS': [
+        'stun:stun.l.google.com:19302',
+        'stun:stun1.l.google.com:19302',
+    ],
+    'RECORDING_ENABLED': True,
+    'RECORDING_PATH': MEDIA_ROOT + '/recordings/',
+    'AUTO_END_SESSION_AFTER': 150,  # minutes
+}
+
+# AI/ML Settings
+AI_SETTINGS = {
+    'ENABLE_AI_FEATURES': True,
+    'SYMPTOM_ANALYSIS_ENABLED': True,
+    'DRUG_INTERACTION_CHECK': True,
+    'HEALTH_RISK_ASSESSMENT': True,
+    'ML_MODEL_PATH': BASE_DIR / 'ai_models/',
+    'OPENAI_API_KEY': os.getenv('OPENAI_API_KEY', ''),
+    'HUGGINGFACE_API_KEY': os.getenv('HUGGINGFACE_API_KEY', ''),
+}
+
+# Analytics Settings
+ANALYTICS_SETTINGS = {
+    'ENABLE_ANALYTICS': True,
+    'DATA_RETENTION_DAYS': 365,
+    'REAL_TIME_UPDATES': True,
+    'EXPORT_FORMATS': ['pdf', 'excel', 'csv'],
+}
+
+# Notification Settings
+NOTIFICATION_SETTINGS = {
+    'EMAIL_NOTIFICATIONS': True,
+    'SMS_NOTIFICATIONS': False,  # Requires SMS service setup
+    'PUSH_NOTIFICATIONS': True,
+    'REAL_TIME_NOTIFICATIONS': True,
+    'NOTIFICATION_RETENTION_DAYS': 30,
+}
+
+# Security Settings for Production
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+# Cache Settings (for analytics and performance)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+# Logging Settings
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'meditrack.log',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'telemedicine': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'core.ai_features': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
     },
 }

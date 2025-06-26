@@ -1,0 +1,280 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Session Details{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Session Information -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-video"></i> Session {{ session.session_id }}</h5>
+                    <span class="badge badge-{{ session.status }} badge-lg">
+                        {{ session.get_status_display }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Participants</h6>
+                            <div class="participant-info mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-user-md text-primary me-2"></i>
+                                    <div>
+                                        <strong>Doctor:</strong> {{ session.doctor.get_full_name }}<br>
+                                        <small class="text-muted">{{ session.doctor.email }}</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-user text-info me-2"></i>
+                                    <div>
+                                        <strong>Patient:</strong> {{ session.patient.get_full_name }}<br>
+                                        <small class="text-muted">{{ session.patient.email }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h6>Session Details</h6>
+                            <div class="session-details">
+                                <p><strong>Type:</strong> {{ session.get_session_type_display }}</p>
+                                <p><strong>Scheduled:</strong> {{ session.scheduled_time|date:"M d, Y H:i" }}</p>
+                                <p><strong>Duration:</strong> {{ session.duration_minutes }} minutes</p>
+                                {% if session.start_time %}
+                                <p><strong>Started:</strong> {{ session.start_time|date:"H:i" }}</p>
+                                {% endif %}
+                                {% if session.end_time %}
+                                <p><strong>Ended:</strong> {{ session.end_time|date:"H:i" }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if session.notes %}
+                    <div class="mt-3">
+                        <h6>Notes</h6>
+                        <p class="text-muted">{{ session.notes }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if session.diagnosis %}
+                    <div class="mt-3">
+                        <h6>Diagnosis</h6>
+                        <p>{{ session.diagnosis }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if session.prescription %}
+                    <div class="mt-3">
+                        <h6>Prescription</h6>
+                        <p>{{ session.prescription }}</p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    <div class="mt-4">
+                        {% if session.status == 'scheduled' %}
+                            <a href="{% url 'telemedicine:join' session.session_id %}" 
+                               class="btn btn-success btn-lg me-2">
+                                <i class="fas fa-video"></i> Join Session
+                            </a>
+                        {% endif %}
+                        
+                        {% if session.status == 'in_progress' and user in session.participants %}
+                            <a href="{% url 'telemedicine:join' session.session_id %}" 
+                               class="btn btn-warning btn-lg me-2">
+                                <i class="fas fa-video"></i> Rejoin Session
+                            </a>
+                        {% endif %}
+
+                        {% if user.user_type == 'doctor' and session.status == 'in_progress' %}
+                            <button class="btn btn-danger me-2" onclick="endSession()">
+                                <i class="fas fa-stop"></i> End Session
+                            </button>
+                        {% endif %}
+
+                        {% if session.recording_url %}
+                            <a href="{{ session.recording_url }}" class="btn btn-outline-info me-2" target="_blank">
+                                <i class="fas fa-play"></i> View Recording
+                            </a>
+                        {% endif %}
+
+                        <a href="{% url 'telemedicine:list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Sessions
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat History -->
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h6><i class="fas fa-comments"></i> Session Messages</h6>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;" id="chatHistory">
+                    {% for message in messages %}
+                    <div class="message mb-3 {% if message.sender == user %}sent{% else %}received{% endif %}">
+                        <div class="message-content">
+                            <div class="message-header d-flex justify-content-between">
+                                <small class="text-muted">{{ message.sender.get_full_name }}</small>
+                                <small class="text-muted">{{ message.timestamp|date:"H:i" }}</small>
+                            </div>
+                            <div class="message-text">
+                                {% if message.message_type == 'text' %}
+                                    {{ message.content }}
+                                {% elif message.message_type == 'file' %}
+                                    <a href="{{ message.file_url }}" target="_blank">
+                                        <i class="fas fa-file"></i> {{ message.content }}
+                                    </a>
+                                {% elif message.message_type == 'image' %}
+                                    <img src="{{ message.file_url }}" alt="Shared image" class="img-fluid" style="max-width: 200px;">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center">No messages yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Session Statistics (for doctors) -->
+    {% if user.user_type == 'doctor' and session.status == 'completed' %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-chart-bar"></i> Session Analytics</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-value">{{ session.actual_duration }}</div>
+                                <div class="stat-label">Actual Duration (min)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-value">{{ messages.count }}</div>
+                                <div class="stat-label">Messages Exchanged</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-value">{% if session.recording_url %}Yes{% else %}No{% endif %}</div>
+                                <div class="stat-label">Session Recorded</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-value">{% if session.follow_up_required %}Required{% else %}No{% endif %}</div>
+                                <div class="stat-label">Follow-up</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function endSession() {
+    if (confirm('Are you sure you want to end this session?')) {
+        $.ajax({
+            url: '{% url "telemedicine:end" session.session_id %}',
+            method: 'POST',
+            data: {
+                'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    alert('Error ending session: ' + response.error);
+                }
+            },
+            error: function() {
+                alert('Error ending session. Please try again.');
+            }
+        });
+    }
+}
+
+// Auto-refresh messages for active sessions
+{% if session.status == 'in_progress' %}
+setInterval(function() {
+    loadMessages();
+}, 5000);
+
+function loadMessages() {
+    $.ajax({
+        url: '{% url "telemedicine:get_messages" session.session_id %}',
+        method: 'GET',
+        success: function(response) {
+            // Update chat history with new messages
+            // This would be implemented with more sophisticated real-time messaging
+        }
+    });
+}
+{% endif %}
+</script>
+
+<style>
+.participant-info .fas {
+    width: 20px;
+    text-align: center;
+}
+
+.message {
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.message.sent {
+    background-color: #007bff;
+    color: white;
+    margin-left: 20px;
+}
+
+.message.received {
+    background-color: #f8f9fa;
+    margin-right: 20px;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.badge-lg {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+</style>
+{% endblock %}

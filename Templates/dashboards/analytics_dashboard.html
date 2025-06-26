@@ -1,0 +1,618 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Analytics Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2><i class="fas fa-chart-line"></i> Advanced Analytics Dashboard</h2>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary" id="refreshData">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button type="button" class="btn btn-outline-info" id="exportReport">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Period Selector -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <label class="form-label">Time Period:</label>
+                            <select class="form-select" id="timePeriod">
+                                <option value="7">Last 7 Days</option>
+                                <option value="30" selected>Last 30 Days</option>
+                                <option value="90">Last 3 Months</option>
+                                <option value="365">Last Year</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Department:</label>
+                            <select class="form-select" id="departmentFilter">
+                                <option value="">All Departments</option>
+                                <option value="cardiology">Cardiology</option>
+                                <option value="neurology">Neurology</option>
+                                <option value="oncology">Oncology</option>
+                                <option value="pediatrics">Pediatrics</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">User Type:</label>
+                            <select class="form-select" id="userTypeFilter">
+                                <option value="">All Users</option>
+                                <option value="patient">Patients</option>
+                                <option value="doctor">Doctors</option>
+                                <option value="admin">Administrators</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" id="applyFilters">
+                                <i class="fas fa-filter"></i> Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Metrics Row -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card">
+                <div class="metric-icon bg-primary">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value" id="totalUsers">{{ analytics.total_users|default:"0" }}</div>
+                    <div class="metric-label">Total Users</div>
+                    <div class="metric-change positive">
+                        <i class="fas fa-arrow-up"></i> +12% from last month
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card">
+                <div class="metric-icon bg-success">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value" id="totalAppointments">{{ analytics.total_appointments|default:"0" }}</div>
+                    <div class="metric-label">Appointments</div>
+                    <div class="metric-change positive">
+                        <i class="fas fa-arrow-up"></i> +8% from last month
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card">
+                <div class="metric-icon bg-info">
+                    <i class="fas fa-video"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value" id="teleSessions">{{ analytics.telemedicine_sessions|default:"0" }}</div>
+                    <div class="metric-label">Tele Sessions</div>
+                    <div class="metric-change positive">
+                        <i class="fas fa-arrow-up"></i> +25% from last month
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card">
+                <div class="metric-icon bg-warning">
+                    <i class="fas fa-pills"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value" id="prescriptions">{{ analytics.prescriptions_issued|default:"0" }}</div>
+                    <div class="metric-label">Prescriptions</div>
+                    <div class="metric-change negative">
+                        <i class="fas fa-arrow-down"></i> -3% from last month
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <!-- User Growth Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h6><i class="fas fa-chart-line"></i> User Growth Trend</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="userGrowthChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Appointment Status Distribution -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h6><i class="fas fa-chart-pie"></i> Appointment Status Distribution</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="appointmentStatusChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Healthcare Analytics Row -->
+    <div class="row mb-4">
+        <!-- Popular Departments -->
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h6><i class="fas fa-hospital"></i> Popular Departments</h6>
+                </div>
+                <div class="card-body">
+                    <div class="department-stats">
+                        <div class="stat-item">
+                            <div class="stat-bar">
+                                <div class="stat-fill" style="width: 85%"></div>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-name">Cardiology</span>
+                                <span class="stat-value">85%</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-bar">
+                                <div class="stat-fill" style="width: 72%"></div>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-name">Neurology</span>
+                                <span class="stat-value">72%</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-bar">
+                                <div class="stat-fill" style="width: 68%"></div>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-name">Orthopedics</span>
+                                <span class="stat-value">68%</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-bar">
+                                <div class="stat-fill" style="width: 56%"></div>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-name">Pediatrics</span>
+                                <span class="stat-value">56%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AI Insights -->
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h6><i class="fas fa-brain"></i> AI Health Insights</h6>
+                </div>
+                <div class="card-body">
+                    <div class="insight-item">
+                        <div class="insight-icon bg-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h6>High Risk Patients</h6>
+                            <p class="text-muted">23 patients flagged for cardiovascular risk</p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-icon bg-warning">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h6>Drug Interactions</h6>
+                            <p class="text-muted">5 potential interactions detected</p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-icon bg-info">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h6>Follow-up Needed</h6>
+                            <p class="text-muted">18 patients due for follow-up</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- System Performance -->
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h6><i class="fas fa-server"></i> System Performance</h6>
+                </div>
+                <div class="card-body">
+                    <div class="performance-metric">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>API Response Time</span>
+                            <span class="text-success">142ms</span>
+                        </div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-success" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="performance-metric">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Database Performance</span>
+                            <span class="text-info">Good</span>
+                        </div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-info" style="width: 78%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="performance-metric">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Server Uptime</span>
+                            <span class="text-success">99.8%</span>
+                        </div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-success" style="width: 99%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-history"></i> Recent System Activity</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Event</th>
+                                    <th>User</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activityTable">
+                                <tr>
+                                    <td>10:30 AM</td>
+                                    <td>New appointment scheduled</td>
+                                    <td>Dr. Sarah Johnson</td>
+                                    <td>Cardiology</td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>10:25 AM</td>
+                                    <td>Teleconsultation started</td>
+                                    <td>Dr. Michael Chen</td>
+                                    <td>Neurology</td>
+                                    <td><span class="badge bg-primary">In Progress</span></td>
+                                </tr>
+                                <tr>
+                                    <td>10:20 AM</td>
+                                    <td>Patient registered</td>
+                                    <td>John Doe</td>
+                                    <td>General</td>
+                                    <td><span class="badge bg-info">New</span></td>
+                                </tr>
+                                <tr>
+                                    <td>10:15 AM</td>
+                                    <td>AI risk assessment completed</td>
+                                    <td>System</td>
+                                    <td>AI Analytics</td>
+                                    <td><span class="badge bg-warning">Review Required</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.metric-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.metric-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    color: white;
+    font-size: 24px;
+}
+
+.metric-content {
+    flex: 1;
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.metric-label {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.metric-change {
+    font-size: 0.8rem;
+}
+
+.metric-change.positive {
+    color: #28a745;
+}
+
+.metric-change.negative {
+    color: #dc3545;
+}
+
+.department-stats .stat-item {
+    margin-bottom: 15px;
+}
+
+.stat-bar {
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.stat-fill {
+    height: 100%;
+    background: linear-gradient(45deg, #007bff, #28a745);
+    transition: width 0.3s ease;
+}
+
+.stat-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.insight-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.insight-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    color: white;
+}
+
+.insight-content h6 {
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.insight-content p {
+    margin-bottom: 0;
+    font-size: 0.85rem;
+}
+
+.performance-metric {
+    margin-bottom: 20px;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+$(document).ready(function() {
+    // Initialize charts
+    initializeCharts();
+    
+    // Event handlers
+    $('#applyFilters').click(function() {
+        updateDashboard();
+    });
+    
+    $('#refreshData').click(function() {
+        refreshDashboard();
+    });
+    
+    $('#exportReport').click(function() {
+        exportReport();
+    });
+    
+    // Auto-refresh every 5 minutes
+    setInterval(refreshDashboard, 300000);
+});
+
+function initializeCharts() {
+    // User Growth Chart
+    const userCtx = document.getElementById('userGrowthChart').getContext('2d');
+    new Chart(userCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Users',
+                data: [120, 145, 180, 220, 265, 310],
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Appointment Status Chart
+    const statusCtx = document.getElementById('appointmentStatusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Completed', 'Scheduled', 'Cancelled', 'No Show'],
+            datasets: [{
+                data: [65, 25, 7, 3],
+                backgroundColor: ['#28a745', '#007bff', '#dc3545', '#ffc107']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function updateDashboard() {
+    const timePeriod = $('#timePeriod').val();
+    const department = $('#departmentFilter').val();
+    const userType = $('#userTypeFilter').val();
+    
+    // Show loading
+    $('.metric-value').html('<i class="fas fa-spinner fa-spin"></i>');
+    
+    // AJAX call to update dashboard
+    $.ajax({
+        url: '{% url "core:analytics_data" %}',
+        method: 'GET',
+        data: {
+            'period': timePeriod,
+            'department': department,
+            'user_type': userType
+        },
+        success: function(response) {
+            updateMetrics(response);
+            updateCharts(response);
+        },
+        error: function() {
+            console.error('Failed to update dashboard');
+        }
+    });
+}
+
+function updateMetrics(data) {
+    $('#totalUsers').text(data.total_users || 0);
+    $('#totalAppointments').text(data.total_appointments || 0);
+    $('#teleSessions').text(data.telemedicine_sessions || 0);
+    $('#prescriptions').text(data.prescriptions_issued || 0);
+}
+
+function updateCharts(data) {
+    // Update chart data with new information
+    // This would be more complex in a real implementation
+}
+
+function refreshDashboard() {
+    updateDashboard();
+    // Refresh activity table
+    loadRecentActivity();
+}
+
+function loadRecentActivity() {
+    $.ajax({
+        url: '{% url "core:recent_activity" %}',
+        method: 'GET',
+        success: function(response) {
+            updateActivityTable(response.activities);
+        }
+    });
+}
+
+function updateActivityTable(activities) {
+    const tbody = $('#activityTable');
+    tbody.empty();
+    
+    activities.forEach(function(activity) {
+        const row = `
+            <tr>
+                <td>${activity.time}</td>
+                <td>${activity.event}</td>
+                <td>${activity.user}</td>
+                <td>${activity.department}</td>
+                <td><span class="badge bg-${activity.status_color}">${activity.status}</span></td>
+            </tr>
+        `;
+        tbody.append(row);
+    });
+}
+
+function exportReport() {
+    const format = prompt('Select format: pdf, excel, csv', 'pdf');
+    if (format && ['pdf', 'excel', 'csv'].includes(format)) {
+        window.open(`{% url "core:export_analytics" %}?format=${format}`, '_blank');
+    }
+}
+</script>
+{% endblock %}
