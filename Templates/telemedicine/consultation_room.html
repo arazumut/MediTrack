@@ -1,0 +1,718 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% translate "Video Konsültasyon Odası" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .consultation-room {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 0;
+    }
+    
+    .video-container {
+        position: relative;
+        background: #000;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    .main-video {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 15px;
+    }
+    
+    .self-video {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 200px;
+        height: 150px;
+        border-radius: 10px;
+        border: 3px solid #fff;
+        object-fit: cover;
+        z-index: 10;
+    }
+    
+    .video-controls {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 15px;
+        z-index: 20;
+    }
+    
+    .control-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .control-btn.video-btn {
+        background: rgba(76, 175, 80, 0.9);
+    }
+    
+    .control-btn.video-btn.muted {
+        background: rgba(244, 67, 54, 0.9);
+    }
+    
+    .control-btn.audio-btn {
+        background: rgba(33, 150, 243, 0.9);
+    }
+    
+    .control-btn.audio-btn.muted {
+        background: rgba(244, 67, 54, 0.9);
+    }
+    
+    .control-btn.end-btn {
+        background: rgba(244, 67, 54, 0.9);
+        width: 60px;
+        height: 60px;
+    }
+    
+    .control-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    .chat-panel {
+        background: white;
+        border-radius: 15px;
+        height: 500px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    
+    .chat-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid #eee;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px 15px 0 0;
+    }
+    
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 15px;
+        max-height: 350px;
+    }
+    
+    .message {
+        margin-bottom: 15px;
+        padding: 10px 15px;
+        border-radius: 18px;
+        max-width: 80%;
+        word-wrap: break-word;
+    }
+    
+    .message.sent {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        margin-left: auto;
+        text-align: right;
+    }
+    
+    .message.received {
+        background: #f1f3f4;
+        color: #333;
+        margin-right: auto;
+    }
+    
+    .message-sender {
+        font-weight: bold;
+        font-size: 0.85rem;
+        margin-bottom: 5px;
+    }
+    
+    .message-time {
+        font-size: 0.75rem;
+        opacity: 0.7;
+        margin-top: 5px;
+    }
+    
+    .chat-input {
+        padding: 15px;
+        border-top: 1px solid #eee;
+        border-radius: 0 0 15px 15px;
+    }
+    
+    .input-group {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .message-input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        padding: 12px 20px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+    
+    .message-input:focus {
+        border-color: #667eea;
+    }
+    
+    .send-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        color: white;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    
+    .send-btn:hover {
+        transform: scale(1.1);
+    }
+    
+    .consultation-header {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 15px;
+        color: white;
+    }
+    
+    .consultation-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .connection-status {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #4CAF50;
+        animation: pulse 2s infinite;
+    }
+    
+    .status-indicator.poor {
+        background: #F44336;
+    }
+    
+    .status-indicator.fair {
+        background: #FF9800;
+    }
+    
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+    }
+    
+    .waiting-room {
+        text-align: center;
+        color: white;
+        padding: 50px;
+    }
+    
+    .waiting-spinner {
+        font-size: 3rem;
+        animation: spin 2s linear infinite;
+        margin-bottom: 20px;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .consultation-ended {
+        text-align: center;
+        color: white;
+        padding: 50px;
+    }
+    
+    .participant-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 10px;
+    }
+    
+    .participant-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .duration-timer {
+        font-family: 'Courier New', monospace;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="consultation-room">
+    <div class="container-fluid h-100">
+        <!-- Consultation Header -->
+        <div class="consultation-header">
+            <div class="consultation-info">
+                <div>
+                    <h4 class="mb-2">
+                        {% if is_doctor %}
+                            {% translate "Hasta ile Konsültasyon" %}: {{ consultation.appointment.patient.get_full_name }}
+                        {% else %}
+                            {% translate "Doktor Konsültasyonu" %}: Dr. {{ consultation.appointment.doctor.get_full_name }}
+                        {% endif %}
+                    </h4>
+                    <div class="participant-info">
+                        <div class="participant-avatar">
+                            {% if is_doctor %}
+                                {{ consultation.appointment.patient.first_name|first }}
+                            {% else %}
+                                {{ consultation.appointment.doctor.first_name|first }}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="duration-timer" id="duration-timer">00:00:00</div>
+                            <small>{% translate "Konsültasyon Süresi" %}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="connection-status">
+                    <div class="status-indicator" id="connection-indicator"></div>
+                    <span id="connection-status">{% translate "Bağlantı İyi" %}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row h-75">
+            <!-- Video Section -->
+            <div class="col-lg-8 mb-4">
+                <div class="video-container">
+                    <!-- Main Video Stream -->
+                    <video id="remoteVideo" class="main-video" autoplay muted></video>
+                    
+                    <!-- Self Video -->
+                    <video id="localVideo" class="self-video" autoplay muted></video>
+                    
+                    <!-- Video Controls -->
+                    <div class="video-controls">
+                        <button class="control-btn video-btn" id="videoToggle" title="{% translate 'Kamerayı Aç/Kapat' %}">
+                            <i class="fas fa-video"></i>
+                        </button>
+                        <button class="control-btn audio-btn" id="audioToggle" title="{% translate 'Mikrofonu Aç/Kapat' %}">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button class="control-btn" style="background: rgba(156, 39, 176, 0.9);" id="screenShare" title="{% translate 'Ekran Paylaş' %}">
+                            <i class="fas fa-desktop"></i>
+                        </button>
+                        {% if is_doctor %}
+                        <button class="control-btn end-btn" id="endConsultation" title="{% translate 'Konsültasyonu Sonlandır' %}">
+                            <i class="fas fa-phone-slash"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Waiting Room -->
+                    <div id="waitingRoom" class="waiting-room" style="display: none;">
+                        <div class="waiting-spinner">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                        <h3>{% translate "Bekleme Odasında" %}</h3>
+                        <p>{% translate "Diğer katılımcının bağlanması bekleniyor..." %}</p>
+                    </div>
+                    
+                    <!-- Consultation Ended -->
+                    <div id="consultationEnded" class="consultation-ended" style="display: none;">
+                        <h3>{% translate "Konsültasyon Sonlandırıldı" %}</h3>
+                        <p>{% translate "Teşekkürler! Konsültasyonunuz başarıyla tamamlandı." %}</p>
+                        <a href="{% url 'telemedicine-consultation-list' %}" class="btn btn-primary">
+                            {% translate "Konsültasyon Listesine Dön" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Panel -->
+            <div class="col-lg-4">
+                <div class="chat-panel">
+                    <div class="chat-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-comments me-2"></i>
+                            {% translate "Chat" %}
+                        </h6>
+                    </div>
+                    
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Chat messages will be loaded here -->
+                    </div>
+                    
+                    <div class="chat-input">
+                        <div class="input-group">
+                            <input type="text" class="message-input" id="messageInput" 
+                                   placeholder="{% translate 'Mesaj yazın...' %}"
+                                   maxlength="500">
+                            <button class="send-btn" id="sendMessage">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consultation Notes Modal (For Doctors) -->
+        {% if is_doctor %}
+        <div class="modal fade" id="endConsultationModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{% translate "Konsültasyonu Sonlandır" %}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="endConsultationForm">
+                            <div class="mb-3">
+                                <label for="consultationNotes" class="form-label">{% translate "Konsültasyon Notları" %}</label>
+                                <textarea class="form-control" id="consultationNotes" rows="4"
+                                          placeholder="{% translate 'Konsültasyon sırasında yapılan değerlendirmeler, öneriler vb.' %}"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="patientFeedback" class="form-label">{% translate "Hasta Geri Bildirimi" %}</label>
+                                <textarea class="form-control" id="patientFeedback" rows="3"
+                                          placeholder="{% translate 'Hastanın belirttiği geri bildirimler' %}"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% translate "İptal" %}</button>
+                        <button type="button" class="btn btn-danger" id="confirmEndConsultation">
+                            {% translate "Konsültasyonu Sonlandır" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+class TeleMedicineConsultation {
+    constructor(consultationId, userRole) {
+        this.consultationId = consultationId;
+        this.userRole = userRole;
+        this.localStream = null;
+        this.remoteStream = null;
+        this.peerConnection = null;
+        this.isVideoEnabled = true;
+        this.isAudioEnabled = true;
+        this.startTime = new Date();
+        
+        this.init();
+    }
+    
+    async init() {
+        await this.setupLocalStream();
+        this.setupEventListeners();
+        this.loadChatMessages();
+        this.startDurationTimer();
+        
+        // Chat message polling
+        setInterval(() => this.loadChatMessages(), 3000);
+    }
+    
+    async setupLocalStream() {
+        try {
+            this.localStream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true
+            });
+            
+            document.getElementById('localVideo').srcObject = this.localStream;
+            
+            // Setup peer connection for real video calling
+            // This would require WebRTC implementation
+            this.simulateRemoteVideo();
+            
+        } catch (error) {
+            console.error('Error accessing media devices:', error);
+            this.showError('Kamera ve mikrofon erişimi gerekli');
+        }
+    }
+    
+    simulateRemoteVideo() {
+        // This is a placeholder - in real implementation, you'd setup WebRTC
+        const remoteVideo = document.getElementById('remoteVideo');
+        // For demo purposes, we'll show a placeholder
+        remoteVideo.style.background = 'linear-gradient(45deg, #333, #555)';
+        remoteVideo.style.display = 'flex';
+        remoteVideo.style.alignItems = 'center';
+        remoteVideo.style.justifyContent = 'center';
+        remoteVideo.innerHTML = '<div style="color: white; text-align: center;"><i class="fas fa-user fa-5x mb-3"></i><br>Diğer Katılımcı</div>';
+    }
+    
+    setupEventListeners() {
+        // Video toggle
+        document.getElementById('videoToggle').addEventListener('click', () => {
+            this.toggleVideo();
+        });
+        
+        // Audio toggle
+        document.getElementById('audioToggle').addEventListener('click', () => {
+            this.toggleAudio();
+        });
+        
+        // Screen share
+        document.getElementById('screenShare').addEventListener('click', () => {
+            this.toggleScreenShare();
+        });
+        
+        // End consultation (doctors only)
+        const endBtn = document.getElementById('endConsultation');
+        if (endBtn) {
+            endBtn.addEventListener('click', () => {
+                $('#endConsultationModal').modal('show');
+            });
+        }
+        
+        // Confirm end consultation
+        const confirmEndBtn = document.getElementById('confirmEndConsultation');
+        if (confirmEndBtn) {
+            confirmEndBtn.addEventListener('click', () => {
+                this.endConsultation();
+            });
+        }
+        
+        // Chat functionality
+        document.getElementById('sendMessage').addEventListener('click', () => {
+            this.sendMessage();
+        });
+        
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.sendMessage();
+            }
+        });
+    }
+    
+    toggleVideo() {
+        this.isVideoEnabled = !this.isVideoEnabled;
+        const videoTrack = this.localStream.getVideoTracks()[0];
+        videoTrack.enabled = this.isVideoEnabled;
+        
+        const btn = document.getElementById('videoToggle');
+        const icon = btn.querySelector('i');
+        
+        if (this.isVideoEnabled) {
+            btn.classList.remove('muted');
+            icon.className = 'fas fa-video';
+        } else {
+            btn.classList.add('muted');
+            icon.className = 'fas fa-video-slash';
+        }
+    }
+    
+    toggleAudio() {
+        this.isAudioEnabled = !this.isAudioEnabled;
+        const audioTrack = this.localStream.getAudioTracks()[0];
+        audioTrack.enabled = this.isAudioEnabled;
+        
+        const btn = document.getElementById('audioToggle');
+        const icon = btn.querySelector('i');
+        
+        if (this.isAudioEnabled) {
+            btn.classList.remove('muted');
+            icon.className = 'fas fa-microphone';
+        } else {
+            btn.classList.add('muted');
+            icon.className = 'fas fa-microphone-slash';
+        }
+    }
+    
+    async toggleScreenShare() {
+        try {
+            if (this.isScreenSharing) {
+                // Stop screen sharing, back to camera
+                this.localStream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true
+                });
+                this.isScreenSharing = false;
+            } else {
+                // Start screen sharing
+                this.localStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true,
+                    audio: true
+                });
+                this.isScreenSharing = true;
+            }
+            
+            document.getElementById('localVideo').srcObject = this.localStream;
+            
+        } catch (error) {
+            console.error('Screen share error:', error);
+        }
+    }
+    
+    async sendMessage() {
+        const input = document.getElementById('messageInput');
+        const content = input.value.trim();
+        
+        if (!content) return;
+        
+        try {
+            const response = await fetch(`/telemedicine/consultation/${this.consultationId}/send-message/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    content: content,
+                    type: 'text'
+                })
+            });
+            
+            if (response.ok) {
+                input.value = '';
+                this.loadChatMessages();
+            }
+            
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
+    }
+    
+    async loadChatMessages() {
+        try {
+            const response = await fetch(`/telemedicine/consultation/${this.consultationId}/messages/`);
+            const data = await response.json();
+            
+            const chatContainer = document.getElementById('chatMessages');
+            chatContainer.innerHTML = '';
+            
+            data.messages.forEach(message => {
+                const messageElement = this.createMessageElement(message);
+                chatContainer.appendChild(messageElement);
+            });
+            
+            // Scroll to bottom
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+        } catch (error) {
+            console.error('Error loading messages:', error);
+        }
+    }
+    
+    createMessageElement(message) {
+        const div = document.createElement('div');
+        div.className = `message ${message.is_own ? 'sent' : 'received'}`;
+        
+        const time = new Date(message.timestamp).toLocaleTimeString('tr-TR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        div.innerHTML = `
+            <div class="message-sender">${message.sender}</div>
+            <div>${message.content}</div>
+            <div class="message-time">${time}</div>
+        `;
+        
+        return div;
+    }
+    
+    async endConsultation() {
+        const notes = document.getElementById('consultationNotes').value;
+        const feedback = document.getElementById('patientFeedback').value;
+        
+        try {
+            const response = await fetch(`/telemedicine/consultation/${this.consultationId}/end/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    notes: notes,
+                    patient_feedback: feedback
+                })
+            });
+            
+            if (response.ok) {
+                $('#endConsultationModal').modal('hide');
+                this.showConsultationEnded();
+            }
+            
+        } catch (error) {
+            console.error('Error ending consultation:', error);
+        }
+    }
+    
+    showConsultationEnded() {
+        document.querySelector('.video-container video').style.display = 'none';
+        document.querySelector('.video-controls').style.display = 'none';
+        document.getElementById('consultationEnded').style.display = 'block';
+    }
+    
+    startDurationTimer() {
+        const timer = document.getElementById('duration-timer');
+        
+        setInterval(() => {
+            const elapsed = new Date() - this.startTime;
+            const hours = Math.floor(elapsed / 3600000);
+            const minutes = Math.floor((elapsed % 3600000) / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            
+            timer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }, 1000);
+    }
+    
+    showError(message) {
+        // Show error message to user
+        alert(message);
+    }
+}
+
+// Initialize consultation when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const consultationId = {{ consultation.id }};
+    const userRole = '{{ user_role }}';
+    
+    new TeleMedicineConsultation(consultationId, userRole);
+});
+</script>
+{% endblock %}
