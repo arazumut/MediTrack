@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from core.utils import get_upcoming_appointments, send_appointment_reminder_email
-from core.models_communication import Notification
+from core.models_communication import CommunicationNotification
 
 class Command(BaseCommand):
     help = 'Yaklaşan randevular için hatırlatma e-postaları ve bildirimleri gönderir'
@@ -37,7 +37,7 @@ class Command(BaseCommand):
             
             # Bildirim oluştur
             try:
-                Notification.objects.create(
+                CommunicationNotification.objects.create(
                     user=appointment.patient,
                     title=f"Randevu Hatırlatması: {appointment.date.strftime('%d.%m.%Y')}",
                     message=f"Yarın saat {appointment.time.strftime('%H:%M')} için Dr. {appointment.doctor.get_full_name()} ile randevunuz bulunmaktadır.",

@@ -1,0 +1,16 @@
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 16919
+"GET /static/assets/css/theme.css HTTP/1.1" 200 2834
+"GET /static/assets/js/theme.js HTTP/1.1" 200 3625
+"GET /static/assets/js/scripts.bundle.js HTTP/1.1" 200 238050
+"GET /static/assets/plugins/global/plugins.bundle.css HTTP/1.1" 200 879267
+"GET /static/assets/css/style.bundle.css HTTP/1.1" 200 1538590
+"GET /static/assets/plugins/global/plugins.bundle.js HTTP/1.1" 200 3558077
+"GET /static/assets/plugins/global/fonts/keenicons/keenicons-outline.ttf?fzo4bm HTTP/1.1" 200 246764
+"GET /theme/preference/ HTTP/1.1" 302 0
+"GET /login/?next=/theme/preference/ HTTP/1.1" 200 9176
+"GET /static/assets/media/logos/favicon.png HTTP/1.1" 200 65582
+"GET /login/ HTTP/1.1" 200 9158

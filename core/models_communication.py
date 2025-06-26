@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
-class Notification(models.Model):
+class CommunicationNotification(models.Model):
     """
     Bildirim modeli. Sistem içinde kullanıcılara gönderilen bildirimleri temsil eder.
     """

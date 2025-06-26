@@ -6,7 +6,7 @@ from django.conf import settings
 from django.utils import timezone
 from datetime import timedelta
 
-from core.models_communication import Notification
+from core.models_communication import CommunicationNotification
 from appointments.models_availability import DoctorAvailability, DoctorTimeOff
 from users.models import User
 
@@ -25,7 +25,7 @@ def create_notification(user, notification_type, title, message, related_url=Non
     Returns:
         Oluşturulan bildirim nesnesi
     """
-    notification = Notification.objects.create(
+    notification = CommunicationNotification.objects.create(
         user=user,
         notification_type=notification_type,
         title=title,

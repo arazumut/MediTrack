@@ -8,7 +8,7 @@ from appointments.models import Appointment
 from appointments.models_availability import DoctorAvailability, DoctorTimeOff
 from treatments.models import Treatment, Prescription
 from treatments.models_medical_history import MedicalHistory
-from core.models_communication import Notification
+from core.models_communication import CommunicationNotification
 from treatments.models_medications import Medication
 from treatments.models_lab import LabTest, TestResult
 from treatments.models_imaging import MedicalImage, Report
@@ -931,7 +931,7 @@ class Command(BaseCommand):
                 is_read = random.choice([True, False]) if days_ago > 2 else False
                 
                 # Bildirim oluştur
-                Notification.objects.create(
+                CommunicationNotification.objects.create(
                     user=user,
                     notification_type=notification_type,
                     content=content,

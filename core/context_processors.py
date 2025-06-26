@@ -1,4 +1,4 @@
-from core.models_communication import Notification
+from core.models_communication import CommunicationNotification
 from core.models_theme import UserThemePreference
 
 def notifications_processor(request):
@@ -8,13 +8,13 @@ def notifications_processor(request):
     context = {}
     
     if request.user.is_authenticated:
-        unread_notifications_count = Notification.objects.filter(
+        unread_notifications_count = CommunicationNotification.objects.filter(
             user=request.user,
             is_read=False
         ).count()
         
         # Son 5 bildirimi al
-        recent_notifications = Notification.objects.filter(
+        recent_notifications = CommunicationNotification.objects.filter(
             user=request.user
         ).order_by('-created_at')[:5]
         
