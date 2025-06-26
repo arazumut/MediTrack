@@ -8,8 +8,21 @@ from .views_notification import (
     NotificationListView, mark_notification_as_read, mark_all_notifications_as_read
 )
 from .views_theme import toggle_theme, get_theme_preference
+from .views_dashboard import (
+    EnhancedDashboardView, DoctorPerformanceView, SystemReportsView,
+    dashboard_analytics_api, patient_health_summary_api
+)
 
 urlpatterns = [
+    # Dashboard
+    path('dashboard/', EnhancedDashboardView.as_view(), name='enhanced-dashboard'),
+    path('dashboard/doctor-performance/', DoctorPerformanceView.as_view(), name='doctor-performance'),
+    path('dashboard/system-reports/', SystemReportsView.as_view(), name='system-reports'),
+    
+    # Dashboard API endpoints
+    path('dashboard/api/analytics/', dashboard_analytics_api, name='dashboard-analytics-api'),
+    path('dashboard/api/patient/<int:patient_id>/health-summary/', patient_health_summary_api, name='patient-health-summary-api'),
+
     # Hastalar
     path('patients/register/', views.PatientRegistrationView.as_view(), name='patient-register'),
     path('patients/', views.PatientListView.as_view(), name='patient-list'),

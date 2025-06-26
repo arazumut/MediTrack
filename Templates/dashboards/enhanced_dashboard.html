@@ -1,0 +1,449 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% translate "Gelişmiş Dashboard" %}{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.css" rel="stylesheet">
+<style>
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 15px;
+        color: white;
+        transition: transform 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stats-card.success {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+    
+    .stats-card.warning {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+    
+    .stats-card.info {
+        background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        color: #333;
+    }
+    
+    .quick-action-btn {
+        border-radius: 12px;
+        padding: 15px;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .quick-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        border-color: currentColor;
+    }
+    
+    .activity-item {
+        border-left: 4px solid #007bff;
+        padding-left: 15px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .activity-item:hover {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 10px 15px;
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 300px;
+        margin: 20px 0;
+    }
+    
+    .metric-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .metric-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+    
+    .trend-indicator {
+        font-size: 0.8rem;
+        margin-top: 5px;
+    }
+    
+    .trend-up {
+        color: #28a745;
+    }
+    
+    .trend-down {
+        color: #dc3545;
+    }
+    
+    .dashboard-header {
+        background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .weather-widget {
+        background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-2">{% translate "Hoş geldiniz" %}, {{ user.get_full_name|default:user.username }}!</h1>
+                <p class="mb-0">
+                    {% if user.is_doctor %}
+                        {% translate "Bugün" %} {{ current_date|date:"d F Y" }} - {% translate "Hasta bakım dashboard'unuz" %}
+                    {% elif user.is_patient %}
+                        {% translate "Sağlık takip dashboard'unuz" %}
+                    {% elif user.is_receptionist %}
+                        {% translate "Hasta ve randevu yönetim dashboard'unuz" %}
+                    {% else %}
+                        {% translate "Sistem yönetim dashboard'unuz" %}
+                    {% endif %}
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="weather-widget">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <i class="fas fa-sun fa-2x me-3"></i>
+                        </div>
+                        <div>
+                            <div class="h4 mb-0">24°C</div>
+                            <small>{% translate "Güneşli" %}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row mb-4">
+        {% if appointment_stats %}
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stats-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-alt fa-3x mb-3"></i>
+                    <div class="metric-value">{{ appointment_stats.total }}</div>
+                    <div class="metric-label">{% translate "Toplam Randevu" %}</div>
+                    <div class="trend-indicator trend-up">
+                        <i class="fas fa-arrow-up"></i> +12% {% translate "bu ay" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if appointment_stats %}
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stats-card success">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle fa-3x mb-3"></i>
+                    <div class="metric-value">{{ appointment_stats.completed }}</div>
+                    <div class="metric-label">{% translate "Tamamlanan" %}</div>
+                    <div class="trend-indicator">
+                        %{{ appointment_stats.completion_rate|floatformat:1 }} {% translate "başarı oranı" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if treatment_stats %}
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stats-card warning">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-md fa-3x mb-3"></i>
+                    <div class="metric-value">{{ treatment_stats.total_treatments }}</div>
+                    <div class="metric-label">{% translate "Tedavi Sayısı" %}</div>
+                    <div class="trend-indicator">
+                        {{ treatment_stats.avg_prescriptions }} {% translate "ort. reçete" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if lab_test_stats %}
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stats-card info">
+                <div class="card-body text-center">
+                    <i class="fas fa-flask fa-3x mb-3"></i>
+                    <div class="metric-value">{{ lab_test_stats.total_tests }}</div>
+                    <div class="metric-label">{% translate "Lab Testleri" %}</div>
+                    <div class="trend-indicator">
+                        {{ lab_test_stats.pending_tests }} {% translate "beklemede" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <!-- Sol Kolon -->
+        <div class="col-lg-8">
+            <!-- Grafikler -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-line me-2"></i>
+                        {% translate "Randevu Trendleri" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="appointmentTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doktor Performansı (sadece doktorlar için) -->
+            {% if doctor_performance %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-trophy me-2"></i>
+                        {% translate "Performans Özeti" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <div class="h3 text-primary">{{ doctor_performance.avg_daily_patients }}</div>
+                            <small class="text-muted">{% translate "Günlük Ortalama Hasta" %}</small>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="h3 text-success">%{{ doctor_performance.completion_rate|floatformat:1 }}</div>
+                            <small class="text-muted">{% translate "Tamamlama Oranı" %}</small>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="h3 text-info">{{ doctor_performance.total_treatments }}</div>
+                            <small class="text-muted">{% translate "Toplam Tedavi" %}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- En Sık Teşhisler -->
+            {% if treatment_stats.common_diagnoses %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-stethoscope me-2"></i>
+                        {% translate "En Sık Teşhisler" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="diagnosisChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sağ Kolon -->
+        <div class="col-lg-4">
+            <!-- Hızlı Eylemler -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-bolt me-2"></i>
+                        {% translate "Hızlı Eylemler" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for action in quick_actions %}
+                        <div class="col-6 mb-3">
+                            <a href="#" class="btn btn-outline-{{ action.color }} quick-action-btn w-100 text-decoration-none">
+                                <i class="fas fa-{{ action.icon }} mb-2"></i>
+                                <div class="small">{{ action.title }}</div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Son Aktiviteler -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-clock me-2"></i>
+                        {% translate "Son Aktiviteler" %}
+                    </h5>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    {% for activity in recent_activities %}
+                    <div class="activity-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">{{ activity.title }}</h6>
+                                {% if activity.description %}
+                                <p class="mb-1 text-muted small">{{ activity.description }}</p>
+                                {% endif %}
+                                <small class="text-muted">
+                                    {{ activity.date|date:"d.m.Y" }}
+                                    {% if activity.time %} {{ activity.time|time:"H:i" }}{% endif %}
+                                </small>
+                            </div>
+                            {% if activity.status %}
+                            <span class="badge badge-light-{{ activity.status|yesno:'success,warning,danger' }}">
+                                {{ activity.status|title }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center">{% translate "Henüz aktivite bulunmuyor." %}</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Sistem Bildirimleri -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-bell me-2"></i>
+                        {% translate "Sistem Bildirimleri" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {% translate "Sistem bakımı 15 Ocak'ta yapılacaktır." %}
+                    </div>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        {% translate "Yeni özellikler eklendi! Keşfetmek için tıklayın." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Randevu trend grafiği
+    {% if monthly_trends %}
+    const trendCtx = document.getElementById('appointmentTrendChart');
+    if (trendCtx) {
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: [{% for trend in monthly_trends %}'{{ trend.month }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+                datasets: [{
+                    label: '{% translate "Randevular" %}',
+                    data: [{% for trend in monthly_trends %}{{ trend.appointments }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                    borderColor: 'rgb(107, 115, 255)',
+                    backgroundColor: 'rgba(107, 115, 255, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: '{% translate "Tedaviler" %}',
+                    data: [{% for trend in monthly_trends %}{{ trend.treatments }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+    {% endif %}
+
+    // Teşhis grafiği
+    {% if treatment_stats.common_diagnoses %}
+    const diagnosisCtx = document.getElementById('diagnosisChart');
+    if (diagnosisCtx) {
+        new Chart(diagnosisCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [{% for diagnosis in treatment_stats.common_diagnoses %}'{{ diagnosis.diagnosis|truncatechars:20 }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+                datasets: [{
+                    data: [{% for diagnosis in treatment_stats.common_diagnoses %}{{ diagnosis.count }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                    backgroundColor: [
+                        '#FF6384',
+                        '#36A2EB', 
+                        '#FFCE56',
+                        '#4BC0C0',
+                        '#9966FF',
+                        '#FF6600',
+                        '#FF6666',
+                        '#66FF66',
+                        '#6666FF',
+                        '#FFFF66'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    }
+    {% endif %}
+
+    // Otomatik yenileme (30 saniyede bir)
+    setInterval(function() {
+        // AJAX ile dashboard verilerini güncelle
+        fetch('/dashboard/api/analytics/')
+            .then(response => response.json())
+            .then(data => {
+                // Verileri güncelle (isteğe bağlı)
+                console.log('Dashboard data updated:', data);
+            })
+            .catch(error => console.error('Error updating dashboard:', error));
+    }, 30000);
+});
+</script>
+{% endblock %}
