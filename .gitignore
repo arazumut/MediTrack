@@ -77,6 +77,19 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*/__pycache__/
+*/*/__pycache__/
+*/*/*/__pycache__/
+*/*/*/*/__pycache__/
+*/*/*/*/*/__pycache__/
+*.so
+.Python
+
+
 # Docker
 docker-compose.override.yml
 
