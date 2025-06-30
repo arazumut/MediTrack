@@ -118,6 +118,63 @@ class DoctorStatistics(models.Model):
     def __str__(self):
         return f"{self.doctor} - {self.date}"
 
+class DoctorPerformanceMetric(models.Model):
+    """
+    Doktor performans metriği modeli. Doktorların performans değerlendirmelerini tutar.
+    """
+    doctor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='performance_metrics',
+        verbose_name=_('Doktor'),
+        limit_choices_to={'user_type': 'doctor'}
+    )
+    date = models.DateField(
+        verbose_name=_('Tarih')
+    )
+    appointments_count = models.IntegerField(
+        default=0,
+        verbose_name=_('Randevu Sayısı')
+    )
+    treatments_count = models.IntegerField(
+        default=0,
+        verbose_name=_('Tedavi Sayısı')
+    )
+    average_rating = models.FloatField(
+        default=0.0,
+        verbose_name=_('Ortalama Değerlendirme (5 üzerinden)')
+    )
+    patient_satisfaction = models.FloatField(
+        default=0.0,
+        verbose_name=_('Hasta Memnuniyeti (100 üzerinden)')
+    )
+    efficiency_score = models.FloatField(
+        default=0.0,
+        verbose_name=_('Verimlilik Puanı (100 üzerinden)')
+    )
+    notes = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Notlar')
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Oluşturulma Tarihi')
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Güncellenme Tarihi')
+    )
+    
+    class Meta:
+        verbose_name = _('Doktor Performans Metriği')
+        verbose_name_plural = _('Doktor Performans Metrikleri')
+        ordering = ['-date']
+        unique_together = ['doctor', 'date']
+    
+    def __str__(self):
+        return f"{self.doctor} - {self.date}"
+
 class ReportTemplate(models.Model):
     """
     Rapor şablonu modeli. Özel raporlar oluşturmak için kullanılır.

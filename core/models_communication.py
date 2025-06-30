@@ -17,7 +17,7 @@ class CommunicationNotification(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='notifications',
+        related_name='communication_notifications',
         verbose_name=_('Kullanıcı')
     )
     notification_type = models.CharField(
@@ -48,8 +48,8 @@ class CommunicationNotification(models.Model):
     )
     
     class Meta:
-        verbose_name = _('Bildirim')
-        verbose_name_plural = _('Bildirimler')
+        verbose_name = _('İletişim Bildirimi')
+        verbose_name_plural = _('İletişim Bildirimleri')
         ordering = ['-created_at']
     
     def __str__(self):

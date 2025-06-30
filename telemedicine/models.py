@@ -10,6 +10,358 @@ from appointments.models import Appointment
 import uuid
 
 
+class TelemedicineAppointment(models.Model):
+    """
+    Tele-tıp randevu modeli
+    """
+    STATUS_CHOICES = [
+        ('scheduled', _('Zamanlandı')),
+        ('completed', _('Tamamlandı')),
+        ('cancelled', _('İptal Edildi')),
+        ('no_show', _('Katılım Sağlanmadı')),
+    ]
+    
+    patient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='telemedicine_patient_appointments',
+        verbose_name=_('Hasta'),
+        limit_choices_to={'user_type': 'patient'}
+    )
+    
+    doctor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='telemedicine_doctor_appointments',
+        verbose_name=_('Doktor'),
+        limit_choices_to={'user_type': 'doctor'}
+    )
+    
+    date = models.DateField(
+        verbose_name=_('Tarih')
+    )
+    
+    time = models.TimeField(
+        verbose_name=_('Saat')
+    )
+    
+    duration = models.PositiveIntegerField(
+        default=30,
+        verbose_name=_('Süre (dakika)')
+    )
+    
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='scheduled',
+        verbose_name=_('Durum')
+    )
+    
+    description = models.TextField(
+        blank=True,
+        verbose_name=_('Açıklama')
+    )
+    
+    chief_complaint = models.TextField(
+        blank=True,
+        verbose_name=_('Ana Şikayet')
+    )
+    
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='created_telemedicine_appointments',
+        verbose_name=_('Oluşturan')
+    )
+    
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Oluşturulma Tarihi')
+    )
+    
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Güncellenme Tarihi')
+    )
+    
+    class Meta:
+        verbose_name = _('Tele-tıp Randevusu')
+        verbose_name_plural = _('Tele-tıp Randevuları')
+        ordering = ['-date', '-time']
+    
+    def __str__(self):
+        return f"{self.patient} - Dr. {self.doctor} - {self.date} {self.time}"
+    
+    def is_past(self):
+        """Randevu geçmiş mi?"""
+        now = timezone.now()
+        appointment_datetime = timezone.make_aware(timezone.datetime.combine(self.date, self.time))
+        return appointment_datetime < now
+
+
+class VideoSession(models.Model):
+    """
+    Video görüşme oturumu modeli
+    """
+    appointment = models.ForeignKey(
+        TelemedicineAppointment,
+        on_delete=models.CASCADE,
+        related_name='video_sessions',
+        verbose_name=_('Randevu')
+    )
+    
+    room_name = models.CharField(
+        max_length=255,
+        verbose_name=_('Oda Adı')
+    )
+    
+    started_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='started_sessions',
+        verbose_name=_('Başlatan')
+    )
+    
+    start_time = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Başlangıç Zamanı')
+    )
+    
+    end_time = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('Bitiş Zamanı')
+    )
+    
+    ended_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='ended_sessions',
+        verbose_name=_('Sonlandıran')
+    )
+    
+    duration_seconds = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_('Süre (saniye)')
+    )
+    
+    recording_url = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name=_('Kayıt URL')
+    )
+    
+    connection_quality = models.CharField(
+        max_length=20,
+        choices=[
+            ('excellent', _('Mükemmel')),
+            ('good', _('İyi')),
+            ('fair', _('Orta')),
+            ('poor', _('Kötü')),
+        ],
+        blank=True,
+        null=True,
+        verbose_name=_('Bağlantı Kalitesi')
+    )
+    
+    class Meta:
+        verbose_name = _('Video Oturumu')
+        verbose_name_plural = _('Video Oturumları')
+        ordering = ['-start_time']
+    
+    def __str__(self):
+        return f"Oturum: {self.appointment} - {self.start_time}"
+    
+    def get_duration(self):
+        """Oturum süresini hesapla"""
+        if self.end_time:
+            return (self.end_time - self.start_time).total_seconds()
+        return None
+    
+    def save(self, *args, **kwargs):
+        if self.end_time and not self.duration_seconds:
+            self.duration_seconds = self.get_duration()
+        super().save(*args, **kwargs)
+
+
+class TelemedDocument(models.Model):
+    """
+    Tele-tıp belge modeli
+    """
+    appointment = models.ForeignKey(
+        TelemedicineAppointment,
+        on_delete=models.CASCADE,
+        related_name='documents',
+        verbose_name=_('Randevu')
+    )
+    
+    title = models.CharField(
+        max_length=255,
+        verbose_name=_('Başlık')
+    )
+    
+    document_type = models.CharField(
+        max_length=50,
+        choices=[
+            ('lab_result', _('Laboratuvar Sonucu')),
+            ('prescription', _('Reçete')),
+            ('medical_image', _('Tıbbi Görüntü')),
+            ('referral', _('Sevk')),
+            ('other', _('Diğer')),
+        ],
+        verbose_name=_('Belge Türü')
+    )
+    
+    file = models.FileField(
+        upload_to='telemedicine/documents/',
+        verbose_name=_('Dosya')
+    )
+    
+    description = models.TextField(
+        blank=True,
+        verbose_name=_('Açıklama')
+    )
+    
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='uploaded_telemedicine_documents',
+        verbose_name=_('Yükleyen')
+    )
+    
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Oluşturulma Tarihi')
+    )
+    
+    class Meta:
+        verbose_name = _('Tele-tıp Belgesi')
+        verbose_name_plural = _('Tele-tıp Belgeleri')
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.title} - {self.appointment}"
+
+
+class TelemedPrescription(models.Model):
+    """
+    Tele-tıp reçete modeli
+    """
+    appointment = models.ForeignKey(
+        TelemedicineAppointment,
+        on_delete=models.CASCADE,
+        related_name='prescriptions',
+        verbose_name=_('Randevu')
+    )
+    
+    medications = models.JSONField(
+        verbose_name=_('İlaçlar'),
+        help_text=_('İlaç listesi ve dozaj bilgileri')
+    )
+    
+    instructions = models.TextField(
+        verbose_name=_('Talimatlar')
+    )
+    
+    duration_days = models.PositiveIntegerField(
+        verbose_name=_('Süre (gün)')
+    )
+    
+    is_renewable = models.BooleanField(
+        default=False,
+        verbose_name=_('Yenilenebilir mi?')
+    )
+    
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='created_telemedicine_prescriptions',
+        verbose_name=_('Oluşturan Doktor'),
+        limit_choices_to={'user_type': 'doctor'}
+    )
+    
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Oluşturulma Tarihi')
+    )
+    
+    class Meta:
+        verbose_name = _('Tele-tıp Reçetesi')
+        verbose_name_plural = _('Tele-tıp Reçeteleri')
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Reçete: {self.appointment}"
+
+
+class TelemedNote(models.Model):
+    """
+    Tele-tıp not modeli
+    """
+    appointment = models.ForeignKey(
+        TelemedicineAppointment,
+        on_delete=models.CASCADE,
+        related_name='notes',
+        verbose_name=_('Randevu')
+    )
+    
+    title = models.CharField(
+        max_length=255,
+        verbose_name=_('Başlık')
+    )
+    
+    content = models.TextField(
+        verbose_name=_('İçerik')
+    )
+    
+    note_type = models.CharField(
+        max_length=50,
+        choices=[
+            ('diagnosis', _('Teşhis')),
+            ('treatment_plan', _('Tedavi Planı')),
+            ('follow_up', _('Takip')),
+            ('general', _('Genel Not')),
+        ],
+        default='general',
+        verbose_name=_('Not Türü')
+    )
+    
+    is_private = models.BooleanField(
+        default=False,
+        verbose_name=_('Özel Not mu?'),
+        help_text=_('Özel notlar sadece doktor tarafından görülebilir')
+    )
+    
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='created_telemedicine_notes',
+        verbose_name=_('Oluşturan')
+    )
+    
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Oluşturulma Tarihi')
+    )
+    
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Güncellenme Tarihi')
+    )
+    
+    class Meta:
+        verbose_name = _('Tele-tıp Notu')
+        verbose_name_plural = _('Tele-tıp Notları')
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.title} - {self.appointment}"
+
+
 class TeleMedicineConsultation(models.Model):
     """
     Uzaktan sağlık konsültasyonu modeli
@@ -251,27 +603,26 @@ class TeleMedicineConsultation(models.Model):
         if not self.actual_start_time:
             self.actual_start_time = timezone.now()
             self.status = 'in_progress'
-        
-        # Katılım zamanını kaydet
-        if user == self.appointment.doctor:
-            self.doctor_joined_at = timezone.now()
-        elif user == self.appointment.patient:
-            self.patient_joined_at = timezone.now()
-        
-        self.save()
+            
+            if user == self.appointment.doctor:
+                self.doctor_joined_at = timezone.now()
+            elif user == self.appointment.patient:
+                self.patient_joined_at = timezone.now()
+                
+            self.save()
     
     def mark_as_completed(self):
         """Konsültasyonu tamamlandı olarak işaretle"""
         if not self.end_time:
             self.end_time = timezone.now()
-        
-        self.status = 'completed'
-        
-        # Süreyi hesapla
-        if self.actual_start_time:
-            self.duration_minutes = int(self.get_duration())
-        
-        self.save()
+            self.status = 'completed'
+            
+            # Süreyi hesapla
+            if self.actual_start_time:
+                duration = self.end_time - self.actual_start_time
+                self.duration_minutes = int(duration.total_seconds() / 60)
+                
+            self.save()
 
 
 class TeleMedicineMessage(models.Model):
@@ -319,7 +670,7 @@ class TeleMedicineMessage(models.Model):
     
     timestamp = models.DateTimeField(
         auto_now_add=True,
-        verbose_name=_('Zaman Damgası')
+        verbose_name=_('Zaman')
     )
     
     class Meta:
@@ -408,8 +759,8 @@ class TeleMedicineSettings(models.Model):
     )
     
     auto_end_consultation = models.BooleanField(
-        default=False,
-        verbose_name=_('Otomatik Konsültasyon Sonu')
+        default=True,
+        verbose_name=_('Otomatik Sonlandır')
     )
     
     class Meta:
@@ -417,4 +768,4 @@ class TeleMedicineSettings(models.Model):
         verbose_name_plural = _('Telemedicine Ayarları')
     
     def __str__(self):
-        return f"{self.user} - Telemedicine Ayarları"
+        return f"{self.user} Ayarları"

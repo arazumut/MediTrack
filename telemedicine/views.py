@@ -4,7 +4,7 @@ Telemedicine Views for MediTracked
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
@@ -15,10 +15,13 @@ from django.views.decorators.http import require_http_methods
 from django.db import models
 import json
 import uuid
+import time
+from datetime import datetime
 
-from .models import TeleMedicineConsultation, TeleMedicineMessage, TeleMedicineSettings
+from .models import TeleMedicineConsultation, TeleMedicineMessage, TeleMedicineSettings, TelemedicineAppointment, VideoSession, TelemedDocument, TelemedPrescription, TelemedNote
 from appointments.models import Appointment
 from core.models_notifications import Notification, NotificationType
+from .forms import TelemedicineAppointmentForm, TelemedDocumentForm, TelemedPrescriptionForm, TelemedNoteForm
 
 
 class TeleMedicineConsultationListView(LoginRequiredMixin, ListView):
@@ -466,3 +469,207 @@ def telemedicine_dashboard(request):
         context = {'user_type': 'other'}
     
     return render(request, 'telemedicine/dashboard.html', context)
+
+
+@login_required
+def create_telemedicine_appointment(request):
+    if request.method == 'POST':
+        form = TelemedicineAppointmentForm(request.POST, user=request.user)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            
+            # Kullanıcı tipine göre atama
+            if request.user.is_patient():
+                appointment.patient = request.user
+            else:
+                appointment.created_by = request.user
+                
+            appointment.save()
+            
+            # Doktor için bildirim oluştur
+            Notification.objects.create(
+                recipient=appointment.doctor,
+                notification_type=NotificationType.APPOINTMENT_CONFIRMED,
+                title="Yeni Tele-tıp Randevusu",
+                message=f"{appointment.patient.get_full_name()} ile {appointment.date.strftime('%d.%m.%Y')} tarihinde saat {appointment.time.strftime('%H:%M')} için yeni bir tele-tıp randevunuz var.",
+                priority="normal",
+                extra_data={
+                    "appointment_id": appointment.id,
+                    "patient_id": appointment.patient.id,
+                }
+            )
+            
+            # Hasta için bildirim oluştur (hasta oluşturmadıysa)
+            if not request.user.is_patient():
+                Notification.objects.create(
+                    recipient=appointment.patient,
+                    notification_type=NotificationType.APPOINTMENT_CONFIRMED,
+                    title="Yeni Tele-tıp Randevusu",
+                    message=f"Dr. {appointment.doctor.get_full_name()} ile {appointment.date.strftime('%d.%m.%Y')} tarihinde saat {appointment.time.strftime('%H:%M')} için yeni bir tele-tıp randevunuz oluşturuldu.",
+                    priority="normal",
+                    extra_data={
+                        "appointment_id": appointment.id,
+                        "doctor_id": appointment.doctor.id,
+                    }
+                )
+            
+            messages.success(request, "Tele-tıp randevusu başarıyla oluşturuldu.")
+            return redirect('telemedicine-appointment-detail', pk=appointment.pk)
+    else:
+        form = TelemedicineAppointmentForm(user=request.user)
+        
+    return render(request, 'telemedicine/appointment_form.html', {'form': form})
+
+
+@login_required
+def start_video_session(request, appointment_id):
+    appointment = get_object_or_404(TelemedicineAppointment, id=appointment_id)
+    
+    # Yetki kontrolü
+    if not (request.user == appointment.doctor or request.user == appointment.patient):
+        messages.error(request, "Bu görüşmeye erişim yetkiniz yok.")
+        return redirect('telemedicine-appointment-list')
+    
+    # Randevu zamanı kontrolü
+    now = timezone.now()
+    appointment_datetime = timezone.make_aware(datetime.combine(appointment.date, appointment.time))
+    time_diff = (appointment_datetime - now).total_seconds() / 60  # Dakika cinsinden
+    
+    # Randevudan 10 dakika önce veya 30 dakika sonrasına kadar izin ver
+    if time_diff > 10:
+        messages.warning(request, f"Görüşme henüz başlamadı. Randevunuz {appointment.time.strftime('%H:%M')} saatinde.")
+        return redirect('telemedicine-appointment-detail', pk=appointment_id)
+    
+    if time_diff < -30:
+        messages.warning(request, "Bu randevunun süresi dolmuş. Yeni bir randevu oluşturun.")
+        return redirect('telemedicine-appointment-list')
+    
+    # Aktif görüşme var mı kontrol et
+    active_session = VideoSession.objects.filter(
+        appointment=appointment,
+        end_time__isnull=True
+    ).first()
+    
+    # Yoksa yeni görüşme başlat
+    if not active_session:
+        active_session = VideoSession.objects.create(
+            appointment=appointment,
+            started_by=request.user,
+            room_name=f"telemed_{appointment.id}_{int(time.time())}"
+        )
+        
+        # Karşı tarafa bildirim gönder
+        recipient = appointment.patient if request.user == appointment.doctor else appointment.doctor
+        Notification.objects.create(
+            recipient=recipient,
+            notification_type=NotificationType.APPOINTMENT_REMINDER,
+            title="Görüşme Başladı",
+            message=f"{request.user.get_full_name()} görüşmeyi başlattı. Şimdi katılabilirsiniz.",
+            priority="high",
+            extra_data={
+                "appointment_id": appointment.id,
+                "session_id": active_session.id,
+            }
+        )
+    
+    # Görüşme sayfasına yönlendir
+    return render(request, 'telemedicine/video_session.html', {
+        'appointment': appointment,
+        'session': active_session,
+        'is_doctor': request.user == appointment.doctor
+    })
+
+
+@login_required
+def end_video_session(request, session_id):
+    session = get_object_or_404(VideoSession, id=session_id)
+    appointment = session.appointment
+    
+    # Yetki kontrolü
+    if not (request.user == appointment.doctor or request.user == appointment.patient):
+        messages.error(request, "Bu işlem için yetkiniz yok.")
+        return JsonResponse({'status': 'error', 'message': 'Yetki hatası'})
+    
+    # Görüşmeyi sonlandır
+    if not session.end_time:
+        session.end_time = timezone.now()
+        session.ended_by = request.user
+        session.save()
+    
+    return JsonResponse({'status': 'success'})
+
+
+class TelemedicineAppointmentListView(LoginRequiredMixin, ListView):
+    model = TelemedicineAppointment
+    template_name = 'telemedicine/appointment_list.html'
+    context_object_name = 'appointments'
+    
+    def get_queryset(self):
+        user = self.request.user
+        queryset = TelemedicineAppointment.objects.all()
+        
+        # Kullanıcı tipine göre filtrele
+        if user.is_patient():
+            queryset = queryset.filter(patient=user)
+        elif user.is_doctor():
+            queryset = queryset.filter(doctor=user)
+        
+        # Durum filtresi
+        status = self.request.GET.get('status')
+        if status:
+            queryset = queryset.filter(status=status)
+        
+        # Tarih filtresi
+        date_filter = self.request.GET.get('date_filter', 'upcoming')
+        today = timezone.now().date()
+        
+        if date_filter == 'upcoming':
+            queryset = queryset.filter(date__gte=today)
+        elif date_filter == 'past':
+            queryset = queryset.filter(date__lt=today)
+        
+        return queryset.order_by('date', 'time')
+
+
+class TelemedicineAppointmentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = TelemedicineAppointment
+    template_name = 'telemedicine/appointment_detail.html'
+    context_object_name = 'appointment'
+    
+    def test_func(self):
+        appointment = self.get_object()
+        user = self.request.user
+        return (user == appointment.doctor or 
+                user == appointment.patient or 
+                user.is_receptionist() or 
+                user.is_admin_user())
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        appointment = self.get_object()
+        
+        # Belgeleri ekle
+        context['documents'] = TelemedDocument.objects.filter(appointment=appointment)
+        
+        # Reçeteleri ekle
+        context['prescriptions'] = TelemedPrescription.objects.filter(appointment=appointment)
+        
+        # Notları ekle
+        context['notes'] = TelemedNote.objects.filter(appointment=appointment)
+        
+        # Görüşme geçmişini ekle
+        context['sessions'] = VideoSession.objects.filter(appointment=appointment)
+        
+        # Aktif görüşme var mı?
+        context['active_session'] = VideoSession.objects.filter(
+            appointment=appointment,
+            end_time__isnull=True
+        ).first()
+        
+        # Formları ekle
+        if self.request.user == appointment.doctor:
+            context['document_form'] = TelemedDocumentForm()
+            context['prescription_form'] = TelemedPrescriptionForm()
+            context['note_form'] = TelemedNoteForm()
+        
+        return context
