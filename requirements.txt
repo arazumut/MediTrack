@@ -8,7 +8,6 @@ django-unfold==0.60.0
 
 # REST API and Mobile Support
 djangorestframework==3.14.0
-djangorestframework-authtoken==0.0.0
 django-cors-headers==4.3.1
 
 # AI and Machine Learning
