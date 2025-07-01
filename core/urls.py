@@ -13,6 +13,8 @@ from .views_dashboard import (
     dashboard_analytics_api, patient_health_summary_api
 )
 
+app_name = 'core'
+
 urlpatterns = [
     # Dashboard
     path('dashboard/', EnhancedDashboardView.as_view(), name='enhanced-dashboard'),
@@ -60,4 +62,10 @@ urlpatterns = [
     # Tema Ayarları
     path('theme/toggle/', toggle_theme, name='toggle-theme'),
     path('theme/preference/', get_theme_preference, name='get-theme-preference'),
+    
+    # Analytics Dashboard
+    path('analytics/', views.analytics_dashboard, name='analytics_dashboard'),
+    
+    # AI Assistant
+    path('ai-assistant/', views.ai_assistant, name='ai_assistant'),
 ]

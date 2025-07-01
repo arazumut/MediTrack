@@ -15,6 +15,7 @@ from .forms import (
 )
 from appointments.models import Appointment
 from treatments.models import Treatment, Prescription
+from .analytics import DashboardAnalytics
 
 User = get_user_model()
 
@@ -649,3 +650,36 @@ class DoctorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         response = super().form_valid(form)
         messages.success(self.request, _('Doktor bilgileri başarıyla güncellendi.'))
         return response
+
+# Analytics Dashboard View
+@login_required
+def analytics_dashboard(request):
+    """
+    Gelişmiş analitik dashboard görünümü
+    """
+    # Kullanıcı rolüne göre erişim kontrolü
+    if not (request.user.is_doctor() or request.user.is_admin_user()):
+        messages.error(request, _('Bu sayfaya erişim izniniz bulunmamaktadır.'))
+        return redirect('home')
+    
+    # Analitik verilerini hazırla
+    analytics = DashboardAnalytics(user=request.user)
+    dashboard_data = analytics.get_comprehensive_dashboard_data()
+    
+    context = {
+        'dashboard_data': dashboard_data
+    }
+    
+    return render(request, 'dashboards/analytics_dashboard.html', context)
+
+# AI Assistant View
+@login_required
+def ai_assistant(request):
+    """
+    AI Sağlık Asistanı görünümü
+    """
+    context = {
+        'title': _('AI Sağlık Asistanı')
+    }
+    
+    return render(request, 'core/ai_assistant.html', context)

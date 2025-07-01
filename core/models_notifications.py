@@ -38,12 +38,13 @@ class Notification(models.Model):
     """
     Gelişmiş bildirim modeli
     """
-    # Alıcı
+    # Alıcı - Use null=True for migration purposes
     recipient = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='notifications',
-        verbose_name=_('Alıcı')
+        verbose_name=_('Alıcı'),
+        null=True
     )
     
     # Gönderen (opsiyonel, sistem bildirimleri için None olabilir)

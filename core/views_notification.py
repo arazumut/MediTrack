@@ -48,7 +48,7 @@ def mark_notification_as_read(request, notification_id):
     messages.success(request, _('Bildirim okundu olarak işaretlendi.'))
     if notification.related_url:
         return redirect(notification.related_url)
-    return redirect('notification-list')
+    return redirect('core:notification-list')
 
 @login_required
 def mark_all_notifications_as_read(request):
@@ -63,4 +63,4 @@ def mark_all_notifications_as_read(request):
     
     # Normal istek için yönlendirme
     messages.success(request, _('Tüm bildirimler okundu olarak işaretlendi.'))
-    return redirect('notification-list')
+    return redirect('core:notification-list')

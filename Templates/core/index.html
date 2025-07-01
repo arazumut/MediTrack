@@ -89,11 +89,11 @@
                 <div class="mt-auto">
                     {% if user.is_authenticated %}
                         {% if user.is_receptionist or user.is_admin_user %}
-                        <a href="{% url 'patient-register' %}" class="btn btn-primary">Hasta Kaydı</a>
+                        <a href="{% url 'core:patient-register' %}" class="btn btn-primary">Hasta Kaydı</a>
                         {% elif user.is_doctor %}
-                        <a href="{% url 'patient-list' %}" class="btn btn-primary">Hastalarım</a>
+                        <a href="{% url 'core:patient-list' %}" class="btn btn-primary">Hastalarım</a>
                         {% else %}
-                        <a href="{% url 'appointment-list' %}" class="btn btn-primary">Randevularım</a>
+                        <a href="{% url 'core:appointment-list' %}" class="btn btn-primary">Randevularım</a>
                         {% endif %}
                     {% else %}
                     <a href="{% url 'login' %}" class="btn btn-primary">Giriş Yap</a>
@@ -111,7 +111,7 @@
                 <p class="fs-5 text-gray-600 mb-5">Randevuları kolayca oluşturun, takip edin ve yönetin. Doktor ve hasta programlarını optimize edin.</p>
                 <div class="mt-auto">
                     {% if user.is_authenticated %}
-                    <a href="{% url 'appointment-list' %}" class="btn btn-success">Randevular</a>
+                    <a href="{% url 'core:appointment-list' %}" class="btn btn-success">Randevular</a>
                     {% else %}
                     <a href="{% url 'login' %}" class="btn btn-success">Giriş Yap</a>
                     {% endif %}
@@ -129,7 +129,7 @@
                 <div class="mt-auto">
                     {% if user.is_authenticated %}
                         {% if user.is_doctor %}
-                        <a href="{% url 'appointment-list' %}" class="btn btn-info">Tedavi Yönetimi</a>
+                        <a href="{% url 'core:appointment-list' %}" class="btn btn-info">Tedavi Yönetimi</a>
                         {% else %}
                         <a href="{% url 'dashboard' %}" class="btn btn-info">Dashboard</a>
                         {% endif %}

@@ -46,7 +46,7 @@ urlpatterns = [
     path('theme/preference/', get_theme_preference, name='get-theme-preference'),
     
     # Core uygulaması URL'leri
-    path('core/', include('core.urls')),
+    path('core/', include('core.urls', namespace='core')),
     
     # Appointments uygulaması URL'leri
     path('appointments/', include('appointments.urls')),

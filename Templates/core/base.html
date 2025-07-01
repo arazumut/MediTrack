@@ -125,7 +125,7 @@
                                                 <span class="badge badge-primary ms-2">{{ unread_notifications_count }} yeni</span>
                                                 {% endif %}
                                             </div>
-                                            <a href="{% url 'notification-list' %}" class="fw-semibold text-muted text-hover-primary fs-7">Tüm bildirimleriniz</a>
+                                            <a href="{% url 'core:notification-list' %}" class="fw-semibold text-muted text-hover-primary fs-7">Tüm bildirimleriniz</a>
                                         </div>
                                     </div>
                                 </div>
@@ -143,7 +143,7 @@
                                 
                                 {% for notification in recent_notifications %}
                                 <div class="menu-item px-5 py-2">
-                                    <a href="{% if not notification.is_read %}{% url 'mark-notification-read' notification.id %}{% else %}{{ notification.related_url }}{% endif %}" class="menu-link px-5 {% if not notification.is_read %}bg-light-primary{% endif %}">
+                                    <a href="{% if not notification.is_read %}{% url 'core:mark-notification-read' notification.id %}{% else %}{{ notification.related_url }}{% endif %}" class="menu-link px-5 {% if not notification.is_read %}bg-light-primary{% endif %}">
                                         <span class="menu-title fw-semibold">{{ notification.title }}</span>
                                         <span class="menu-desc text-gray-600 fs-7 mt-1">{{ notification.message|truncatechars:60 }}</span>
                                         <span class="fs-8 text-muted">{{ notification.created_at|date:"d M Y H:i" }}</span>
@@ -162,7 +162,7 @@
                                 <div class="separator my-2"></div>
                                 
                                 <div class="menu-item px-5">
-                                    <a href="{% url 'notification-list' %}" class="menu-link px-5 text-center">
+                                    <a href="{% url 'core:notification-list' %}" class="menu-link px-5 text-center">
                                         <span class="menu-title fw-semibold">Tüm Bildirimleri Görüntüle</span>
                                     </a>
                                 </div>
@@ -200,7 +200,7 @@
                                 </div>
                                 {% if user.is_patient %}
                                 <div class="menu-item px-5">
-                                    <a href="{% url 'patient-detail' user.id %}" class="menu-link px-5">Profilim</a>
+                                    <a href="{% url 'core:patient-detail' user.id %}" class="menu-link px-5">Profilim</a>
                                 </div>
                                 {% endif %}
                                 <div class="menu-item px-5">
@@ -244,7 +244,7 @@
                                 <!-- Hastalar -->
                                 {% if user.is_doctor or user.is_receptionist or user.is_admin_user %}
                                 <div class="menu-item">
-                                    <a class="menu-link" href="{% url 'patient-list' %}">
+                                    <a class="menu-link" href="{% url 'core:patient-list' %}">
                                         <span class="menu-icon">
                                             <i class="ki-outline ki-profile-user fs-2"></i>
                                         </span>
@@ -255,7 +255,7 @@
                                 
                                 <!-- Doktorlar -->
                                 <div class="menu-item">
-                                    <a class="menu-link" href="{% url 'doctor-list' %}">
+                                    <a class="menu-link" href="{% url 'core:doctor-list' %}">
                                         <span class="menu-icon">
                                             <i class="ki-outline ki-abstract-26 fs-2"></i>
                                         </span>
@@ -265,7 +265,7 @@
                                 
                                 <!-- Randevular -->
                                 <div class="menu-item">
-                                    <a class="menu-link" href="{% url 'appointment-list' %}">
+                                    <a class="menu-link" href="{% url 'core:appointment-list' %}">
                                         <span class="menu-icon">
                                             <i class="ki-outline ki-calendar fs-2"></i>
                                         </span>
@@ -357,7 +357,7 @@
                                 
                                 <!-- Bildirimler -->
                                 <div class="menu-item">
-                                    <a class="menu-link" href="{% url 'notification-list' %}">
+                                    <a class="menu-link" href="{% url 'core:notification-list' %}">
                                         <span class="menu-icon">
                                             <i class="ki-outline ki-notification-status fs-2"></i>
                                         </span>
@@ -373,7 +373,7 @@
                                 <!-- Yeni Randevu -->
                                 {% if user.is_doctor or user.is_receptionist or user.is_admin_user %}
                                 <div class="menu-item">
-                                    <a class="menu-link" href="{% url 'appointment-create' %}">
+                                    <a class="menu-link" href="{% url 'core:appointment-create' %}">
                                         <span class="menu-icon">
                                             <i class="ki-outline ki-plus fs-2"></i>
                                         </span>
@@ -385,7 +385,7 @@
                                 <!-- Hasta Kaydı -->
                                 {% if user.is_receptionist or user.is_admin_user %}
                                 <div class="menu-item">
-                                    <a class="menu-link" href="{% url 'patient-register' %}">
+                                    <a class="menu-link" href="{% url 'core:patient-register' %}">
                                         <span class="menu-icon">
                                             <i class="ki-outline ki-user-add fs-2"></i>
                                         </span>

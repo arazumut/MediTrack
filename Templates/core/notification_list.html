@@ -49,7 +49,7 @@
         </div>
         <div class="card-toolbar">
             <div class="d-flex align-items-center position-relative my-1">
-                <a href="{% url 'mark-all-notifications-read' %}" class="btn btn-sm btn-light-primary me-3">
+                <a href="{% url 'core:mark-all-notifications-read' %}" class="btn btn-sm btn-light-primary me-3">
                     <i class="ki-outline ki-check-square fs-2"></i>Tümünü Okundu İşaretle
                 </a>
             </div>
@@ -96,7 +96,7 @@
                                     <span class="notification-time me-3">{{ notification.created_at|date:"d M Y H:i" }}</span>
                                     <div class="notification-actions">
                                         {% if not notification.is_read %}
-                                            <a href="{% url 'mark-notification-read' notification.id %}" class="btn btn-sm btn-icon btn-light-primary btn-active-light-primary me-1" data-bs-toggle="tooltip" title="Okundu İşaretle">
+                                            <a href="{% url 'core:mark-notification-read' notification.id %}" class="btn btn-sm btn-icon btn-light-primary btn-active-light-primary me-1" data-bs-toggle="tooltip" title="Okundu İşaretle">
                                                 <i class="ki-outline ki-check fs-2"></i>
                                             </a>
                                         {% endif %}
@@ -150,7 +150,7 @@
 <script>
     // Bildirim işaretleme işlemi için AJAX kullanımı
     document.addEventListener('DOMContentLoaded', function() {
-        const notificationLinks = document.querySelectorAll('a[href^="{% url 'mark-notification-read' 0 %}"'.replace('/0/', '/'));
+        const notificationLinks = document.querySelectorAll('a[href^="{% url 'core:mark-notification-read' 0 %}"'.replace('/0/', '/'));
         
         notificationLinks.forEach(link => {
             link.addEventListener('click', function(e) {
@@ -187,7 +187,7 @@
         });
         
         // Tümünü okundu işaretle
-        const markAllReadLink = document.querySelector('a[href="{% url 'mark-all-notifications-read' %}"]');
+        const markAllReadLink = document.querySelector('a[href="{% url 'core:mark-all-notifications-read' %}"]');
         if (markAllReadLink) {
             markAllReadLink.addEventListener('click', function(e) {
                 e.preventDefault();
