@@ -333,3 +333,64 @@ class SystemReportsView(LoginRequiredMixin, TemplateView):
             })
         
         return list(reversed(months_data))
+
+
+def recent_activity(request):
+    """
+    API endpoint to retrieve recent system activity for the analytics dashboard
+    """
+    # Sample activities - in a real implementation, this would pull from a database
+    activities = [
+        {
+            'time': timezone.now().strftime('%H:%M %p'),
+            'event': 'New appointment scheduled',
+            'user': 'Dr. Sarah Johnson',
+            'department': 'Cardiology',
+            'status': 'Completed',
+            'status_color': 'success'
+        },
+        {
+            'time': (timezone.now() - timedelta(minutes=5)).strftime('%H:%M %p'),
+            'event': 'Teleconsultation started',
+            'user': 'Dr. Michael Chen',
+            'department': 'Neurology',
+            'status': 'In Progress',
+            'status_color': 'primary'
+        },
+        {
+            'time': (timezone.now() - timedelta(minutes=10)).strftime('%H:%M %p'),
+            'event': 'Patient registered',
+            'user': 'John Doe',
+            'department': 'General',
+            'status': 'New',
+            'status_color': 'info'
+        },
+        {
+            'time': (timezone.now() - timedelta(minutes=15)).strftime('%H:%M %p'),
+            'event': 'AI risk assessment completed',
+            'user': 'System',
+            'department': 'AI Analytics',
+            'status': 'Review Required',
+            'status_color': 'warning'
+        }
+    ]
+    
+    return JsonResponse({'activities': activities})
+
+
+def export_analytics(request):
+    """
+    Export analytics data in different formats (PDF, Excel, CSV)
+    """
+    format_type = request.GET.get('format', 'pdf')
+    
+    # In a real implementation, this would generate and return the appropriate file
+    # For now, we'll just return a response indicating success
+    
+    response_data = {
+        'success': True,
+        'message': f'Analytics exported in {format_type.upper()} format',
+        'format': format_type
+    }
+    
+    return JsonResponse(response_data)

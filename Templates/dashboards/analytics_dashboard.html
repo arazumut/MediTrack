@@ -545,7 +545,7 @@ function updateDashboard() {
     
     // AJAX call to update dashboard
     $.ajax({
-        url: '{% url "core:analytics_data" %}',
+        url: '{% url "core:dashboard-analytics-api" %}',
         method: 'GET',
         data: {
             'period': timePeriod,

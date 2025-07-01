@@ -10,7 +10,8 @@ from .views_notification import (
 from .views_theme import toggle_theme, get_theme_preference
 from .views_dashboard import (
     EnhancedDashboardView, DoctorPerformanceView, SystemReportsView,
-    dashboard_analytics_api, patient_health_summary_api
+    dashboard_analytics_api, patient_health_summary_api, recent_activity,
+    export_analytics
 )
 
 app_name = 'core'
@@ -24,6 +25,8 @@ urlpatterns = [
     # Dashboard API endpoints
     path('dashboard/api/analytics/', dashboard_analytics_api, name='dashboard-analytics-api'),
     path('dashboard/api/patient/<int:patient_id>/health-summary/', patient_health_summary_api, name='patient-health-summary-api'),
+    path('dashboard/api/recent-activity/', recent_activity, name='recent_activity'),
+    path('dashboard/api/export-analytics/', export_analytics, name='export_analytics'),
 
     # Hastalar
     path('patients/register/', views.PatientRegistrationView.as_view(), name='patient-register'),
