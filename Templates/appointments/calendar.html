@@ -70,7 +70,7 @@
                 <i class="ki-outline ki-calendar-tick fs-2"></i>Randevu Listesi
             </a>
             {% if user.is_doctor or user.is_receptionist or user.is_admin_user %}
-            <a href="{% url 'appointment-create' %}" class="btn btn-sm btn-primary">
+            <a href="{% url 'core:appointment-create' %}" class="btn btn-sm btn-primary">
                 <i class="ki-outline ki-plus fs-2"></i>Yeni Randevu
             </a>
             {% endif %}

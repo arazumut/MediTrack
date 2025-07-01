@@ -24,7 +24,7 @@
                 </form>
                 
                 {% if user.is_doctor or user.is_receptionist or user.is_admin_user %}
-                <a href="{% url 'appointment-create' %}" class="btn btn-success">
+                <a href="{% url 'core:appointment-create' %}" class="btn btn-success">
                     <i class="fas fa-plus"></i> Yeni Randevu
                 </a>
                 {% endif %}
@@ -36,7 +36,7 @@
         <div class="card-body">
             {% if user.is_patient %}
             <div class="mb-4">
-                <a href="{% url 'appointment-create' %}" class="btn btn-primary">
+                <a href="{% url 'core:appointment-create' %}" class="btn btn-primary">
                     <i class="fas fa-calendar-plus"></i> Randevu Al
                 </a>
             </div>
@@ -66,7 +66,7 @@
                                     <td>{{ appointment.time|time:"H:i" }}</td>
                                     {% if not user.is_patient %}
                                         <td>
-                                            <a href="{% url 'patient-detail' appointment.patient.id %}">
+                                            <a href="{% url 'core:patient-detail' appointment.patient.id %}">
                                                 {{ appointment.patient.get_full_name }}
                                             </a>
                                         </td>
@@ -85,25 +85,25 @@
                                     </td>
                                     <td>{{ appointment.description|truncatechars:30 }}</td>
                                     <td>
-                                        <a href="{% url 'appointment-detail' appointment.id %}" class="btn btn-sm btn-info">
+                                        <a href="{% url 'core:appointment-detail' appointment.id %}" class="btn btn-sm btn-info">
                                             <i class="fas fa-eye"></i> Görüntüle
                                         </a>
                                         
                                         {% if appointment.status == 'planned' %}
                                             {% if user.is_doctor and appointment.doctor == user %}
-                                                <a href="{% url 'treatment-create' appointment.id %}" class="btn btn-sm btn-success">
+                                                <a href="{% url 'core:treatment-create' appointment.id %}" class="btn btn-sm btn-success">
                                                     <i class="fas fa-notes-medical"></i> Tedavi Ekle
                                                 </a>
                                             {% endif %}
                                             
                                             {% if user.is_doctor or user.is_receptionist or user.is_admin_user %}
-                                                <a href="{% url 'appointment-update' appointment.id %}" class="btn btn-sm btn-warning">
+                                                <a href="{% url 'core:appointment-update' appointment.id %}" class="btn btn-sm btn-warning">
                                                     <i class="fas fa-edit"></i> Düzenle
                                                 </a>
                                             {% endif %}
                                             
                                             {% if user.is_receptionist or user.is_admin_user %}
-                                                <a href="{% url 'appointment-delete' appointment.id %}" class="btn btn-sm btn-danger">
+                                                <a href="{% url 'core:appointment-delete' appointment.id %}" class="btn btn-sm btn-danger">
                                                     <i class="fas fa-trash"></i> Sil
                                                 </a>
                                             {% endif %}

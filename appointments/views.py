@@ -66,7 +66,7 @@ class CalendarView(LoginRequiredMixin, ListView):
                 'title': f"{appointment.patient.get_full_name()} - Dr. {appointment.doctor.get_full_name()}",
                 'start': f"{appointment.date.isoformat()}T{appointment.time.isoformat()}",
                 'end': f"{appointment.date.isoformat()}T{(appointment.time.replace(hour=appointment.time.hour+1)).isoformat()}",
-                'url': f"/appointments/{appointment.id}/",
+                'url': reverse_lazy('core:appointment-detail', kwargs={'pk': appointment.id}),
                 'backgroundColor': self.get_status_color(appointment.status),
                 'borderColor': self.get_status_color(appointment.status),
             })
@@ -109,7 +109,7 @@ def get_calendar_events(request):
                 'title': f"{appointment.patient.get_full_name()} - Dr. {appointment.doctor.get_full_name()}",
                 'start': f"{appointment.date.isoformat()}T{appointment.time.isoformat()}",
                 'end': f"{appointment.date.isoformat()}T{(appointment.time.replace(hour=appointment.time.hour+1)).isoformat()}",
-                'url': f"/appointments/{appointment.id}/",
+                'url': reverse_lazy('core:appointment-detail', kwargs={'pk': appointment.id}),
                 'backgroundColor': get_status_color(appointment.status),
                 'borderColor': get_status_color(appointment.status),
             })

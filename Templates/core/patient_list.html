@@ -18,7 +18,7 @@
                 </form>
                 
                 {% if user.is_receptionist or user.is_admin_user %}
-                <a href="{% url 'register' %}" class="btn btn-success">
+                <a href="{% url 'core:patient-register' %}" class="btn btn-success">
                     <i class="fas fa-plus"></i> Yeni Hasta
                 </a>
                 {% endif %}
@@ -48,12 +48,12 @@
                                     <td>{{ patient.date_of_birth|date:"d.m.Y"|default:"Belirtilmemiş" }}</td>
                                     <td>{{ patient.phone_number|default:"Belirtilmemiş" }}</td>
                                     <td>
-                                        <a href="{% url 'patient-detail' patient.id %}" class="btn btn-sm btn-info">
+                                        <a href="{% url 'core:patient-detail' patient.id %}" class="btn btn-sm btn-info">
                                             <i class="fas fa-eye"></i> Görüntüle
                                         </a>
                                         
                                         {% if user.is_doctor or user.is_receptionist or user.is_admin_user %}
-                                        <a href="{% url 'appointment-create' %}?patient={{ patient.id }}" class="btn btn-sm btn-success">
+                                        <a href="{% url 'core:appointment-create' %}?patient={{ patient.id }}" class="btn btn-sm btn-success">
                                             <i class="fas fa-calendar-plus"></i> Randevu Oluştur
                                         </a>
                                         {% endif %}

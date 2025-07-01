@@ -1502,3 +1502,517 @@ Traceback (most recent call last):
     raise NoReverseMatch(msg)
 django.urls.exceptions.NoReverseMatch: Reverse for 'patient-detail' not found. 'patient-detail' is not a valid view function or pattern name.
 "GET /core/patients/ HTTP/1.1" 500 178089
+"GET /core/patients/ HTTP/1.1" 200 26335
+"GET /theme/preference/ HTTP/1.1" 200 19
+"GET /core/doctors/ HTTP/1.1" 200 31421
+"GET /theme/preference/ HTTP/1.1" 200 19
+Internal Server Error: /core/appointments/
+Traceback (most recent call last):
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'appointment-create' not found. 'appointment-create' is not a valid view function or pattern name.
+"GET /core/appointments/ HTTP/1.1" 500 172807
+"GET /core/appointments/ HTTP/1.1" 200 29401
+"GET /theme/preference/ HTTP/1.1" 200 19
+Internal Server Error: /appointments/calendar/
+Traceback (most recent call last):
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'appointment-create' not found. 'appointment-create' is not a valid view function or pattern name.
+"GET /appointments/calendar/ HTTP/1.1" 500 171438
+"GET /appointments/calendar/ HTTP/1.1" 200 27054
+"GET /theme/preference/ HTTP/1.1" 200 19
+"POST /theme/toggle/ HTTP/1.1" 200 37
+"POST /theme/toggle/ HTTP/1.1" 200 36
+/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/appointments/views.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /appointments/calendar/ HTTP/1.1" 200 27054
+"GET /theme/preference/ HTTP/1.1" 200 19
+/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/appointments/views.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /core/doctors/ HTTP/1.1" 200 31421
+"GET /theme/preference/ HTTP/1.1" 200 19
+"GET /core/patients/ HTTP/1.1" 200 26335
+"GET /theme/preference/ HTTP/1.1" 200 19
+Internal Server Error: /dashboard/
+Traceback (most recent call last):
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/core/views.py", line 156, in dashboard
+    return render(request, 'core/doctor_dashboard.html', context)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'patient-detail' not found. 'patient-detail' is not a valid view function or pattern name.
+"GET /dashboard/ HTTP/1.1" 500 199814
+/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/appointments/views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /dashboard/
+Traceback (most recent call last):
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/core/views.py", line 156, in dashboard
+    return render(request, 'core/doctor_dashboard.html', context)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'patient-detail' not found. 'patient-detail' is not a valid view function or pattern name.
+"GET /dashboard/ HTTP/1.1" 500 199951
+Internal Server Error: /dashboard/
+Traceback (most recent call last):
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/core/views.py", line 156, in dashboard
+    return render(request, 'core/doctor_dashboard.html', context)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'treatment-detail' not found. 'treatment-detail' is not a valid view function or pattern name.
+"GET /dashboard/ HTTP/1.1" 500 200709
+"GET /dashboard/ HTTP/1.1" 200 29729
+"GET /theme/preference/ HTTP/1.1" 200 19
+"GET /dashboard/ HTTP/1.1" 200 29729
+"GET /theme/preference/ HTTP/1.1" 200 19
+"GET /core/patients/ HTTP/1.1" 200 26335
+"GET /theme/preference/ HTTP/1.1" 200 19
+"GET /core/doctors/ HTTP/1.1" 200 31421
+"GET /theme/preference/ HTTP/1.1" 200 19
+"GET /core/appointments/ HTTP/1.1" 200 29401
+"GET /theme/preference/ HTTP/1.1" 200 19
+"GET /appointments/calendar/ HTTP/1.1" 200 27054
+"GET /theme/preference/ HTTP/1.1" 200 19
+Internal Server Error: /telemedicine/
+Traceback (most recent call last):
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/response.py", line 90, in rendered_content
+    template = self.resolve_template(self.template_name)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/response.py", line 72, in resolve_template
+    return select_template(template, using=self.using)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader.py", line 47, in select_template
+    raise TemplateDoesNotExist(", ".join(template_name_list), chain=chain)
+django.template.exceptions.TemplateDoesNotExist: telemedicine/consultation_list.html, telemedicine/telemedicineconsultation_list.html
+"GET /telemedicine/ HTTP/1.1" 500 84634
+Internal Server Error: /core/analytics/
+Traceback (most recent call last):
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/core/views.py", line 673, in analytics_dashboard
+    return render(request, 'dashboards/analytics_dashboard.html', context)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'analytics_data' not found. 'analytics_data' is not a valid view function or pattern name.
+"GET /core/analytics/ HTTP/1.1" 500 196710
+Internal Server Error: /core/analytics/
+Traceback (most recent call last):
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/core/views.py", line 673, in analytics_dashboard
+    return render(request, 'dashboards/analytics_dashboard.html', context)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/umutaraz/Desktop/Tüm hayatım burda/MediTracked/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'analytics_data' not found. 'analytics_data' is not a valid view function or pattern name.
+"GET /core/analytics/ HTTP/1.1" 500 196710

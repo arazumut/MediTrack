@@ -102,11 +102,11 @@
                                             </span>
                                         </td>
                                         <td class="text-end">
-                                            <a href="{% url 'appointment-detail' appointment.id %}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                            <a href="{% url 'core:appointment-detail' appointment.id %}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                                 <i class="ki-outline ki-switch fs-2"></i>
                                             </a>
                                             {% if appointment.status == 'planned' %}
-                                            <a href="{% url 'treatment-create' appointment.id %}" class="btn btn-icon btn-bg-light btn-active-color-success btn-sm">
+                                            <a href="{% url 'core:treatment-create' appointment.id %}" class="btn btn-icon btn-bg-light btn-active-color-success btn-sm">
                                                 <i class="ki-outline ki-add-files fs-2"></i>
                                             </a>
                                             {% endif %}
@@ -155,7 +155,7 @@
                                                     <i class="ki-outline ki-abstract-26 fs-3"></i>
                                                 </div>
                                                 <div class="d-flex justify-content-start flex-column">
-                                                    <a href="{% url 'patient-detail' appointment.patient.id %}" class="text-gray-900 fw-bold text-hover-primary fs-6">{{ appointment.patient.get_full_name }}</a>
+                                                    <a href="{% url 'core:patient-detail' appointment.patient.id %}" class="text-gray-900 fw-bold text-hover-primary fs-6">{{ appointment.patient.get_full_name }}</a>
                                                     <span class="text-muted fw-semibold text-muted d-block fs-7">
                                                         {% if appointment.patient.date_of_birth %}
                                                         {{ appointment.patient.date_of_birth|date:"d M Y" }}
@@ -176,7 +176,7 @@
                                             </span>
                                         </td>
                                         <td class="text-end">
-                                            <a href="{% url 'appointment-detail' appointment.id %}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                            <a href="{% url 'core:appointment-detail' appointment.id %}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                                 <i class="ki-outline ki-switch fs-2"></i>
                                             </a>
                                         </td>
@@ -223,7 +223,7 @@
                                                     <i class="ki-outline ki-abstract-26 fs-3"></i>
                                                 </div>
                                                 <div class="d-flex justify-content-start flex-column">
-                                                    <a href="{% url 'patient-detail' treatment.appointment.patient.id %}" class="text-gray-900 fw-bold text-hover-primary fs-6">{{ treatment.appointment.patient.get_full_name }}</a>
+                                                    <a href="{% url 'core:patient-detail' treatment.appointment.patient.id %}" class="text-gray-900 fw-bold text-hover-primary fs-6">{{ treatment.appointment.patient.get_full_name }}</a>
                                                     <span class="text-muted fw-semibold text-muted d-block fs-7">
                                                         {% if treatment.appointment.patient.date_of_birth %}
                                                         {{ treatment.appointment.patient.date_of_birth|date:"d M Y" }}
@@ -239,7 +239,7 @@
                                             <span class="text-gray-900 fw-semibold d-block fs-6">{{ treatment.diagnosis|truncatechars:50 }}</span>
                                         </td>
                                         <td class="text-end">
-                                            <a href="{% url 'treatment-detail' treatment.id %}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                            <a href="{% url 'core:treatment-detail' treatment.id %}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                                 <i class="ki-outline ki-switch fs-2"></i>
                                             </a>
                                         </td>
