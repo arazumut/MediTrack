@@ -2464,3 +2464,94 @@ django.urls.exceptions.NoReverseMatch: Reverse for 'ai_chat' not found. 'ai_chat
 "GET /theme/preference/ HTTP/1.1" 200 19
 "GET /core/analytics/ HTTP/1.1" 200 43065
 "GET /theme/preference/ HTTP/1.1" 200 19
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 16919
+"GET /static/assets/js/theme.js HTTP/1.1" 200 3625
+"GET /static/assets/css/theme.css HTTP/1.1" 200 2834
+"GET /static/assets/js/scripts.bundle.js HTTP/1.1" 200 238050
+"GET /static/assets/plugins/global/plugins.bundle.css HTTP/1.1" 200 879267
+"GET /static/assets/css/style.bundle.css HTTP/1.1" 200 1538590
+"GET /static/assets/plugins/global/plugins.bundle.js HTTP/1.1" 200 3558077
+"GET /static/assets/plugins/global/fonts/keenicons/keenicons-outline.ttf?fzo4bm HTTP/1.1" 200 246764
+"GET /theme/preference/ HTTP/1.1" 302 0
+"GET /login/?next=/theme/preference/ HTTP/1.1" 200 9176
+"GET /static/assets/media/logos/favicon.png HTTP/1.1" 200 65582
+"GET /login/ HTTP/1.1" 200 9158
+"GET /login/ HTTP/1.1" 200 9158
+"POST /login/ HTTP/1.1" 302 0
+"GET /dashboard/ HTTP/1.1" 200 24209
+"GET /static/assets/plugins/global/fonts/@fortawesome/fa-solid-900.woff2 HTTP/1.1" 200 157192
+"GET /theme/preference/ HTTP/1.1" 200 20
+Internal Server Error: /core/doctors/
+Traceback (most recent call last):
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'doctor-create' not found. 'doctor-create' is not a valid view function or pattern name.
+"GET /core/doctors/ HTTP/1.1" 500 175857
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 4185
+"GET /dashboard/ HTTP/1.1" 200 24209
+"GET /theme/preference/ HTTP/1.1" 200 20
+"POST /theme/toggle/ HTTP/1.1" 200 36
+"GET /core/appointments/ HTTP/1.1" 200 22503
+"GET /theme/preference/ HTTP/1.1" 200 19
+"GET /appointments/calendar/ HTTP/1.1" 200 25490
+"GET /theme/preference/ HTTP/1.1" 200 19
