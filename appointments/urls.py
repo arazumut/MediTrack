@@ -8,6 +8,8 @@ from .views_availability import (
 )
 from . import views
 
+app_name = 'appointments'
+
 urlpatterns = [
     # Doktor Çalışma Saatleri
     path('doctors/<int:doctor_id>/availability/', DoctorAvailabilityListView.as_view(), name='doctor-availability-list'),

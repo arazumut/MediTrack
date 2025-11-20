@@ -3601,3 +3601,178 @@ Watching for file changes with StatReloader
 "GET /theme/preference/ HTTP/1.1" 200 20
 "GET / HTTP/1.1" 200 30515
 "GET /theme/preference/ HTTP/1.1" 200 20
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 30514
+"GET /static/assets/plugins/global/plugins.bundle.css HTTP/1.1" 304 0
+"GET /static/assets/css/style.bundle.css HTTP/1.1" 304 0
+"GET /static/assets/css/theme.css HTTP/1.1" 304 0
+"GET /static/assets/plugins/global/plugins.bundle.js HTTP/1.1" 304 0
+"GET /static/assets/js/theme.js HTTP/1.1" 304 0
+"GET /static/assets/js/scripts.bundle.js HTTP/1.1" 304 0
+"GET /static/assets/plugins/global/fonts/keenicons/keenicons-outline.ttf?fzo4bm HTTP/1.1" 304 0
+"GET /static/assets/plugins/global/fonts/@fortawesome/fa-solid-900.woff2 HTTP/1.1" 304 0
+"GET /theme/preference/ HTTP/1.1" 200 20
+Internal Server Error: /core/patients/
+Traceback (most recent call last):
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/urls/base.py", line 81, in reverse
+    extra, resolver = resolver.namespace_dict[ns]
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^
+KeyError: 'appointments'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/urls/base.py", line 92, in reverse
+    raise NoReverseMatch("%s is not a registered namespace" % key)
+django.urls.exceptions.NoReverseMatch: 'appointments' is not a registered namespace
+"GET /core/patients/ HTTP/1.1" 500 162344
+/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/meditrack/urls.py changed, reloading.
+Watching for file changes with StatReloader
+/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/appointments/urls.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /core/patients/ HTTP/1.1" 200 33115
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/doctors/ HTTP/1.1" 200 38187
+"GET /theme/preference/ HTTP/1.1" 200 20
+Forbidden (Permission denied): /appointments/doctors/39/calendar/
+Traceback (most recent call last):
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/contrib/auth/mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/contrib/auth/mixins.py", line 134, in dispatch
+    return self.handle_no_permission()
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/venv/lib/python3.13/site-packages/django/contrib/auth/mixins.py", line 48, in handle_no_permission
+    raise PermissionDenied(self.get_permission_denied_message())
+django.core.exceptions.PermissionDenied
+"GET /appointments/doctors/39/calendar/ HTTP/1.1" 403 135
+"GET /logout/ HTTP/1.1" 302 0
+"GET /login/ HTTP/1.1" 200 9158
+/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/appointments/urls.py changed, reloading.
+Watching for file changes with StatReloader
+"POST /login/ HTTP/1.1" 302 0
+- Broken pipe from ('127.0.0.1', 50286)
+"POST /login/ HTTP/1.1" 302 0
+- Broken pipe from ('127.0.0.1', 50287)
+"POST /login/ HTTP/1.1" 302 0
+- Broken pipe from ('127.0.0.1', 50288)
+"POST /login/ HTTP/1.1" 302 0
+- Broken pipe from ('127.0.0.1', 50290)
+"POST /login/ HTTP/1.1" 302 0
+- Broken pipe from ('127.0.0.1', 50289)
+"POST /login/ HTTP/1.1" 302 0
+- Broken pipe from ('127.0.0.1', 50292)
+"POST /login/ HTTP/1.1" 302 0
+- Broken pipe from ('127.0.0.1', 50291)
+"POST /login/ HTTP/1.1" 302 0
+- Broken pipe from ('127.0.0.1', 50293)
+"POST /login/ HTTP/1.1" 302 0
+- Broken pipe from ('127.0.0.1', 50294)
+"POST /login/ HTTP/1.1" 302 0
+- Broken pipe from ('127.0.0.1', 50295)
+"POST /login/ HTTP/1.1" 302 0
+- Broken pipe from ('127.0.0.1', 50297)
+"POST /login/ HTTP/1.1" 302 0
+- Broken pipe from ('127.0.0.1', 50296)
+"POST /login/ HTTP/1.1" 302 0
+"POST /login/ HTTP/1.1" 302 0
+- Broken pipe from ('127.0.0.1', 50298)
+"GET /dashboard/ HTTP/1.1" 200 38230
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /login/ HTTP/1.1" 200 9158
+"POST /login/ HTTP/1.1" 302 0
+"GET /dashboard/ HTTP/1.1" 200 26641
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/doctors/ HTTP/1.1" 200 47673
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/appointments/create/?doctor=34 HTTP/1.1" 200 24892
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /appointments/calendar/ HTTP/1.1" 200 25533
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/appointments/ HTTP/1.1" 200 24622
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/doctors/ HTTP/1.1" 200 47673
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/doctors/ HTTP/1.1" 200 47673
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/appointments/ HTTP/1.1" 200 24622
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/appointments/56/ HTTP/1.1" 200 24327
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/appointments/ HTTP/1.1" 200 24622
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/appointments/create/ HTTP/1.1" 200 24892
+"GET /theme/preference/ HTTP/1.1" 200 20
+"POST /core/appointments/create/ HTTP/1.1" 302 0
+"GET /core/appointments/ HTTP/1.1" 200 26501
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /logout/ HTTP/1.1" 302 0
+"GET /login/ HTTP/1.1" 200 9158
+"POST /login/ HTTP/1.1" 302 0
+"GET /dashboard/ HTTP/1.1" 200 38230
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/appointments/ HTTP/1.1" 200 38702
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/appointments/ HTTP/1.1" 200 38702
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/appointments/create/ HTTP/1.1" 200 28438
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET / HTTP/1.1" 200 30514
+"GET /theme/preference/ HTTP/1.1" 200 20
+/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/core/views_dashboard.py changed, reloading.
+Watching for file changes with StatReloader

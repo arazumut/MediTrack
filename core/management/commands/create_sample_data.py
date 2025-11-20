@@ -4,6 +4,8 @@ import pytz
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from faker import Faker
+from faker.providers import BaseProvider
 from appointments.models import Appointment
 from appointments.models_availability import DoctorAvailability, DoctorTimeOff
 from treatments.models import Treatment, Prescription
@@ -14,6 +16,7 @@ from treatments.models_lab import LabTest, TestResult
 from treatments.models_imaging import MedicalImage, Report
 
 User = get_user_model()
+fake = Faker('tr_TR')  # Türkçe locale
 
 # Doktor uzmanlık alanları
 SPECIALIZATIONS = [
@@ -269,15 +272,15 @@ class Command(BaseCommand):
         """Belirtilen sayıda doktor oluşturur."""
         created_count = 0
         for i in range(1, num_doctors + 1):
-            first_name = self.get_random_first_name(gender='male' if i % 2 == 0 else 'female')
-            last_name = self.get_random_last_name()
+            first_name = fake.first_name()
+            last_name = fake.last_name()
             specialization = random.choice(SPECIALIZATIONS)
-            username = f"dr.{first_name.lower()}"
+            username = f"dr.{first_name.lower()}.{last_name.lower()}"
             
             user, created = User.objects.get_or_create(
                 username=username,
                 defaults={
-                    'email': f'{username}@meditrack.com',
+                    'email': fake.email(),
                     'first_name': first_name,
                     'last_name': last_name,
                     'user_type': 'doctor',
@@ -298,28 +301,25 @@ class Command(BaseCommand):
         """Belirtilen sayıda hasta oluşturur."""
         created_count = 0
         for i in range(1, num_patients + 1):
-            first_name = self.get_random_first_name(gender='male' if i % 2 == 0 else 'female')
-            last_name = self.get_random_last_name()
-            username = f"hasta.{first_name.lower()}"
+            first_name = fake.first_name()
+            last_name = fake.last_name()
+            username = f"hasta.{first_name.lower()}.{last_name.lower()}"
             
             # Rastgele adres oluştur
-            location = random.choice(CITIES_AND_DISTRICTS)
-            district = random.choice(location['districts'])
-            address = f"{random.randint(1, 100)}. Sokak, No: {random.randint(1, 100)}, {district} / {location['city']}"
+            address = fake.address()
             
             # Rastgele doğum tarihi (18-80 yaş arası)
-            age = random.randint(18, 80)
-            birth_date = datetime.now().date() - timedelta(days=age*365)
+            birth_date = fake.date_of_birth(minimum_age=18, maximum_age=80)
             
             user, created = User.objects.get_or_create(
                 username=username,
                 defaults={
-                    'email': f'{username}@gmail.com',
+                    'email': fake.email(),
                     'first_name': first_name,
                     'last_name': last_name,
                     'user_type': 'patient',
                     'date_of_birth': birth_date,
-                    'phone_number': f"05{random.randint(10, 99)}{random.randint(1000000, 9999999)}",
+                    'phone_number': fake.phone_number(),
                     'address': address,
                     'blood_type': random.choice(BLOOD_TYPES),
                 }

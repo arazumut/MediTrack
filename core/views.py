@@ -261,7 +261,7 @@ class AppointmentCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView)
     model = Appointment
     form_class = AppointmentForm
     template_name = 'core/appointment_form.html'
-    success_url = reverse_lazy('appointment-list')
+    success_url = reverse_lazy('core:appointment-list')
     
     def test_func(self):
         # Tüm kullanıcılar randevu oluşturabilir
@@ -300,7 +300,7 @@ class AppointmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
     model = Appointment
     form_class = AppointmentForm
     template_name = 'core/appointment_form.html'
-    success_url = reverse_lazy('appointment-list')
+    success_url = reverse_lazy('core:appointment-list')
     
     def test_func(self):
         appointment = self.get_object()
@@ -344,7 +344,7 @@ class AppointmentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
     """
     model = Appointment
     template_name = 'core/appointment_confirm_delete.html'
-    success_url = reverse_lazy('appointment-list')
+    success_url = reverse_lazy('core:appointment-list')
     
     def test_func(self):
         # Sadece resepsiyonistler ve adminler randevu silebilir
@@ -363,7 +363,7 @@ class TreatmentCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Treatment
     form_class = TreatmentForm
     template_name = 'core/treatment_form.html'
-    success_url = reverse_lazy('appointment-list')
+    success_url = reverse_lazy('core:appointment-list')
     
     def test_func(self):
         # Sadece doktorlar tedavi oluşturabilir
@@ -394,7 +394,7 @@ class TreatmentCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         # Doktor sadece kendi randevularına tedavi ekleyebilir
         if appointment.doctor != self.request.user:
             messages.error(self.request, _('Bu randevu için tedavi ekleyemezsiniz.'))
-            return redirect('appointment-list')
+            return redirect('core:appointment-list')
         
         # Randevu durumunu tamamlandı olarak işaretle
         appointment.status = 'completed'
@@ -421,7 +421,7 @@ class TreatmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Treatment
     form_class = TreatmentForm
     template_name = 'core/treatment_form.html'
-    success_url = reverse_lazy('appointment-list')
+    success_url = reverse_lazy('core:appointment-list')
     
     def test_func(self):
         treatment = self.get_object()

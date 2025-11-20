@@ -52,23 +52,23 @@ class EnhancedDashboardView(LoginRequiredMixin, TemplateView):
         
         if user.is_doctor():
             actions = [
-                {'title': 'Bugünün Randevuları', 'url': 'appointment-list', 'icon': 'calendar', 'color': 'primary'},
+                {'title': 'Bugünün Randevuları', 'url': 'core:appointment-list', 'icon': 'calendar', 'color': 'primary'},
                 {'title': 'Yeni Tedavi', 'url': 'treatment-create', 'icon': 'plus', 'color': 'success'},
                 {'title': 'Lab Test İste', 'url': 'lab-test-create', 'icon': 'flask', 'color': 'info'},
                 {'title': 'Hasta Arama', 'url': 'patient-search', 'icon': 'search', 'color': 'warning'},
             ]
         elif user.is_patient():
             actions = [
-                {'title': 'Randevu Al', 'url': 'appointment-create', 'icon': 'calendar-plus', 'color': 'primary'},
+                {'title': 'Randevu Al', 'url': 'core:appointment-create', 'icon': 'calendar-plus', 'color': 'primary'},
                 {'title': 'Tedavi Geçmişi', 'url': 'patient-treatment-history', 'icon': 'history', 'color': 'info'},
                 {'title': 'Test Sonuçları', 'url': 'patient-lab-results', 'icon': 'chart-bar', 'color': 'success'},
                 {'title': 'Reçetelerim', 'url': 'patient-prescriptions', 'icon': 'pills', 'color': 'warning'},
             ]
         elif user.is_receptionist():
             actions = [
-                {'title': 'Yeni Randevu', 'url': 'appointment-create', 'icon': 'calendar-plus', 'color': 'primary'},
+                {'title': 'Yeni Randevu', 'url': 'core:appointment-create', 'icon': 'calendar-plus', 'color': 'primary'},
                 {'title': 'Hasta Kaydı', 'url': 'patient-register', 'icon': 'user-plus', 'color': 'success'},
-                {'title': 'Randevu Listesi', 'url': 'appointment-list', 'icon': 'list', 'color': 'info'},
+                {'title': 'Randevu Listesi', 'url': 'core:appointment-list', 'icon': 'list', 'color': 'info'},
                 {'title': 'Doktor Takvimi', 'url': 'doctor-calendar', 'icon': 'calendar', 'color': 'warning'},
             ]
         elif user.is_admin_user():

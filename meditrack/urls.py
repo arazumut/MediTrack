@@ -49,7 +49,7 @@ urlpatterns = [
     path('core/', include('core.urls', namespace='core')),
     
     # Appointments uygulaması URL'leri
-    path('appointments/', include('appointments.urls')),
+    path('appointments/', include(('appointments.urls', 'appointments'), namespace='appointments')),
     
     # Treatments uygulaması URL'leri
     path('treatments/', include('treatments.urls')),

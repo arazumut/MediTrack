@@ -20,7 +20,7 @@
                     <a href="{% url 'core:doctor-detail' doctor.id %}" class="btn btn-sm btn-secondary me-2">
                         <i class="ki-outline ki-arrow-left fs-2"></i> Doktor Detayına Dön
                     </a>
-                    <a href="{% url 'doctor-calendar' doctor.id %}" class="btn btn-sm btn-info me-2">
+                    <a href="{% url 'appointments:doctor-calendar' doctor.id %}" class="btn btn-sm btn-info me-2">
                         <i class="ki-outline ki-calendar fs-2"></i> Takvim Görünümü
                     </a>
                     <a href="{% url 'doctor-timeoff-list' doctor.id %}" class="btn btn-sm btn-warning">
