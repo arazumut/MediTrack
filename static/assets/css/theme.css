@@ -15,9 +15,7 @@
     --hover-bg: #f0f0f0;
     --input-bg: #fff;
     --input-border: #ccc;
-}
-
-body.dark-mode {
+:root[data-bs-theme="dark"] {
     /* Dark Mode Variables */
     --bg-color: #121212;
     --text-color: #e0e0e0;
@@ -56,7 +54,7 @@ body {
     background-color: rgba(0, 0, 0, 0.05);
 }
 
-body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+[data-bs-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
@@ -117,18 +115,47 @@ body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
     color: var(--text-color);
 }
 
-body.dark-mode .theme-toggle .fa-sun {
+[data-bs-theme="dark"] .bg-light,
+[data-bs-theme="dark"] .btn-bg-light,
+[data-bs-theme="dark"] .btn.btn-bg-light {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+}
+
+[data-bs-theme="dark"] .text-gray-900,
+[data-bs-theme="dark"] .text-dark {
+    color: var(--text-color) !important;
+}
+
+[data-bs-theme="dark"] .text-gray-500,
+[data-bs-theme="dark"] .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+[data-bs-theme="dark"] .border-gray-300,
+[data-bs-theme="dark"] .border-dashed {
+    border-color: var(--border-color) !important;
+}
+
+[data-bs-theme="dark"] .badge-light-primary {
+    background-color: rgba(144, 202, 249, 0.15);
+    color: var(--primary-color);
+}
+
+[data-bs-theme="dark"] .theme-toggle .fa-sun {
     display: inline-block;
 }
 
-body.dark-mode .theme-toggle .fa-moon {
+[data-bs-theme="dark"] .theme-toggle .fa-moon {
     display: none;
 }
 
-body:not(.dark-mode) .theme-toggle .fa-sun {
+[data-bs-theme="light"] .theme-toggle .fa-sun,
+:root:not([data-bs-theme="dark"]) .theme-toggle .fa-sun {
     display: none;
 }
 
-body:not(.dark-mode) .theme-toggle .fa-moon {
+[data-bs-theme="light"] .theme-toggle .fa-moon,
+:root:not([data-bs-theme="dark"]) .theme-toggle .fa-moon {
     display: inline-block;
 }
