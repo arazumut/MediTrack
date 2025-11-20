@@ -64,7 +64,7 @@
                                 <tr>
                                     <th width="30%">Hasta</th>
                                     <td>
-                                        <a href="{% url 'patient-detail' lab_test.patient.id %}">
+                                        <a href="{% url 'core:patient-detail' lab_test.patient.id %}">
                                             {{ lab_test.patient.get_full_name }}
                                         </a>
                                     </td>
@@ -86,7 +86,7 @@
                                 <tr>
                                     <th>İlgili Tedavi</th>
                                     <td>
-                                        <a href="{% url 'treatment-detail' lab_test.treatment.id %}">
+                                        <a href="{% url 'core:treatment-detail' lab_test.treatment.id %}">
                                             {{ lab_test.treatment.diagnosis }} ({{ lab_test.treatment.created_at|date:"d.m.Y" }})
                                         </a>
                                     </td>
@@ -212,7 +212,7 @@
                             </span>
                         </div>
                         <div>
-                            <a href="{% url 'patient-detail' lab_test.patient.id %}" class="fs-5 text-dark text-hover-primary fw-bold">{{ lab_test.patient.get_full_name }}</a>
+                            <a href="{% url 'core:patient-detail' lab_test.patient.id %}" class="fs-5 text-dark text-hover-primary fw-bold">{{ lab_test.patient.get_full_name }}</a>
                             <div class="fw-semibold text-gray-400">Hasta</div>
                         </div>
                     </div>
@@ -243,7 +243,7 @@
                     <div class="separator my-3"></div>
                     
                     <div class="d-grid gap-2">
-                        <a href="{% url 'medical-history-list' lab_test.patient.id %}" class="btn btn-sm btn-light-primary">
+                        <a href="{% url 'core:medical-history-list' lab_test.patient.id %}" class="btn btn-sm btn-light-primary">
                             <i class="ki-outline ki-notepad-bookmark fs-3"></i> Sağlık Geçmişi
                         </a>
                         <a href="{% url 'lab-test-list' patient_id=lab_test.patient.id %}" class="btn btn-sm btn-light-info">

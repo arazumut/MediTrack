@@ -41,7 +41,7 @@
                     <form method="post">
                         {% csrf_token %}
                         <div class="d-flex justify-content-between">
-                            <a href="{% url 'medical-history-list' object.patient.id %}" class="btn btn-secondary">İptal</a>
+                            <a href="{% url 'core:medical-history-list' object.patient.id %}" class="btn btn-secondary">İptal</a>
                             <button type="submit" class="btn btn-danger">Sil</button>
                         </div>
                     </form>

@@ -67,7 +67,7 @@
                         <div class="col-md-5 fw-bold">{% translate "İlgili Tedavi" %}:</div>
                         <div class="col-md-7">
                             {% if medical_image.treatment %}
-                                <a href="{% url 'treatment-detail' medical_image.treatment.id %}">
+                                <a href="{% url 'core:treatment-detail' medical_image.treatment.id %}">
                                     {{ medical_image.treatment }}
                                 </a>
                             {% else %}

@@ -80,7 +80,7 @@
                         <div class="col-md-5 fw-bold">{% translate "İlgili Tedavi" %}:</div>
                         <div class="col-md-7">
                             {% if report.treatment %}
-                                <a href="{% url 'treatment-detail' report.treatment.id %}">
+                                <a href="{% url 'core:treatment-detail' report.treatment.id %}">
                                     {{ report.treatment }}
                                 </a>
                             {% else %}

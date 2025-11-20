@@ -109,9 +109,9 @@
                         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             {% if patient %}
-                                <a href="{% url 'medical-history-list' patient.id %}" class="btn btn-secondary me-md-2">İptal</a>
+                                <a href="{% url 'core:medical-history-list' patient.id %}" class="btn btn-secondary me-md-2">İptal</a>
                             {% elif form.instance.id %}
-                                <a href="{% url 'medical-history-list' form.instance.patient.id %}" class="btn btn-secondary me-md-2">İptal</a>
+                                <a href="{% url 'core:medical-history-list' form.instance.patient.id %}" class="btn btn-secondary me-md-2">İptal</a>
                             {% else %}
                                 <a href="javascript:history.back()" class="btn btn-secondary me-md-2">İptal</a>
                             {% endif %}

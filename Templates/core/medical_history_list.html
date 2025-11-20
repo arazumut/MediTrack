@@ -9,14 +9,14 @@
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0">{{ patient.get_full_name }} - Sağlık Geçmişi</h4>
             {% if user.is_doctor or user.is_admin_user %}
-            <a href="{% url 'medical-history-create' patient.id %}" class="btn btn-light">
+            <a href="{% url 'core:medical-history-create' patient.id %}" class="btn btn-light">
                 <i class="ki-outline ki-plus fs-2"></i> Yeni Kayıt Ekle
             </a>
             {% endif %}
         </div>
         <div class="card-body">
             <div class="d-flex justify-content-between mb-4">
-                <a href="{% url 'patient-detail' patient.id %}" class="btn btn-sm btn-secondary">
+                <a href="{% url 'core:patient-detail' patient.id %}" class="btn btn-sm btn-secondary">
                     <i class="ki-outline ki-arrow-left fs-2"></i> Hasta Detayına Dön
                 </a>
                 <div>
@@ -57,10 +57,10 @@
                                     <i class="ki-outline ki-eye fs-2 text-primary"></i>
                                 </button>
                                 {% if user.is_doctor or user.is_admin_user %}
-                                <a href="{% url 'medical-history-update' history.id %}" class="btn btn-sm btn-icon btn-light me-2">
+                                <a href="{% url 'core:medical-history-update' history.id %}" class="btn btn-sm btn-icon btn-light me-2">
                                     <i class="ki-outline ki-pencil fs-2 text-warning"></i>
                                 </a>
-                                <a href="{% url 'medical-history-delete' history.id %}" class="btn btn-sm btn-icon btn-light">
+                                <a href="{% url 'core:medical-history-delete' history.id %}" class="btn btn-sm btn-icon btn-light">
                                     <i class="ki-outline ki-trash fs-2 text-danger"></i>
                                 </a>
                                 {% endif %}

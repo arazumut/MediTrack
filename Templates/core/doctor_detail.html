@@ -75,7 +75,7 @@
                             
                             {% if user.is_patient %}
                             <div class="col-md-6 mb-3">
-                                <a href="{% url 'appointment-create' %}?doctor={{ doctor.id }}" class="btn btn-success btn-block w-100">
+                                <a href="{% url 'core:appointment-create' %}?doctor={{ doctor.id }}" class="btn btn-success btn-block w-100">
                                     <i class="ki-outline ki-calendar-add fs-2 me-2"></i> Randevu Al
                                 </a>
                             </div>
