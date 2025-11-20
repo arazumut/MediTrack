@@ -3592,3 +3592,12 @@ django.urls.exceptions.NoReverseMatch: Reverse for 'appointment-create' not foun
 "GET /theme/preference/ HTTP/1.1" 200 20
 /Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/meditrack/wsgi.py changed, reloading.
 Watching for file changes with StatReloader
+/Users/umutaraz/Desktop/Projeler/MediTrack/MediTrack/meditrack/wsgi.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /dashboard/ HTTP/1.1" 200 29773
+"GET /static/assets/css/theme.css HTTP/1.1" 304 0
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET /core/analytics/ HTTP/1.1" 200 43109
+"GET /theme/preference/ HTTP/1.1" 200 20
+"GET / HTTP/1.1" 200 30515
+"GET /theme/preference/ HTTP/1.1" 200 20
