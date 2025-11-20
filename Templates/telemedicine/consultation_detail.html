@@ -1,0 +1,79 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Telemedicine Konsültasyonu{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <a href="{% url 'telemedicine:list' %}" class="btn btn-link mb-3">&larr; Konsültasyonlara Dön</a>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h4 mb-1">{{ consultation.appointment }}</h1>
+                    <p class="text-muted mb-0">
+                        {{ consultation.scheduled_start_time|date:"d M Y H:i" }} •
+                        {{ consultation.get_status_display }}
+                    </p>
+                </div>
+                {% if can_join %}
+                    <a href="{{ join_url }}" class="btn btn-primary">Odaya Katıl</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Konsültasyon Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Doktor</dt>
+                        <dd class="col-sm-8">{{ consultation.appointment.doctor.get_full_name }}</dd>
+
+                        <dt class="col-sm-4">Hasta</dt>
+                        <dd class="col-sm-8">{{ consultation.appointment.patient.get_full_name }}</dd>
+
+                        <dt class="col-sm-4">Tür</dt>
+                        <dd class="col-sm-8 text-capitalize">{{ consultation.get_consultation_type_display }}</dd>
+
+                        <dt class="col-sm-4">Platform</dt>
+                        <dd class="col-sm-8">{{ consultation.platform|default:"-" }}</dd>
+
+                        <dt class="col-sm-4">Toplantı Kimliği</dt>
+                        <dd class="col-sm-8"><code>{{ consultation.meeting_id }}</code></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Mesajlar</h5>
+                </div>
+                <div class="card-body">
+                    {% if chat_messages %}
+                        <div class="list-group list-group-flush">
+                            {% for message in chat_messages %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>{{ message.sender.get_full_name }}</strong>
+                                        <small class="text-muted">{{ message.timestamp|date:"d M Y H:i" }}</small>
+                                    </div>
+                                    <p class="mb-0">{{ message.content }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">Henüz mesaj yok.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

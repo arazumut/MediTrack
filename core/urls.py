@@ -71,4 +71,5 @@ urlpatterns = [
     
     # AI Assistant
     path('ai-assistant/', views.ai_assistant, name='ai_assistant'),
+    path('ai-assistant/chat/', views.ai_chat, name='ai_chat'),
 ]

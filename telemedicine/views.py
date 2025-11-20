@@ -162,7 +162,7 @@ def join_consultation(request, meeting_id):
     # Kullanıcı katılabilir mi?
     if not consultation.can_join(request.user):
         messages.error(request, _('Bu konsültasyona katılma yetkiniz yok.'))
-        return redirect('telemedicine-consultation-list')
+        return redirect('telemedicine:list')
     
     # Konsültasyonu başlat
     consultation.mark_as_started(request.user)
@@ -353,7 +353,7 @@ class TeleMedicineSettingsView(LoginRequiredMixin, UpdateView):
         'sms_notifications', 'require_waiting_room', 'allow_recording',
         'allow_file_sharing', 'max_consultation_duration', 'auto_end_consultation'
     ]
-    success_url = reverse_lazy('telemedicine-settings')
+    success_url = reverse_lazy('telemedicine:settings')
     
     def get_object(self, queryset=None):
         settings, created = TeleMedicineSettings.objects.get_or_create(
@@ -514,7 +514,7 @@ def create_telemedicine_appointment(request):
                 )
             
             messages.success(request, "Tele-tıp randevusu başarıyla oluşturuldu.")
-            return redirect('telemedicine-appointment-detail', pk=appointment.pk)
+            return redirect('telemedicine:appointment-detail', pk=appointment.pk)
     else:
         form = TelemedicineAppointmentForm(user=request.user)
         
@@ -528,7 +528,7 @@ def start_video_session(request, appointment_id):
     # Yetki kontrolü
     if not (request.user == appointment.doctor or request.user == appointment.patient):
         messages.error(request, "Bu görüşmeye erişim yetkiniz yok.")
-        return redirect('telemedicine-appointment-list')
+        return redirect('telemedicine:appointment-list')
     
     # Randevu zamanı kontrolü
     now = timezone.now()
@@ -538,11 +538,11 @@ def start_video_session(request, appointment_id):
     # Randevudan 10 dakika önce veya 30 dakika sonrasına kadar izin ver
     if time_diff > 10:
         messages.warning(request, f"Görüşme henüz başlamadı. Randevunuz {appointment.time.strftime('%H:%M')} saatinde.")
-        return redirect('telemedicine-appointment-detail', pk=appointment_id)
+        return redirect('telemedicine:appointment-detail', pk=appointment_id)
     
     if time_diff < -30:
         messages.warning(request, "Bu randevunun süresi dolmuş. Yeni bir randevu oluşturun.")
-        return redirect('telemedicine-appointment-list')
+        return redirect('telemedicine:appointment-list')
     
     # Aktif görüşme var mı kontrol et
     active_session = VideoSession.objects.filter(

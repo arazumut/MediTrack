@@ -1,3 +1,7 @@
+import logging
+
+from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth import login, get_user_model
@@ -8,6 +12,7 @@ from django.views.generic import CreateView, UpdateView, ListView, DetailView, D
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 from .forms import (
     LoginForm, PatientRegistrationForm, AppointmentForm, 
@@ -16,6 +21,11 @@ from .forms import (
 from appointments.models import Appointment
 from treatments.models import Treatment, Prescription
 from .analytics import DashboardAnalytics
+
+try:
+    from openai import OpenAI
+except Exception:  # pragma: no cover
+    OpenAI = None
 
 User = get_user_model()
 
@@ -683,3 +693,54 @@ def ai_assistant(request):
     }
     
     return render(request, 'core/ai_assistant.html', context)
+
+
+def _build_ai_client():
+    api_key = getattr(settings, 'OPENAI_API_KEY', None)
+    if not api_key or OpenAI is None:
+        return None
+    return OpenAI(api_key=api_key)
+
+
+@login_required
+@require_POST
+def ai_chat(request):
+    """
+    AJAX endpoint for AI Sağlık Asistanı
+    """
+    message = request.POST.get('message', '').strip()
+    if not message:
+        return JsonResponse({'success': False, 'error': _('Mesaj içeriği boş olamaz.')}, status=400)
+    
+    response_text = None
+    client = _build_ai_client()
+    if client:
+        try:
+            completion = client.chat.completions.create(
+                model=getattr(settings, 'OPENAI_DEFAULT_MODEL', 'gpt-4o-mini'),
+                temperature=0.3,
+                messages=[
+                    {
+                        'role': 'system',
+                        'content': 'You are MediTrack, a concise Turkish medical assistant that provides general guidance and always reminds users to contact their healthcare professionals.'
+                    },
+                    {'role': 'user', 'content': message}
+                ]
+            )
+            response_text = completion.choices[0].message.content.strip()
+        except Exception as exc:  # pragma: no cover
+            logging.exception("AI chat error: %s", exc)
+    
+    if not response_text:
+        response_text = _generate_fallback_response(message)
+    
+    return JsonResponse({'success': True, 'response': response_text})
+
+
+def _generate_fallback_response(message):
+    templates = [
+        "Mesajınızı aldım: \"{query}\". Bu konuda genel öneriler sunabilirim ancak kesin tanı için doktorunuza danışmalısınız.",
+        "\"{query}\" hakkında size yardımcı olmaya çalışıyorum. Lütfen semptomlarınız devam ederse bir uzmana başvurun."
+    ]
+    idx = hash(message) % len(templates)
+    return templates[idx].format(query=message)
